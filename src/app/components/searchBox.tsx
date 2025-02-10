@@ -73,7 +73,7 @@ export default function SearchBox({
 }
 
 const SearchButton = React.memo(({ 
-  isSearching, 
+  isSearching,
   onClick 
 }: { 
   isSearching: boolean;
