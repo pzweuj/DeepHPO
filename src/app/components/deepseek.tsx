@@ -1,7 +1,4 @@
 // deepseek-V3 使用硅基流动API
-
-import React, { useState } from 'react';
-
 interface DeepSeekResponse {
   // 定义API返回的数据结构
   id: string;
