@@ -8,7 +8,7 @@ interface SearchBoxProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   isSearching: boolean;
-  handleSearch: () => void;
+  handleSearch: (query?: string) => void;
 }
 
 export default function SearchBox({
@@ -40,10 +40,11 @@ export default function SearchBox({
   };
 
   // 搜索按钮点击处理
-  const handleSearchClick = () => {
-    // 同步本地状态到父组件后再执行搜索
+  const handleSearchClick = async () => {
+    // 直接传递本地最新值进行搜索
+    handleSearch(localQuery);  // 修改这里
+    // 同时更新父组件状态保持同步
     setSearchQuery(localQuery);
-    handleSearch();
   };
 
   const calculateRows = (text: string) => {
