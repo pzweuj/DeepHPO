@@ -49,60 +49,69 @@ def silicon_deepseek_v3(message, sdk):
             print("请求过多，请稍后再试")
         elif response.status_code == 503:
             print("服务不可用，请稍后再试")
+        elif response.status_code == 504:
+            print("网关超时，1分钟后重试")
+            time.sleep(60)
+            return silicon_deepseek_v3(message, sdk)
         exit(1)  # 退出程序，返回非0状态码表示异常退出
     except Exception as e:
         print(f"发生未知错误: {e}")
         exit(1)
 
 # 运行
-sdk = "<硅基流动API密钥>"
-done_list = []
-dl = open('done_list.txt', "r", encoding="utf-8")
-for line in dl:
-    done_list.append(line.rstrip())
-dl.close()
-dl = open('done_list.txt', "a", encoding="utf-8")
-with open('hpo_terms.json', 'r') as file, open("hpo_terms_cn.txt", "a", encoding="utf-8") as o:
-    data_dict = json.load(file)
-    for term in data_dict:
-        id = term.get("id", "-")
+def run(sdk):
+    done_list = []
+    dl = open('done_list.txt', "r", encoding="utf-8")
+    for line in dl:
+        done_list.append(line.rstrip())
+    dl.close()
+    dl = open('done_list.txt', "a", encoding="utf-8")
+    with open('hpo_terms.json', 'r') as file, open("hpo_terms_cn.txt", "a", encoding="utf-8") as o:
+        data_dict = json.load(file)
+        for term in data_dict:
+            id = term.get("id", "-")
 
-        if not id in done_list:
-            print("[Process]", id)
-            name = term.get("name", "-")
-            des = term.get("definition", "-")
-            name_cn = des_cn = "-"
-            if name != "-":
-                name_cn = silicon_deepseek_v3(name, sdk) if name != "All" else "所有表型"
-            if des != "-":
-                des_cn = silicon_deepseek_v3(des, sdk)
-            time.sleep(3)
+            if not id in done_list:
+                print("[Process]", id)
+                name = term.get("name", "-")
+                des = term.get("definition", "-")
+                name_cn = des_cn = "-"
+                if name != "-":
+                    name_cn = silicon_deepseek_v3(name, sdk) if name != "All" else "所有表型"
+                if des != "-":
+                    des_cn = silicon_deepseek_v3(des, sdk)
+                time.sleep(3)
 
-            term['name'] = name
-            term['definition'] = des
-            term['name_cn'] = name_cn
-            term['definition_cn'] = des_cn
+                term['name'] = name
+                term['definition'] = des
+                term['name_cn'] = name_cn
+                term['definition_cn'] = des_cn
 
-            o.write(str(term) + "\n")
-            dl.write(id + "\n")
+                o.write(str(term) + "\n")
+                dl.write(id + "\n")
 
 # 因为网络原因，没有将结果一次性生成json，这里重新转换
-output_dict = {}
-with open("hpo_terms_cn.txt", "r", encoding="utf-8") as i:
-    for line in i:
-        id = "-"
-        line = line.lstrip("{")
-        line = line.rstrip("}\n")
-        for j in line.split("', '"):
-            key, value = j.split("': '")
-            key = key.lstrip("'").rstrip("'")
-            value = value.lstrip("'").rstrip("'")
-            if key == "id":
-                id = value
-                output_dict.setdefault(id, {})
-            output_dict[id][key] = value
+def tran2json():
+    output_dict = {}
+    with open("hpo_terms_cn.txt", "r", encoding="utf-8") as i:
+        for line in i:
+            id = "-"
+            line = line.lstrip("{")
+            line = line.rstrip("}\n")
+            for j in line.split("', '"):
+                key, value = j.split("': '")
+                key = key.lstrip("'").rstrip("'")
+                value = value.lstrip("'").rstrip("'")
+                if key == "id":
+                    id = value
+                    output_dict.setdefault(id, {})
+                output_dict[id][key] = value
 
-with open('hpo_terms_cn.json', 'w', encoding='utf-8') as f:
-    json.dump(output_dict, f, ensure_ascii=False, indent=4)
+    with open('hpo_terms_cn.json', 'w', encoding='utf-8') as f:
+        json.dump(output_dict, f, ensure_ascii=False, indent=4)
 
-# end
+###############
+run("<硅基流动API密钥>")
+tran2json()
+
+
