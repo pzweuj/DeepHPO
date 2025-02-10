@@ -7,7 +7,7 @@ import { searchHPOTerms } from './components/greper';
 import SearchBox from './components/searchBox';
 
 export default function Home() {
-  const [searchType, setSearchType] = useState('phenotype');
+  const [searchType, setSearchType] = useState('matcher');
   const [searchQuery, setSearchQuery] = useState('');
   const [tableData, setTableData] = useState([
     {
@@ -23,8 +23,8 @@ export default function Home() {
 
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = async () => {
-    const currentQuery = searchQuery.trim();
+  const handleSearch = async (query?: string) => {
+    const currentQuery = (query || searchQuery).trim();
     
     if (currentQuery === '') {
       setTableData([{
@@ -48,10 +48,10 @@ export default function Home() {
       setIsSearching(true);
       const result = searchType === 'matcher' 
         ? await DeepSeek.query({
-            token: 'sk-hrjkbhkjvqhyhdyponfsmtfphjyuhwiziqowlkqpnpezpnc', // 请替换为自己的sdk || 这个我已经关闭了
+            token: '',
             question: currentQuery
           })
-        : searchHPOTerms(currentQuery);
+        : await Promise.resolve(searchHPOTerms(currentQuery));
       
       setTableData(result);
     } catch (error) {
