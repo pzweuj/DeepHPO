@@ -1,4 +1,4 @@
-# CHPO - 中文HPO查询系统
+# CHPO - 中文HPO查询系统（开发中）
 
 ## 项目简介
 CHPO是一个基于Next.js构建的Web应用，旨在为用户提供便捷的HPO（人类表型本体）信息查询服务。用户可以通过以下方式查询表型信息：
@@ -18,6 +18,13 @@ CHPO是一个基于Next.js构建的Web应用，旨在为用户提供便捷的HPO
 - Next.js
 
 ## 快速开始
+
+建议根据服务提供商自行构筑
+
+```
+src/app/components/deepseek.tsx
+```
+
 
 自行部署这个应用
 

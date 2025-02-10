@@ -48,7 +48,7 @@ export default function Home() {
       setIsSearching(true);
       const result = searchType === 'matcher' 
         ? await DeepSeek.query({
-            token: 'sk-hrjkbhkjvqhyhdyponfsmtfphjyuhwiziqowlkqpnpezpnc',
+            token: 'sk-hrjkbhkjvqhyhdyponfsmtfphjyuhwiziqowlkqpnpezpnc', // 请替换为自己的sdk || 这个我已经关闭了
             question: currentQuery
           })
         : searchHPOTerms(currentQuery);
