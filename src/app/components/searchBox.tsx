@@ -41,8 +41,9 @@ export default function SearchBox({
 
   // 搜索按钮点击处理
   const handleSearchClick = () => {
-    // 直接使用本地最新状态触发搜索，无需等待父组件状态更新
-    handleSearch();  // 移除setSearchQuery调用
+    // 同步本地状态到父组件后再执行搜索
+    setSearchQuery(localQuery);
+    handleSearch();
   };
 
   return (
@@ -59,8 +60,8 @@ export default function SearchBox({
       </div>
       <input
         type="text"
-        id="searchInput"
-        value={localQuery} // 绑定本地状态
+        id="phenotypeSearchInput"
+        value={localQuery}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder={searchType === 'matcher' ? '使用deepseek提取表型信息' : '搜索表型信息'}
@@ -82,7 +83,8 @@ const SearchButton = React.memo(({
     <button
       type="button"
       onClick={onClick}
-      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors"
+      disabled={isSearching}
+      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors disabled:opacity-75 disabled:cursor-wait"
     >
       {isSearching ? (
         <div className="h-6 w-6 animate-spin">
