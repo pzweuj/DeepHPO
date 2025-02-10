@@ -24,7 +24,7 @@ interface TableProps {
 
 const columnHelper = createColumnHelper<TableData>();
 
-const MAX_TABLE_SIZE = 1000;
+// const MAX_TABLE_SIZE = 1000;
 
 export default function Table({ data }: TableProps) {
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
