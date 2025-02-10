@@ -48,7 +48,7 @@ export default function Home() {
       setIsSearching(true);
       const result = searchType === 'matcher' 
         ? await DeepSeek.query({
-            token: '',
+            token: process.env.DEEPSEEK_API_KEY!,
             question: currentQuery
           })
         : await Promise.resolve(searchHPOTerms(currentQuery));
