@@ -6,7 +6,15 @@ import SearchBox from './components/searchBox';
 
 async function getTableData(searchType: string, searchQuery: string) {
   if (searchQuery.trim() === '') {
-    return [/* 空状态数据 */];
+    return [{
+      hpo: 'HP:0000001',
+      name: 'All',
+      chineseName: '所有表型',
+      destination: 'Ready',
+      description: '等待查询',
+      confidence: '-',
+      remark: '等待查询'
+    }]; // 设置初次渲染默认数据
   }
 
   try {
