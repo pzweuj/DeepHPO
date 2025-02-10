@@ -1,67 +1,40 @@
-'use client';
 import Image from "next/image";
-import { useState } from 'react';
 import Table from './components/table';
 import DeepSeek from './components/deepseek';
 import { searchHPOTerms } from './components/greper';
 import SearchBox from './components/searchBox';
 
-export default function Home() {
-  const [searchType, setSearchType] = useState('matcher');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [tableData, setTableData] = useState([
-    {
-      hpo: 'HP:0000001',
-      name: 'All',
-      chineseName: '所有表型',
-      destination: '-',
-      description: '-',
-      confidence: '高',
-      remark: '示例'
-    }
-  ]);
+async function getTableData(searchType: string, searchQuery: string) {
+  if (searchQuery.trim() === '') {
+    return [/* 空状态数据 */];
+  }
 
-  const [isSearching, setIsSearching] = useState(false);
+  try {
+    // 服务端直接调用
+    return searchType === 'matcher' 
+      ? await DeepSeek.query({
+          token: process.env.DEEPSEEK_API_KEY!,
+          question: searchQuery
+        })
+      : await searchHPOTerms(searchQuery);
+  } catch (error) {
+    console.error('查询失败:', error);
+    return [/* 错误状态数据 */];
+  }
+}
 
-  const handleSearch = async (query?: string) => {
-    const currentQuery = (query || searchQuery).trim();
-    
-    if (currentQuery === '') {
-      setTableData([{
-        hpo: 'HP:0000001',
-        name: 'All',
-        chineseName: '所有表型',
-        destination: '-',
-        description: '-',
-        confidence: '高',
-        remark: '请输入搜索内容'
-      }]);
-      return;
-    }
-
-    if (searchType !== 'matcher' && typeof searchHPOTerms !== 'function') {
-      setIsSearching(false);
-      return;
-    }
-
-    try {
-      setIsSearching(true);
-      const result = searchType === 'matcher' 
-        ? await DeepSeek.query({
-            token: process.env.DEEPSEEK_API_KEY!,
-            question: currentQuery
-          })
-        : await Promise.resolve(searchHPOTerms(currentQuery));
-      
-      setTableData(result);
-    } catch (error) {
-      console.error('查询失败:', error);
-      setTableData([]);
-      alert('查询失败，请稍后重试');
-    } finally {
-      setIsSearching(false);
-    }
-  };
+export default async function Home({
+  searchParams
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const searchType = searchParams?.type || 'matcher';
+  const searchQuery = searchParams?.q || '';
+  
+  const tableData = await getTableData(
+    searchType.toString(),
+    searchQuery.toString()
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -91,13 +64,9 @@ export default function Home() {
           </h1>
         </div>
 
-        <SearchBox
-          searchType={searchType}
-          setSearchType={setSearchType}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          isSearching={isSearching}
-          handleSearch={handleSearch}
+        <SearchBox 
+          initialType={searchType.toString()}
+          initialQuery={searchQuery.toString()}
         />
       </div>
 
