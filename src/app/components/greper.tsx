@@ -7,14 +7,6 @@ const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
   definition_cn: string;
 }>;
 
-interface HpoTerm {
-  id: string;
-  name: string;
-  definition: string;
-  name_cn: string;
-  definition_cn: string;
-}
-
 interface TableData {
   hpo: string;
   name: string;
