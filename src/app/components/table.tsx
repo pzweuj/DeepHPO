@@ -87,55 +87,57 @@ export default function Table({ data }: TableProps) {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-lg shadow-sm">
-      <div className="flex-1 overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <th
-                    key={header.id}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700"
-                    style={{ minWidth: 120 }}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {table.getRowModel().rows.map(row => (
-              <tr
-                key={row.id}
-                className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors relative"
-                onMouseEnter={() => setHoveredRow(row.id)}
-                onMouseLeave={() => setHoveredRow(null)}
-              >
-                {row.getVisibleCells().map(cell => (
-                  <td
-                    key={cell.id}
-                    className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
-                    onMouseEnter={() => cell.column.id === 'description' && setHoveredRow(row.id)}
-                    onMouseLeave={() => cell.column.id === 'description' && setHoveredRow(null)}
-                  >
-                    <div className="relative z-0">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </div>
-                    {hoveredRow === row.id && cell.column.id === 'description' && (
-                      <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-700 p-2 shadow-lg z-10 border-t border-gray-200 dark:border-gray-600">
-                        <div className="text-sm space-y-1">
-                          <p>置信度: {row.original.confidence}</p>
-                          <p>备注: {row.original.remark || '-'}</p>
-                        </div>
+      <div className="flex-1 overflow-x-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+        <div className="min-w-full inline-block" style={{ minWidth: '768px' }}>
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th
+                      key={header.id}
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700"
+                      style={{ minWidth: 120 }}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              {table.getRowModel().rows.map(row => (
+                <tr
+                  key={row.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors relative"
+                  onMouseEnter={() => setHoveredRow(row.id)}
+                  onMouseLeave={() => setHoveredRow(null)}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <td
+                      key={cell.id}
+                      className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
+                      onMouseEnter={() => cell.column.id === 'description' && setHoveredRow(row.id)}
+                      onMouseLeave={() => cell.column.id === 'description' && setHoveredRow(null)}
+                    >
+                      <div className="relative z-0">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </div>
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                      {hoveredRow === row.id && cell.column.id === 'description' && (
+                        <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-700 p-2 shadow-lg z-10 border-t border-gray-200 dark:border-gray-600">
+                          <div className="text-sm space-y-1">
+                            <p>置信度: {row.original.confidence}</p>
+                            <p>备注: {row.original.remark || '-'}</p>
+                          </div>
+                        </div>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
