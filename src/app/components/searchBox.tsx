@@ -47,7 +47,7 @@ export default function SearchBox({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-2xl">
       <div className="absolute left-3 top-1/2 -translate-y-1/2">
         <select
           value={searchType}
@@ -65,7 +65,7 @@ export default function SearchBox({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder={searchType === 'matcher' ? '使用deepseek提取表型信息' : '搜索表型信息'}
-        className="w-full pl-28 pr-6 py-4 rounded-full border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors"
+        className="w-full pl-28 pr-6 py-5 rounded-full border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-lg"
       />
       <SearchButton isSearching={isSearching} onClick={handleSearchClick} />
     </div>
