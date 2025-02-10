@@ -115,12 +115,16 @@ export default function Table({ data }: TableProps) {
                 {row.getVisibleCells().map(cell => (
                   <td
                     key={cell.id}
-                    className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative"
+                    className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
+                    onMouseEnter={() => cell.column.id === 'description' && setHoveredRow(row.id)}
+                    onMouseLeave={() => cell.column.id === 'description' && setHoveredRow(null)}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <div className="relative z-0">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
                     {hoveredRow === row.id && cell.column.id === 'description' && (
-                      <div className="absolute inset-0 bg-white dark:bg-gray-700 p-2 shadow-lg z-10">
-                        <div className="text-sm">
+                      <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-700 p-2 shadow-lg z-10 border-t border-gray-200 dark:border-gray-600">
+                        <div className="text-sm space-y-1">
                           <p>置信度: {row.original.confidence}</p>
                           <p>备注: {row.original.remark || '-'}</p>
                         </div>
