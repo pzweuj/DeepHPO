@@ -87,8 +87,8 @@ export default function Table({ data }: TableProps) {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-lg shadow-sm">
-      <div className="flex-1 overflow-x-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-        <div className="min-w-full inline-block" style={{ minWidth: '768px' }}>
+      <div className="flex-1 overflow-x-auto" style={{ maxHeight: '70vh' }}>
+        <div className="min-w-full">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
               {table.getHeaderGroups().map(headerGroup => (
@@ -96,8 +96,7 @@ export default function Table({ data }: TableProps) {
                   {headerGroup.headers.map(header => (
                     <th
                       key={header.id}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700"
-                      style={{ minWidth: 120 }}
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700"
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </th>
@@ -116,7 +115,7 @@ export default function Table({ data }: TableProps) {
                   {row.getVisibleCells().map(cell => (
                     <td
                       key={cell.id}
-                      className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
+                      className="px-4 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
                       onMouseEnter={() => cell.column.id === 'description' && setHoveredRow(row.id)}
                       onMouseLeave={() => cell.column.id === 'description' && setHoveredRow(null)}
                     >
