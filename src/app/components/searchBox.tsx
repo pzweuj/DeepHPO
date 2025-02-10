@@ -59,7 +59,7 @@ export default function SearchBox({
         <select
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
-          className="appearance-none bg-transparent border-none text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-0 px-2 py-1 rounded-md bg-gray-200/50 dark:bg-gray-700/50 hover:bg-gray-300/50 dark:hover:bg-gray-600/50 transition-colors"
+          className="appearance-none bg-transparent border-none text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-0 px-2 py-1 rounded-md bg-gray-300/50 dark:bg-gray-600/50 transition-colors cursor-pointer shadow-sm text-center"
         >
           <option value="phenotype">表型</option>
           <option value="matcher">deepseek</option>
