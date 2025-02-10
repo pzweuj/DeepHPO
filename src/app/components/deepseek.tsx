@@ -28,6 +28,15 @@ interface TableData {
   remark: string;
 }
 
+// 新增hpo术语数据导入
+const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
+  id: string;
+  name: string;
+  definition: string;
+  name_cn: string;
+  definition_cn: string;
+}>;
+
 const parseResponseToTableData = (response: string): TableData[] => {
   const lines = response.split('\n').filter(line => line.startsWith('|'));
   const tableData: TableData[] = [];
@@ -35,15 +44,20 @@ const parseResponseToTableData = (response: string): TableData[] => {
   lines.slice(2).forEach(line => {
     const columns = line.split('|').map(col => col.trim()).filter(Boolean);
     if (columns.length >= 5) {
-      tableData.push({
-        hpo: columns[0],
-        name: columns[1],
-        chineseName: columns[2],
-        destination: '',
-        description: columns[1], // 使用英文术语作为描述
-        confidence: columns[3],
-        remark: columns[4] || ''
-      });
+      const hpoId = columns[0].trim();
+      const hpoTerm = hpoTerms[hpoId];
+      
+      if (hpoTerm) { // 只保留json中存在的术语
+        tableData.push({
+          hpo: hpoId,
+          name: hpoTerm.name, // 使用json中的英文术语
+          chineseName: hpoTerm.name_cn, // 使用json中的中文译名
+          destination: hpoTerm.definition, // 使用英文定义作为描述
+          description: hpoTerm.definition_cn, // 使用中文定义作为描述
+          confidence: columns[3], // 保留原始置信度
+          remark: columns[4] || '' // 保留原始备注
+        });
+      }
     }
   });
 
@@ -53,7 +67,7 @@ const parseResponseToTableData = (response: string): TableData[] => {
 export const query = async ({ token, question }: DeepSeekProps): Promise<TableData[]> => {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000); // 15秒超时
+    const timeout = setTimeout(() => controller.abort(), 60000); // 60秒超时
 
     const options = {
       method: 'POST',
