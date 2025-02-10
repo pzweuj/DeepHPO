@@ -98,10 +98,10 @@ def tran2json():
             id = "-"
             line = line.lstrip("{")
             line = line.rstrip("}\n")
-            for j in line.split("', '"):
-                key, value = j.split("': '")
-                key = key.lstrip("'").rstrip("'")
-                value = value.lstrip("'").rstrip("'")
+            for j in line.split(", '"):
+                key, value = j.split("': ")
+                key = key.lstrip("'").lstrip('"').rstrip("'").rstrip('"')
+                value = value.lstrip("'").lstrip('"').rstrip("'").rstrip('"')
                 if key == "id":
                     id = value
                     output_dict.setdefault(id, {})
@@ -111,7 +111,7 @@ def tran2json():
         json.dump(output_dict, f, ensure_ascii=False, indent=4)
 
 ###############
-run("<硅基流动API密钥>")
+# run("<硅基流动API密钥>")
 tran2json()
 
 
