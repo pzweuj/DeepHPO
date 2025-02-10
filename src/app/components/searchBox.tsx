@@ -72,7 +72,7 @@ export default function SearchBox({
         onKeyDown={handleKeyDown}
         onFocus={(e) => e.target.select()}
         placeholder={searchType === 'matcher' ? '输入临床信息, 使用deepseek提取表型信息' : '搜索HPO编号或中英文表型信息'}
-        className="w-full pl-28 pr-6 py-[0.8rem] rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.6]"
+        className="w-full pl-28 pr-6 py-[1rem] rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
         style={{ height: `${calculateRows(localQuery) * 24 + 32}px` }}
       />
       <SearchButton isSearching={isSearching} onClick={handleSearchClick} />
