@@ -88,7 +88,7 @@ export default function Table({ data }: TableProps) {
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-lg shadow-sm">
       <div className="flex-1 overflow-auto">
-        <table className="min-w-full h-full divide-y divide-gray-200 dark:divide-gray-700">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
@@ -96,6 +96,7 @@ export default function Table({ data }: TableProps) {
                   <th
                     key={header.id}
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    style={{ minWidth: 120 }}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
@@ -114,19 +115,19 @@ export default function Table({ data }: TableProps) {
                 {row.getVisibleCells().map(cell => (
                   <td
                     key={cell.id}
-                    className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300"
+                    className="px-6 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {hoveredRow === row.id && cell.column.id === 'description' && (
+                      <div className="absolute inset-0 bg-white dark:bg-gray-700 p-2 shadow-lg z-10">
+                        <div className="text-sm">
+                          <p>置信度: {row.original.confidence}</p>
+                          <p>备注: {row.original.remark || '-'}</p>
+                        </div>
+                      </div>
+                    )}
                   </td>
                 ))}
-                {hoveredRow === row.id && (
-                  <div className="absolute right-0 top-0 bg-white dark:bg-gray-700 p-2 shadow-lg rounded-lg">
-                    <div className="text-sm">
-                      <p>置信度: {row.original.confidence}</p>
-                      <p>备注: {row.original.remark || '-'}</p>
-                    </div>
-                  </div>
-                )}
               </tr>
             ))}
           </tbody>
