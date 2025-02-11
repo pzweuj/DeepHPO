@@ -90,6 +90,11 @@ const parseResponseToTableData = (response: string): TableData[] => {
 
 export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
   try {
+    // 增加请求超时控制（Vercel默认10秒超时）
+    const timeoutDuration = 9000; // 设置为9秒
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+
     // 直接从环境变量获取token
     const token = process.env.DEEPSEEK_API_KEY;
     if (!token) {
@@ -146,7 +151,11 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
       })
     };
 
-    const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', options);
+    const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
     
     // 增加响应内容检查
     const responseText = await res.text();
@@ -171,15 +180,17 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
     return parseResponseToTableData(data.choices[0].message.content);
   } catch (error) {
     console.error('API Error:', error);
-    // 返回包含详细错误信息的默认行
+    // 确保返回符合TableData结构的标准错误行
     return [{
       hpo: 'HP:0000001',
-      name: 'API Error',
-      chineseName: 'API错误',
-      destination: 'API请求失败',
-      description: error instanceof Error ? error.message : '未知API错误',
+      name: error instanceof Error && error.name === 'AbortError' ? 'Timeout Error' : 'API Error',
+      chineseName: error instanceof Error && error.name === 'AbortError' ? '请求超时' : 'API错误',
+      destination: '服务响应异常',
+      description: error instanceof Error ? 
+        (error.name === 'AbortError' ? '请求超过9秒未响应' : error.message) : 
+        '未知API错误',
       confidence: '-',
-      remark: '请稍后重试'
+      remark: '请简化查询后重试'
     }];
   }
 };
