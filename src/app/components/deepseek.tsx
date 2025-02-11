@@ -129,7 +129,7 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
       destination: 'deepseek服务器超时',
       description: '请换个时间再试吧',
       confidence: '-',
-      remark: '超时'
+      remark: error instanceof Error ? error.message : '服务器错误' // 根据错误类型返回具体错误信息
     }];
   }
 };
