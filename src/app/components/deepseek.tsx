@@ -68,6 +68,8 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
       throw new Error('DEEPSEEK_API_KEY environment variable not configured');
     }
 
+    console.log('Is DEEPSEEK_API_KEY present:', !!process.env.DEEPSEEK_API_KEY);
+
     // 服务端组件不需要AbortController
     const options = {
       method: 'POST',
