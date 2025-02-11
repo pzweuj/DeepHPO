@@ -35,7 +35,7 @@ git clone https://github.com/pzweuj/chpo.git
 src/app/components/deepseek.tsx
 ```
 
-如果你也使用硅基流动的API，则可以在.env.local.self中填入自己的key，并将文件名修改为.env.local
+如果你也使用[硅基流动](https://cloud.siliconflow.cn/i/mHQgxhJC)的API，则可以在.env.local.self中填入自己的key，并将文件名修改为.env.local
 
 接下来自行部署这个应用
 
