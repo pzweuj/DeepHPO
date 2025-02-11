@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 
 interface TableData {
   hpo: string;
