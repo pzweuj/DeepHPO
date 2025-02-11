@@ -6,13 +6,12 @@
   "routes": [
     {
       "src": "/api/query",
-      "dest": "/api/query",
-      "methods": ["GET"],
-      "continue": true
+      "dest": "/api/query/route",
+      "methods": ["GET"]
     }
   ],
   "functions": {
-    "api/query": {
+    "api/query/route": {
       "maxDuration": 60
     }
   }
