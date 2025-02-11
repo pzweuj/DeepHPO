@@ -17,61 +17,46 @@ interface TableData {
   remark: string;
 }
 
-interface SearchHPOProps {
-  term: string;
-  signal?: AbortSignal;  // 新增信号参数
-}
+export function searchHPOTerms(query: string): TableData[] {
+  const results: TableData[] = [];
+  
+  // 将查询转换为小写以便不区分大小写
+  const lowerQuery = query?.toLowerCase() || '';
 
-export async function searchHPOTerms({ term, signal }: SearchHPOProps) {
-  try {
-    const response = await fetch('/api/hpo-search', {
-      method: 'POST',
-      body: JSON.stringify({ term }),
-      signal,  // 传递中止信号
-    });
-    const results: TableData[] = [];
-    
-    // 将查询转换为小写以便不区分大小写
-    const lowerQuery = term?.toLowerCase() || '';
-
-    // 遍历JSON数据
-    Object.values(hpoTerms).forEach(term => {
-      // 检查是否匹配ID、英文名或中文名
-      if ((term.id?.toLowerCase() || '').includes(lowerQuery) ||
-          (term.name?.toLowerCase() || '').includes(lowerQuery) ||
-          (term.name_cn?.toLowerCase() || '').includes(lowerQuery)) {
-        
-        const tableData: TableData = {
-          hpo: term.id,
-          name: term.name,
-          chineseName: term.name_cn,
-          destination: term.definition,
-          description: term.definition_cn,
-          confidence: '-',
-          remark: '搜索匹配'
-        };
-        
-        results.push(tableData);
-      }
-    });
-
-    // 如果没有找到任何结果，添加默认条目
-    if (results.length === 0 && term.trim() !== '') {
-      const defaultData: TableData = {
-        hpo: 'HP:0000001',
-        name: 'All',
-        chineseName: '所有表型',
-        destination: 'NOTFOUND',
-        description: '未找到结果',
+  // 遍历JSON数据
+  Object.values(hpoTerms).forEach(term => {
+    // 检查是否匹配ID、英文名或中文名
+    if ((term.id?.toLowerCase() || '').includes(lowerQuery) ||
+        (term.name?.toLowerCase() || '').includes(lowerQuery) ||
+        (term.name_cn?.toLowerCase() || '').includes(lowerQuery)) {
+      
+      const tableData: TableData = {
+        hpo: term.id,
+        name: term.name,
+        chineseName: term.name_cn,
+        destination: term.definition,
+        description: term.definition_cn,
         confidence: '-',
-        remark: '查询失败'
+        remark: '搜索匹配'
       };
-      results.push(defaultData);
+      
+      results.push(tableData);
     }
+  });
 
-    return results;
-  } catch (error) {
-    console.error('搜索失败:', error);
-    return [];
+  // 如果没有找到任何结果，添加默认条目
+  if (results.length === 0 && query.trim() !== '') {
+    const defaultData: TableData = {
+      hpo: 'HP:0000001',
+      name: 'All',
+      chineseName: '所有表型',
+      destination: 'NOTFOUND',
+      description: '未找到结果',
+      confidence: '-',
+      remark: '查询失败'
+    };
+    results.push(defaultData);
   }
+
+  return results;
 }
