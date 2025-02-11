@@ -94,6 +94,7 @@ export const query = async ({ token, question }: DeepSeekProps): Promise<TableDa
           |----------|------------------------|----------|--------|------|
           | HP:0001250 | Seizure              | 癫痫发作 | 高     | 直接描述 |
           | HP:0030177 | Palmoplantar keratoderma | 掌跖角化症 | 中   | 需病理证实 |
+          | HP:0002353 | HP:0002353 | 脑电图异常 | 中   | 直接描述 |
           
           4. **特殊处理**
           - 对"特殊面容"等模糊描述，应分解为具体特征（如眼距过宽、鼻梁低平等）
