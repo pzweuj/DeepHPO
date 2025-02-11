@@ -132,14 +132,14 @@ export default function Table({ data, isLoading }: TableProps) {
                         <div className="relative z-0">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </div>
-                        {hoveredRow === row.id && cell.column.id === 'description' && (
+                        {/* {hoveredRow === row.id && cell.column.id === 'description' && (
                           <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-700 p-2 shadow-lg z-10 border-t border-gray-200 dark:border-gray-600">
                             <div className="text-sm space-y-1">
                               <p>置信度: {row.original.confidence}</p>
                               <p>备注: {row.original.remark || '-'}</p>
                             </div>
                           </div>
-                        )}
+                        )} */}
                       </td>
                     ))}
                   </tr>
