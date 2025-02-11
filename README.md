@@ -19,7 +19,13 @@ CHPO是一个基于Next.js构建的Web应用，旨在为用户提供便捷的HPO
 
 ## 快速开始
 
-建议根据服务提供商自行构筑
+克隆项目
+
+```bash
+git clone https://github.com/pzweuj/chpo.git
+```
+
+建议根据服务提供商自行调整脚本
 
 ```
 src/app/components/deepseek.tsx
@@ -30,7 +36,6 @@ src/app/components/deepseek.tsx
 接下来自行部署这个应用
 
 ```bash
-git clone https://github.com/pzweuj/chpo.git
 npm install
 npm run dev
 ```
