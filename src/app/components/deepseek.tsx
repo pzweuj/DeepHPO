@@ -34,30 +34,58 @@ const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
 }>;
 
 const parseResponseToTableData = (response: string): TableData[] => {
-  const lines = response.split('\n').filter(line => line.startsWith('|'));
-  const tableData: TableData[] = [];
-
-  lines.slice(2).forEach(line => {
-    const columns = line.split('|').map(col => col.trim()).filter(Boolean);
-    if (columns.length >= 5) {
-      const hpoId = columns[0].trim();
-      const hpoTerm = hpoTerms[hpoId];
-      
-      if (hpoTerm) { // 只保留json中存在的术语
-        tableData.push({
-          hpo: hpoId,
-          name: hpoTerm.name, // 使用json中的英文术语
-          chineseName: hpoTerm.name_cn, // 使用json中的中文译名
-          destination: hpoTerm.definition, // 使用英文定义作为描述
-          description: hpoTerm.definition_cn, // 使用中文定义作为描述
-          confidence: columns[3], // 保留原始置信度
-          remark: columns[4] || '' // 保留原始备注
-        });
-      }
+  try {
+    // 增加空响应检查
+    if (!response || typeof response !== 'string') {
+      throw new Error('Invalid or empty response');
     }
-  });
 
-  return tableData;
+    const lines = response.split('\n').filter(line => line.startsWith('|'));
+    // 增加有效行数检查
+    if (lines.length < 3) {
+      throw new Error('Response does not contain valid table data');
+    }
+
+    const tableData: TableData[] = [];
+    lines.slice(2).forEach(line => {
+      const columns = line.split('|').map(col => col.trim()).filter(Boolean);
+      if (columns.length >= 5) {
+        const hpoId = columns[0].trim();
+        const hpoTerm = hpoTerms[hpoId];
+        
+        if (hpoTerm) { // 只保留json中存在的术语
+          tableData.push({
+            hpo: hpoId,
+            name: hpoTerm.name, // 使用json中的英文术语
+            chineseName: hpoTerm.name_cn, // 使用json中的中文译名
+            destination: hpoTerm.definition, // 使用英文定义作为描述
+            description: hpoTerm.definition_cn, // 使用中文定义作为描述
+            confidence: columns[3], // 保留原始置信度
+            remark: columns[4] || '' // 保留原始备注
+          });
+        }
+      }
+    });
+
+    // 增加空结果检查
+    if (tableData.length === 0) {
+      throw new Error('No valid HPO terms found in response');
+    }
+
+    return tableData;
+  } catch (error) {
+    console.error('Parsing error:', error);
+    // 返回包含错误信息的默认行
+    return [{
+      hpo: 'HP:0000001',
+      name: 'Parsing Error',
+      chineseName: '解析错误',
+      destination: '无法解析API响应',
+      description: error instanceof Error ? error.message : '未知解析错误',
+      confidence: '-',
+      remark: '请检查输入格式'
+    }];
+  }
 };
 
 export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
@@ -119,19 +147,39 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
     };
 
     const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', options);
-    const data: DeepSeekResponse = await res.json();
+    
+    // 增加响应内容检查
+    const responseText = await res.text();
+    if (!responseText) {
+      throw new Error('Empty response from API');
+    }
+
+    // 尝试解析JSON
+    let data: DeepSeekResponse;
+    try {
+      data = JSON.parse(responseText);
+    } catch (jsonError) {
+      console.error('JSON parsing error:', jsonError);
+      throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}`);
+    }
+
+    // 增加choices检查
+    if (!data.choices || data.choices.length === 0) {
+      throw new Error('No choices in API response');
+    }
+
     return parseResponseToTableData(data.choices[0].message.content);
   } catch (error) {
-    console.error('Error:', error);
-    // 返回默认结果
+    console.error('API Error:', error);
+    // 返回包含详细错误信息的默认行
     return [{
       hpo: 'HP:0000001',
-      name: 'All',
-      chineseName: '所有表型',
-      destination: 'deepseek服务器超时',
-      description: '请换个时间再试吧',
+      name: 'API Error',
+      chineseName: 'API错误',
+      destination: 'API请求失败',
+      description: error instanceof Error ? error.message : '未知API错误',
       confidence: '-',
-      remark: error instanceof Error ? error.message : '服务器错误' // 根据错误类型返回具体错误信息
+      remark: '请稍后重试'
     }];
   }
 };
