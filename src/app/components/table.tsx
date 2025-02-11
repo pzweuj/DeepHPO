@@ -28,9 +28,7 @@ const columnHelper = createColumnHelper<TableData>();
 // const MAX_TABLE_SIZE = 1000;
 
 export default function Table({ data, isLoading }: TableProps) {
-  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
-  
-  const safeData = useMemo(() => data.slice(0, 20), [data]); // 直接截取前20条数据
+  const safeData = useMemo(() => data.slice(0, 20), [data]);
 
   const columns = [
     columnHelper.accessor('hpo', {
@@ -75,7 +73,7 @@ export default function Table({ data, isLoading }: TableProps) {
   ];
 
   const table = useReactTable({
-    data: safeData, // 直接使用截取后的数据
+    data: safeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
@@ -119,27 +117,15 @@ export default function Table({ data, isLoading }: TableProps) {
                   <tr
                     key={row.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors relative"
-                    onMouseEnter={() => setHoveredRow(row.id)}
-                    onMouseLeave={() => setHoveredRow(null)}
                   >
                     {row.getVisibleCells().map(cell => (
                       <td
                         key={cell.id}
                         className="px-4 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
-                        onMouseEnter={() => cell.column.id === 'description' && setHoveredRow(row.id)}
-                        onMouseLeave={() => cell.column.id === 'description' && setHoveredRow(null)}
                       >
                         <div className="relative z-0">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </div>
-                        {/* {hoveredRow === row.id && cell.column.id === 'description' && (
-                          <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-700 p-2 shadow-lg z-10 border-t border-gray-200 dark:border-gray-600">
-                            <div className="text-sm space-y-1">
-                              <p>置信度: {row.original.confidence}</p>
-                              <p>备注: {row.original.remark || '-'}</p>
-                            </div>
-                          </div>
-                        )} */}
                       </td>
                     ))}
                   </tr>
