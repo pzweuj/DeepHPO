@@ -1,0 +1,19 @@
+{
+  "framework": null,
+  "github": {
+    "silent": true
+  },
+  "routes": [
+    {
+      "src": "/api/query",
+      "dest": "/api/query",
+      "methods": ["GET"],
+      "continue": true
+    }
+  ],
+  "functions": {
+    "api/query": {
+      "maxDuration": 60
+    }
+  }
+} 
