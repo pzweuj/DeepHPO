@@ -22,14 +22,21 @@ export function searchHPOTerms(query: string): TableData[] {
   
   // 将查询转换为小写以便不区分大小写
   const lowerQuery = query?.toLowerCase() || '';
+  const enableFullTextSearch = lowerQuery.length > 15; // 添加长度判断
 
   // 遍历JSON数据
   Object.values(hpoTerms).forEach(term => {
-    // 检查是否匹配ID、英文名或中文名
-    if ((term.id?.toLowerCase() || '').includes(lowerQuery) ||
-        (term.name?.toLowerCase() || '').includes(lowerQuery) ||
-        (term.name_cn?.toLowerCase() || '').includes(lowerQuery)) {
-      
+    // 基础匹配条件
+    const baseMatch = (term.id?.toLowerCase() || '').includes(lowerQuery) ||
+                      (term.name?.toLowerCase() || '').includes(lowerQuery) ||
+                      (term.name_cn?.toLowerCase() || '').includes(lowerQuery);
+
+    // 当查询长度大于15时，增加定义匹配
+    const fullTextMatch = enableFullTextSearch && 
+                         ((term.definition?.toLowerCase() || '').includes(lowerQuery) ||
+                          (term.definition_cn?.toLowerCase() || '').includes(lowerQuery));
+
+    if (baseMatch || fullTextMatch) {
       const tableData: TableData = {
         hpo: term.id,
         name: term.name,
