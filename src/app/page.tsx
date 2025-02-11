@@ -48,7 +48,7 @@ export default async function Home({
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
       {/* GitHub Link */}
       <a
-        href="https://github.com/pzweuj/CHPO"
+        href="https://github.com/pzweuj/DeepHPO"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed top-4 right-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors z-50"
@@ -68,7 +68,7 @@ export default async function Home({
       <div className="max-w-2xl mx-auto mb-8">
         <div className="flex justify-center mb-4">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-            CHPO
+            DeepHPO
           </h1>
         </div>
 

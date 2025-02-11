@@ -32,7 +32,7 @@ export default function SearchBox({ initialType, initialQuery }: SearchBoxProps)
         <select
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
-          className="appearance-none bg-transparent border-none text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-0 px-2 py-1 rounded-md bg-gray-300/50 dark:bg-gray-600/50 transition-colors cursor-pointer shadow-sm text-center"
+          className="appearance-none bg-transparent border-none text-white focus:outline-none focus:ring-0 px-2 py-1 rounded-md bg-blue-500 dark:bg-blue-600 transition-colors cursor-pointer shadow-sm text-center"
         >
           <option value="phenotype">表型</option>
           <option value="matcher">deepseek</option>

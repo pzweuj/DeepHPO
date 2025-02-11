@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "CHPO - deepseek",
-  description: "China HPO",
+  title: "DeepHPO",
+  description: "基于DeepSeek的临床表型HPO术语提取系统",
   icons: {
     icon: '/hpo-logo-white-no-words.png',
   },
