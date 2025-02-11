@@ -3,6 +3,8 @@
 ## 项目简介
 DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
+注：HPO术语在持续使用DeepSeek-V3翻译中，未完全更新！
+
 1. 用户可以通过输入患者的临床诊断信息，系统会使用DeepSeek-V3对信息进行提取，输出其中可能存在的HPO术语
 
 2. 用户可以通过以下方式查询表型信息：
@@ -26,7 +28,7 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 克隆项目
 
 ```bash
-git clone https://github.com/pzweuj/chpo.git
+git clone https://github.com/pzweuj/DeepHPO.git
 ```
 
 建议根据服务提供商自行调整脚本
