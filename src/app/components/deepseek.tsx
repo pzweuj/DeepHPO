@@ -12,6 +12,7 @@ interface DeepSeekResponse {
 
 interface DeepSeekProps {
   question: string;
+  signal?: AbortSignal;  // 新增可选的中止信号属性
 }
 
 interface TableData {
@@ -88,7 +89,7 @@ const parseResponseToTableData = (response: string): TableData[] => {
   }
 };
 
-export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
+export const query = async ({ question, signal }: DeepSeekProps): Promise<TableData[]> => {
   try {
     // 增加请求超时控制（Vercel默认10秒超时）
     const timeoutDuration = 9000; // 设置为9秒
@@ -153,7 +154,7 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
 
     const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
       ...options,
-      signal: controller.signal
+      signal: signal || controller.signal  // 优先使用外部信号
     });
     clearTimeout(timeoutId);
     
