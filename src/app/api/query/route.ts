@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { searchHPOTerms } from '../../components/greper';
 import { query } from '../../components/deepseek';
 
+export const maxDuration = 60;
+
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const type = searchParams.get('type') || 'matcher';
