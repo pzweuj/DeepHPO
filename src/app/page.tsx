@@ -1,48 +1,55 @@
+'use client';
+import { useEffect, useState } from 'react';
 import Image from "next/image";
 import Table from './components/table';
-import DeepSeek from './components/deepseek';
-import { searchHPOTerms } from './components/greper';
 import SearchBox from './components/searchBox';
 
-async function getTableData(searchType: string, searchQuery: string) {
-  if (searchQuery.trim() === '') {
-    return [{
-      hpo: 'HP:0000001',
-      name: 'All',
-      chineseName: '所有表型',
-      destination: 'Ready',
-      description: '等待查询',
-      confidence: '-',
-      remark: '等待查询'
-    }]; // 设置初次渲染默认数据
-  }
-
-  try {
-    // 服务端直接调用
-    return searchType === 'matcher' 
-      ? await DeepSeek.query({
-          token: process.env.DEEPSEEK_API_KEY!,
-          question: searchQuery
-        })
-      : await searchHPOTerms(searchQuery);
-  } catch (error) {
-    console.error('查询失败:', error);
-    return [/* 错误状态数据 */];
-  }
-}
-
-export default async function Home({
+export default function Home({
   searchParams
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const searchType = searchParams?.type || 'matcher';
-  const searchQuery = searchParams?.q || '';
-  
-  const tableData = await getTableData(
-    searchType.toString(),
-    searchQuery.toString()
-  );
+  const [tableData, setTableData] = useState<any[]>([{
+    hpo: 'HP:0000001',
+    name: 'All',
+    chineseName: '所有表型',
+    destination: 'Ready',
+    description: '等待查询',
+    confidence: '-',
+    remark: '等待查询'
+  }]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const type = searchParams?.type?.toString() || 'matcher';
+        const query = searchParams?.q?.toString() || '';
+        
+        // 当没有查询参数时保持默认数据
+        if (!query) {
+          setIsLoading(false);
+          return;
+        }
+
+        // 调用API路由
+        const res = await fetch(`/api/query?type=${type}&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        // 仅当有数据时更新
+        if (data && data.length > 0) {
+          setTableData(data);
+        }
+      } catch (error) {
+        console.error('数据获取失败:', error);
+        setTableData([/* 错误状态数据 */]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [searchParams]); // 依赖searchParams变化
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -73,14 +80,14 @@ export default async function Home({
         </div>
 
         <SearchBox 
-          initialType={searchType.toString()}
-          initialQuery={searchQuery.toString()}
+          initialType={searchParams?.type?.toString() || 'matcher'}
+          initialQuery={searchParams?.q?.toString() || ''}
         />
       </div>
 
-      {/* Table */}
+      {/* 添加加载状态提示 */}
       <div className="max-w-full mx-auto">
-        <Table data={tableData} />
+        <Table data={tableData} isLoading={isLoading} />
       </div>
 
       {/* 将HPO信息部分移动到这里 */}

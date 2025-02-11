@@ -11,7 +11,6 @@ interface DeepSeekResponse {
 }
 
 interface DeepSeekProps {
-  token: string;
   question: string;
 }
 
@@ -61,11 +60,15 @@ const parseResponseToTableData = (response: string): TableData[] => {
   return tableData;
 };
 
-export const query = async ({ token, question }: DeepSeekProps): Promise<TableData[]> => {
+export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60000); // 60秒超时
+    // 直接从环境变量获取token
+    const token = process.env.DEEPSEEK_API_KEY;
+    if (!token) {
+      throw new Error('DEEPSEEK_API_KEY environment variable not configured');
+    }
 
+    // 服务端组件不需要AbortController
     const options = {
       method: 'POST',
       headers: {
@@ -110,12 +113,10 @@ export const query = async ({ token, question }: DeepSeekProps): Promise<TableDa
         top_p: 0.5,
         frequency_penalty: 0.2,
         presence_penalty: 0.1
-      }),
-      signal: controller.signal
+      })
     };
 
     const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', options);
-    clearTimeout(timeout);
     const data: DeepSeekResponse = await res.json();
     return parseResponseToTableData(data.choices[0].message.content);
   } catch (error) {
