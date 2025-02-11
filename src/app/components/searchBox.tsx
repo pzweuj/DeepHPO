@@ -48,7 +48,7 @@ export default function SearchBox({ initialType, initialQuery }: SearchBoxProps)
         value={localQuery}
         onChange={(e) => setLocalQuery(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
+          if (e.key === 'Enter' && !e.shiftKey && localQuery.length <= 600) {
             e.preventDefault();
             (e.currentTarget.form as HTMLFormElement)?.requestSubmit();
           }
@@ -61,8 +61,12 @@ export default function SearchBox({ initialType, initialQuery }: SearchBoxProps)
       
       <button
         type="submit"
-        disabled={pending}
-        className="absolute right-3 top-[calc(50%-0.1rem)] -translate-y-1/2 p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors disabled:opacity-75 disabled:cursor-wait"
+        disabled={pending || localQuery.length > 600}
+        className={`absolute right-3 top-[calc(50%-0.1rem)] -translate-y-1/2 p-2 rounded-full transition-colors ${
+          pending || localQuery.length > 600
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600'
+        }`}
       >
         {pending ? (
           <div className="h-6 w-6 animate-spin">
