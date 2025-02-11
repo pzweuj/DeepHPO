@@ -13,6 +13,10 @@ export default function SearchBox({ initialType, initialQuery }: SearchBoxProps)
   const [searchType, setSearchType] = React.useState(initialType);
   const { pending } = useFormStatus();
 
+  const toggleSearchType = () => {
+    setSearchType(prev => prev === 'matcher' ? 'phenotype' : 'matcher');
+  };
+
   React.useEffect(() => {
     setLocalQuery(initialQuery);
   }, [initialQuery]);
@@ -29,14 +33,13 @@ export default function SearchBox({ initialType, initialQuery }: SearchBoxProps)
       <input type="hidden" name="type" value={searchType} />
       
       <div className="absolute left-3 top-[calc(50%-0.1rem)] -translate-y-1/2">
-        <select
-          value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
-          className="appearance-none bg-transparent border-none text-white focus:outline-none focus:ring-0 px-2 py-1 rounded-md bg-blue-500 dark:bg-blue-600 transition-colors cursor-pointer shadow-sm text-center"
+        <button
+          type="button"
+          onClick={toggleSearchType}
+          className="bg-blue-500 dark:bg-blue-600 border-none text-white focus:outline-none focus:ring-0 px-2 py-1 rounded-md transition-colors cursor-pointer shadow-sm text-center"
         >
-          <option value="phenotype">表型</option>
-          <option value="matcher">deepseek</option>
-        </select>
+          {searchType === 'matcher' ? 'deepseek' : '表型'}
+        </button>
       </div>
       
       <textarea
