@@ -22,6 +22,11 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 3. 快速响应的表型信息展示
 4. 基于Deepseek-V3的患者临床信息HPO编号提取
 
+## 切换功能
+
+![shot](shot.png)
+
+
 ## 技术栈
 - Next.js
 
