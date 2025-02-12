@@ -6,6 +6,7 @@
 # 注意对话时间间隔
 
 import json
+import ast
 import requests
 import time
 
@@ -96,16 +97,9 @@ def tran2json():
     with open("hpo_terms_cn.txt", "r", encoding="utf-8") as i:
         for line in i:
             id = "-"
-            line = line.lstrip("{")
-            line = line.rstrip("}\n")
-            for j in line.split(", '"):
-                key, value = j.split("': ")
-                key = key.lstrip("'").lstrip('"').rstrip("'").rstrip('"')
-                value = value.lstrip("'").lstrip('"').rstrip("'").rstrip('"')
-                if key == "id":
-                    id = value
-                    output_dict.setdefault(id, {})
-                output_dict[id][key] = value
+            data_dict = ast.literal_eval(line.rstrip("\n"))
+            id = data_dict["id"]
+            output_dict.setdefault(id, data_dict)
 
     with open('hpo_terms_cn.json', 'w', encoding='utf-8') as f:
         json.dump(output_dict, f, ensure_ascii=False, indent=4)
