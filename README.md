@@ -61,3 +61,9 @@ npm run dev
 
 Cite: [doi: 10.1093/nar/gkad1005](https://pmc.ncbi.nlm.nih.gov/articles/PMC10767975/)
 
+## 展望
+
+尝试将词表作为知识库，叠加一个RAG，提高deepseek输出的精度。
+
+
+
