@@ -96,9 +96,10 @@ def tran2json():
     output_dict = {}
     with open("hpo_terms_cn.txt", "r", encoding="utf-8") as i:
         for line in i:
-            id = "-"
             data_dict = ast.literal_eval(line.rstrip("\n"))
-            id = data_dict["id"]
+            id = data_dict.get("id", "-")
+            if id == "-":
+                continue
             output_dict.setdefault(id, data_dict)
 
     with open('hpo_terms_cn.json', 'w', encoding='utf-8') as f:
