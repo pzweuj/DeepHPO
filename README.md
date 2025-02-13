@@ -1,4 +1,4 @@
-# DeepHPO
+# DeepHPO <img src="src/app/favicon.ico" alt="deephpo" width="40" height="40">
 
 ## 项目简介
 DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
