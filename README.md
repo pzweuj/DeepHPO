@@ -5,7 +5,7 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 
 通过[Vercel在线使用](https://deephpo.vercel.app/)！ 目前我的硅基账户余额尚可，但由于Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。
 
-**HPO术语在持续使用DeepSeek-V3翻译中，未完全更新！**
+**HPO术语使用DeepSeek-V3翻译，请仔细甄别**
 
 1. 用户可以通过输入患者的临床诊断信息，系统会使用DeepSeek-V3对信息进行提取，输出其中可能存在的HPO术语
 
