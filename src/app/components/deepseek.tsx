@@ -141,7 +141,7 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
           content: question
         }],
         stream: false,
-        max_tokens: 512,
+        max_tokens: 2048,
         temperature: 0.3,
         top_p: 0.5,
         frequency_penalty: 0.2,
