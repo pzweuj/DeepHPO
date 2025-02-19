@@ -3,9 +3,15 @@
 ## 项目简介
 DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-通过[Vercel在线使用](https://deephpo.vercel.app/)！ 目前我的硅基账户余额尚可，但由于Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。
+通过[Vercel在线使用](https://deephpo.vercel.app/)！ 
+
+**Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
 **HPO术语使用DeepSeek-V3翻译，请仔细甄别**
+
+```
+项目从硅基流动API切换为腾讯云大模型知识引擎API，我已在该API内建了HPO知识库以及前置提示词（核心模型仍然是Deepseek-V3），预估可以用到2025年4月10日。
+```
 
 1. 用户可以通过输入患者的临床诊断信息，系统会使用DeepSeek-V3对信息进行提取，输出其中可能存在的HPO术语
 
@@ -38,10 +44,11 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 git clone https://github.com/pzweuj/DeepHPO.git
 ```
 
-建议根据服务提供商自行调整脚本
+建议根据服务提供商自行调整下面脚本，以及将route.ts的引用组件切换回deepseek.tsx
 
 ```
 src/app/components/deepseek.tsx
+src/app/api/query/route.ts
 ```
 
 如果你也使用[硅基流动](https://cloud.siliconflow.cn/i/mHQgxhJC)的API，则可以在.env.local.self中填入自己的key，并将文件名修改为.env.local
