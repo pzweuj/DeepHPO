@@ -22,6 +22,7 @@ export default function Home({
   const [showSettings, setShowSettings] = useState(false);
   const [apiUrl, setApiUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +94,15 @@ export default function Home({
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Model</label>
+                <input
+                  type="text"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                 />
               </div>
