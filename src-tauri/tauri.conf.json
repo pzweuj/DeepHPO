@@ -1,0 +1,33 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "deephpo",
+  "version": "0.1.0",
+  "identifier": "com.pzweuj.deephpo",
+  "build": {
+    "frontendDist": "../.next/static",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "DeepHPO",
+        "width": 1280,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/favicon.ico"
+    ]
+  }
+}
