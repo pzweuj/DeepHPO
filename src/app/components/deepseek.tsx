@@ -90,13 +90,18 @@ const parseResponseToTableData = (response: string): TableData[] => {
 
 export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
   try {
-    // 直接从环境变量获取token
-    const token = process.env.DEEPSEEK_API_KEY;
+    // 从localStorage获取API配置
+    const apiConfig = JSON.parse(localStorage.getItem('deepseekConfig') || '{}');
+    const token = apiConfig.apiKey || process.env.DEEPSEEK_API_KEY;
+    const apiUrl = apiConfig.apiUrl || 'https://api.siliconflow.cn/v1/chat/completions';
+    const model = apiConfig.model || 'deepseek-ai/DeepSeek-V3';
+
     if (!token) {
-      throw new Error('DEEPSEEK_API_KEY environment variable not configured');
+      throw new Error('API Key未配置');
     }
 
-    console.log('Is DEEPSEEK_API_KEY present:', !!process.env.DEEPSEEK_API_KEY);
+    console.log('Using API URL:', apiUrl);
+    console.log('Is API Key present:', !!token);
 
     // 服务端组件不需要AbortController
     const options = {
@@ -106,7 +111,7 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'deepseek-ai/DeepSeek-V3',
+        model: `${model}`,
         messages: [{
           role: 'system',
           content: `你是一位资深临床遗传学专家，擅长使用人类表型本体（HPO）进行精准表型分析。请按照以下要求处理临床特征信息：
@@ -149,7 +154,7 @@ export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> =
       })
     };
 
-    const res = await fetch('https://api.siliconflow.cn/v1/chat/completions', options);
+    const res = await fetch(apiUrl, options);
     
     // 增加响应内容检查
     const responseText = await res.text();
