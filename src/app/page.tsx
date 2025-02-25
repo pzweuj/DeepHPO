@@ -24,6 +24,17 @@ export default function Home({
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
 
+  // 从localStorage加载设置
+  useEffect(() => {
+    const savedApiUrl = localStorage.getItem('apiUrl');
+    const savedApiKey = localStorage.getItem('apiKey');
+    const savedModel = localStorage.getItem('model');
+
+    if (savedApiUrl) setApiUrl(savedApiUrl);
+    if (savedApiKey) setApiKey(savedApiKey);
+    if (savedModel) setModel(savedModel);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,7 +49,13 @@ export default function Home({
         }
 
         // 调用API路由
-        const res = await fetch(`/api/query?type=${type}&q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/query?type=${type}&q=${encodeURIComponent(query)}`, {
+          headers: {
+            'x-api-url': apiUrl,
+            'x-api-key': apiKey,
+            'x-model': model
+          }
+        });
         const data = await res.json();
         // 仅当有数据时更新
         if (data && data.length > 0) {
@@ -53,7 +70,7 @@ export default function Home({
     };
 
     fetchData();
-  }, [searchParams]); // 依赖searchParams变化
+  }, [searchParams, apiUrl, apiKey, model]); // 添加API设置作为依赖项
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -116,7 +133,10 @@ export default function Home({
               </button>
               <button
                 onClick={() => {
-                  // 这里可以添加保存设置的逻辑
+                  // 保存设置到localStorage
+                  localStorage.setItem('apiUrl', apiUrl);
+                  localStorage.setItem('apiKey', apiKey);
+                  localStorage.setItem('model', model);
                   setShowSettings(false);
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
@@ -129,7 +149,7 @@ export default function Home({
       )}
 
       {/* GitHub Link */}
-      {/* <a
+      <a
         href="https://github.com/pzweuj/DeepHPO"
         target="_blank"
         rel="noopener noreferrer"
@@ -144,7 +164,7 @@ export default function Home({
         >
           <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.237 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
         </svg>
-      </a> */}
+      </a>
 
       {/* Logo and Search */}
       <div className="max-w-2xl mx-auto mb-8">

@@ -12,6 +12,9 @@ interface DeepSeekResponse {
 
 interface DeepSeekProps {
   question: string;
+  apiUrl?: string;
+  apiKey?: string;
+  model?: string;
 }
 
 interface TableData {
@@ -88,13 +91,12 @@ const parseResponseToTableData = (response: string): TableData[] => {
   }
 };
 
-export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
+export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: DeepSeekProps): Promise<TableData[]> => {
   try {
-    // 从localStorage获取API配置
-    const apiConfig = JSON.parse(localStorage.getItem('deepseekConfig') || '{}');
-    const token = apiConfig.apiKey || '';
-    const apiUrl = apiConfig.apiUrl || '';
-    const model = apiConfig.model || '';
+    // 优先使用传入的API配置，如果没有则使用环境变量
+    const token = customApiKey || '';
+    const apiUrl = customApiUrl || '';
+    const model = customModel || '';
 
     if (!token) {
       throw new Error('API Key未配置');
