@@ -7,9 +7,9 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 
 **Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
-**HPO术语使用DeepSeek-V3翻译，请仔细甄别**
+**默认使用硅基流动的API，但是您也可以通过主页的设置按钮设置其他使用OPENAI格式的服务提供商。**
 
-🎉🎉 项目从硅基流动API切换为腾讯云大模型知识引擎，我已内建了HPO知识库以及前置提示词（核心模型仍然是Deepseek-V3）。🎉🎉
+**HPO术语使用DeepSeek-V3翻译，请仔细甄别**
 
 1. 用户可以通过输入患者的临床诊断信息，系统会使用DeepSeek-V3对信息进行提取，输出其中可能存在的HPO术语
 
@@ -65,10 +65,4 @@ npm run dev
 了解更多请访问：[http://www.human-phenotype-ontology.org](http://www.human-phenotype-ontology.org)
 
 Cite: [doi: 10.1093/nar/gkad1005](https://pmc.ncbi.nlm.nih.gov/articles/PMC10767975/)
-
-## 展望
-
-尝试将词表作为知识库，叠加一个RAG，提高deepseek输出的精度。
-
-
 
