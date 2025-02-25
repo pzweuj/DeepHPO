@@ -24,6 +24,17 @@ export default function Home({
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
 
+  // 从localStorage加载设置
+  useEffect(() => {
+    const savedApiUrl = localStorage.getItem('apiUrl');
+    const savedApiKey = localStorage.getItem('apiKey');
+    const savedModel = localStorage.getItem('model');
+
+    if (savedApiUrl) setApiUrl(savedApiUrl);
+    if (savedApiKey) setApiKey(savedApiKey);
+    if (savedModel) setModel(savedModel);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,7 +49,13 @@ export default function Home({
         }
 
         // 调用API路由
-        const res = await fetch(`/api/query?type=${type}&q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/query?type=${type}&q=${encodeURIComponent(query)}`, {
+          headers: {
+            'x-api-url': apiUrl,
+            'x-api-key': apiKey,
+            'x-model': model
+          }
+        });
         const data = await res.json();
         // 仅当有数据时更新
         if (data && data.length > 0) {
@@ -53,7 +70,7 @@ export default function Home({
     };
 
     fetchData();
-  }, [searchParams]); // 依赖searchParams变化
+  }, [searchParams, apiUrl, apiKey, model]); // 添加API设置作为依赖项
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -116,7 +133,10 @@ export default function Home({
               </button>
               <button
                 onClick={() => {
-                  // 这里可以添加保存设置的逻辑
+                  // 保存设置到localStorage
+                  localStorage.setItem('apiUrl', apiUrl);
+                  localStorage.setItem('apiKey', apiKey);
+                  localStorage.setItem('model', model);
                   setShowSettings(false);
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"

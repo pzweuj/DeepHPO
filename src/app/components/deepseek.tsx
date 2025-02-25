@@ -12,6 +12,9 @@ interface DeepSeekResponse {
 
 interface DeepSeekProps {
   question: string;
+  apiUrl?: string;
+  apiKey?: string;
+  model?: string;
 }
 
 interface TableData {
@@ -88,13 +91,12 @@ const parseResponseToTableData = (response: string): TableData[] => {
   }
 };
 
-export const query = async ({ question }: DeepSeekProps): Promise<TableData[]> => {
+export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: DeepSeekProps): Promise<TableData[]> => {
   try {
-    // 从localStorage获取API配置
-    const apiConfig = JSON.parse(localStorage.getItem('deepseekConfig') || '{}');
-    const token = apiConfig.apiKey || process.env.DEEPSEEK_API_KEY;
-    const apiUrl = apiConfig.apiUrl || 'https://api.siliconflow.cn/v1/chat/completions';
-    const model = apiConfig.model || 'deepseek-ai/DeepSeek-V3';
+    // 优先使用传入的API配置，如果没有则使用环境变量
+    const token = customApiKey || process.env.DEEPSEEK_API_KEY;
+    const apiUrl = customApiUrl || 'https://api.siliconflow.cn/v1/chat/completions';
+    const model = customModel || 'deepseek-ai/DeepSeek-V3';
 
     if (!token) {
       throw new Error('API Key未配置');
