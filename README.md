@@ -55,7 +55,7 @@ src/app/api/query/route.ts
 
 ```bash
 npm install
-npm run dev
+npm run build
 ```
 
 ## 引用与许可
