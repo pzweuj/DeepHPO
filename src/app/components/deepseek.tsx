@@ -1,15 +1,5 @@
 // deepseek-V3 使用硅基流动API
-interface DeepSeekResponse {
-  // 定义API返回的数据结构
-  id: string;
-  choices: Array<{
-    message: {
-      role: string;
-      content: string;
-    };
-  }>;
-}
-
+// 移除未使用的接口定义
 interface DeepSeekProps {
   question: string;
   apiUrl?: string;
