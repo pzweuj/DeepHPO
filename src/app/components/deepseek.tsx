@@ -36,6 +36,112 @@ const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
   definition_cn: string;
 }>;
 
+// 改进的分词和相似度匹配函数
+const findRelevantTerms = (input: string, maxTerms: number = 8): string => {
+  if (!input || input.trim() === '') return '';
+  
+  // 检测输入是否包含中文
+  const hasChinese = /[\u4e00-\u9fa5]/.test(input);
+  
+  // 增强分词：处理中英文混合情况
+  const words = input
+    .toLowerCase()
+    .replace(/[,.;:?!，。；：？！、]/g, ' ') // 增加更多标点符号
+    .split(/\s+/)
+    .filter(word => word.length > 1) // 过滤掉单字符词
+    .map(word => word.trim());
+  
+  // 提取可能的医学术语短语（2-4个词的组合）
+  const phrases: string[] = [];
+  for (let i = 0; i < words.length; i++) {
+    phrases.push(words[i]); // 单词
+    if (i + 1 < words.length) phrases.push(`${words[i]} ${words[i+1]}`); // 双词组合
+    if (i + 2 < words.length) phrases.push(`${words[i]} ${words[i+1]} ${words[i+2]}`); // 三词组合
+    if (i + 3 < words.length) phrases.push(`${words[i]} ${words[i+1]} ${words[i+2]} ${words[i+3]}`); // 四词组合
+  }
+  
+  // 中文分词处理
+  if (hasChinese) {
+    // 按字符分割中文，创建2-4字符的滑动窗口
+    const chineseChars = input.match(/[\u4e00-\u9fa5]/g) || [];
+    for (let i = 0; i < chineseChars.length; i++) {
+      phrases.push(chineseChars[i]); // 单字符
+      if (i + 1 < chineseChars.length) phrases.push(chineseChars.slice(i, i+2).join(''));
+      if (i + 2 < chineseChars.length) phrases.push(chineseChars.slice(i, i+3).join(''));
+      if (i + 3 < chineseChars.length) phrases.push(chineseChars.slice(i, i+4).join(''));
+    }
+  }
+  
+  // 记录每个术语的匹配分数
+  const termScores: Record<string, number> = {};
+  
+  // 遍历所有HPO术语
+  Object.entries(hpoTerms).forEach(([id, term]) => {
+    let score = 0;
+    const termNameLower = term.name.toLowerCase();
+    const termNameCnLower = term.name_cn.toLowerCase();
+    const termDefLower = term.definition.toLowerCase();
+    const termDefCnLower = term.definition_cn.toLowerCase();
+    
+    // 检查每个词/短语是否在术语中出现
+    phrases.forEach(phrase => {
+      const phraseLower = phrase.toLowerCase();
+      
+      // 精确匹配（完全匹配术语名称）
+      if (termNameLower === phraseLower || termNameCnLower === phraseLower) {
+        score += 10; // 精确匹配权重最高
+      }
+      
+      // 部分匹配（包含关系）
+      else {
+        // 英文名称匹配
+        if (termNameLower.includes(phraseLower)) {
+          score += 3 + (phraseLower.length / termNameLower.length) * 2; // 匹配度越高分数越高
+        }
+        // 中文名称匹配
+        if (termNameCnLower.includes(phraseLower)) {
+          score += 3 + (phraseLower.length / termNameCnLower.length) * 2;
+        }
+        // 英文定义匹配
+        if (termDefLower.includes(phraseLower)) {
+          score += 1 + (phraseLower.length / Math.min(100, termDefLower.length)) * 0.5;
+        }
+        // 中文定义匹配
+        if (termDefCnLower.includes(phraseLower)) {
+          score += 1 + (phraseLower.length / Math.min(100, termDefCnLower.length)) * 0.5;
+        }
+      }
+    });
+    
+    // HPO ID直接匹配（如果用户输入了HPO ID）
+    if (input.toUpperCase().includes(id)) {
+      score += 15; // ID匹配权重最高
+    }
+    
+    if (score > 0) {
+      termScores[id] = score;
+    }
+  });
+  
+  // 按分数排序并获取前N个最相关的术语
+  const topTerms = Object.entries(termScores)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, maxTerms)
+    .map(([id]) => id);
+  
+  // 构建相关术语的上下文信息
+  let context = "";
+  if (topTerms.length > 0) {
+    context = "参考以下可能相关的HPO术语:\n";
+    topTerms.forEach(id => {
+      const term = hpoTerms[id];
+      context += `- ${id} (${term.name}/${term.name_cn}): ${term.definition_cn}\n`;
+    });
+  }
+  
+  return context;
+};
+
 const parseResponseToTableData = (response: string): TableData[] => {
   try {
     // 增加空响应检查
@@ -91,6 +197,7 @@ const parseResponseToTableData = (response: string): TableData[] => {
   }
 };
 
+// 单轮查询函数
 export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: DeepSeekProps): Promise<TableData[]> => {
   try {
     // 优先使用传入的API配置，如果没有则使用环境变量
@@ -102,11 +209,13 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
       throw new Error('API Key未配置');
     }
 
-    console.log('Using API URL:', apiUrl);
-    console.log('Is API Key present:', !!token);
+    // 获取相关术语作为上下文
+    const relevantTermsContext = findRelevantTerms(question, 12);
+    
+    console.log('Processing query:', question.substring(0, 30) + '...');
 
-    // 服务端组件不需要AbortController
-    const options = {
+    // 单轮分析
+    const analysisOptions = {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -117,6 +226,7 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
         messages: [{
           role: 'system',
           content: `你是一位资深临床遗传学专家，擅长使用人类表型本体（HPO）进行精准表型分析。请按照以下要求处理临床特征信息：
+          
           1. **术语规范**
           - 严格使用HPO最新官方术语
           - 仅匹配HPO明确收录的表型，拒绝推测性描述
@@ -124,7 +234,8 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
           - 不要输出否定或患者不存在的表型
           - 不要输出没有把握的信息
           - 输出结果数目不要超过5个
-          - 严格按照输出规范进行输出，不需要输出额外信息
+          - 严格限制在用户描述的表型范畴内，不要过度推断
+          - 优先考虑参考信息中提供的表型
           
           2. **分析流程**
           ① 特征分解：将复合描述拆解为独立表型要素
@@ -137,51 +248,49 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
           |----------|------------------------|----------|--------|------|
           | HP:0001250 | Seizure              | 癫痫发作 | 高     | 直接描述 |
           | HP:0030177 | Palmoplantar keratoderma | 掌跖角化症 | 中   | 需病理证实 |
-          | HP:0002353 | EEG abnormality | 脑电图异常 | 中   | 直接描述 |
           
           4. **特殊处理**
           - 对"特殊面容"等模糊描述，应分解为具体特征（如眼距过宽、鼻梁低平等）
-          - 对矛盾表述（如"身材矮小但四肢细长"）保留原始描述并添加[需复核]标记
-          - 实验室指标需标注参考范围（如"碱性磷酸酶升高（＞500 U/L）"）`
+          - 对矛盾表述保留原始描述并添加[需复核]标记
+          - 实验室指标需标注参考范围
+          - 严格遵循用户描述的症状，不要添加用户未提及的症状
+          
+          ${relevantTermsContext ? `\n5. **参考信息**\n${relevantTermsContext}` : ''}`
         }, {
           role: 'user',
           content: question
         }],
         stream: false,
         max_tokens: 2048,
-        temperature: 0.3,
+        temperature: 0.2,
         top_p: 0.5,
         frequency_penalty: 0.2,
         presence_penalty: 0.1
       })
     };
 
-    const res = await fetch(apiUrl, options);
+    const analysisRes = await fetch(apiUrl, analysisOptions);
+    const analysisText = await analysisRes.text();
     
-    // 增加响应内容检查
-    const responseText = await res.text();
-    if (!responseText) {
+    if (!analysisText) {
       throw new Error('Empty response from API');
     }
 
-    // 尝试解析JSON
-    let data: DeepSeekResponse;
+    let analysisData;
     try {
-      data = JSON.parse(responseText);
+      analysisData = JSON.parse(analysisText);
     } catch (jsonError) {
       console.error('JSON parsing error:', jsonError);
-      throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}`);
+      throw new Error(`Invalid JSON response: ${analysisText.substring(0, 100)}`);
     }
 
-    // 增加choices检查
-    if (!data.choices || data.choices.length === 0) {
+    if (!analysisData.choices || analysisData.choices.length === 0) {
       throw new Error('No choices in API response');
     }
 
-    return parseResponseToTableData(data.choices[0].message.content);
+    return parseResponseToTableData(analysisData.choices[0].message.content);
   } catch (error) {
     console.error('API Error:', error);
-    // 返回包含详细错误信息的默认行
     return [{
       hpo: 'HP:0000001',
       name: 'API Error',

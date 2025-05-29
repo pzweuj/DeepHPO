@@ -180,7 +180,7 @@ export default function Home({
         />
       </div>
 
-      {/* 添加滚动区域 */}
+      {/* 修改滚动区域 */}
       <div className="max-w-full mx-auto h-[calc(100vh-300px)] overflow-y-auto">
         <Table data={tableData} isLoading={isLoading} />
       </div>
