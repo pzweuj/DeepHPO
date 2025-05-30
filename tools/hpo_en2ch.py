@@ -102,7 +102,7 @@ def tran2json():
                 continue
             output_dict.setdefault(id, data_dict)
 
-    with open('hpo_terms_cn.json', 'w', encoding='utf-8') as f:
+    with open('hpo_terms_cn_new.json', 'w', encoding='utf-8') as f:
         json.dump(output_dict, f, ensure_ascii=False, indent=4)
 
 ###############

@@ -3,7 +3,7 @@
 ## 项目简介
 DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-通过[Vercel在线使用](https://deephpo.vercel.app/)！ 
+通过[Vercel在线使用](https://deephpo.vercel.app/)！ 该版本使用DeepSeek-V3（0324）。
 
 **Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
@@ -19,6 +19,8 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 - 表型英文描述
 - 表型中文名称（由deepseek-V3生成，请仔细甄别）
 - 表型中文描述（由deepseek-V3生成，请仔细甄别）
+
+3. 你可以在[这里下载](https://github.com/pzweuj/DeepHPO/blob/main/public/hpo_terms_cn.json)由deepseek-V3翻译的词表。
 
 ## 主要功能
 1. 搜索引擎式主页界面
@@ -42,14 +44,12 @@ DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨�
 git clone https://github.com/pzweuj/DeepHPO.git
 ```
 
-建议根据服务提供商自行调整下面脚本，以及将route.ts的引用组件切换回deepseek.tsx
 
-```
-src/app/components/deepseek.tsx
-src/app/api/query/route.ts
-```
+如果你也使用[硅基流动](https://cloud.siliconflow.cn/i/mHQgxhJC)的API，则可以在.env.local.self中填入自己的key，并将文件名修改为.env.local。
 
-如果你也使用[硅基流动](https://cloud.siliconflow.cn/i/mHQgxhJC)的API，则可以在.env.local.self中填入自己的key，并将文件名修改为.env.local
+你也可以在部署后，在左上角设置中，输入自己的API服务商URL、模型名称以及KEY。
+
+**注：腾讯LKE已废弃。**
 
 接下来自行部署这个应用
 
@@ -60,7 +60,7 @@ npm run build
 
 ## 引用与许可
 
-应用数据库来源于[HPO obo文件](http://purl.obolibrary.org/obo/hp.obo)（版本 2025-01-16）。
+应用数据库来源于[HPO obo文件](http://purl.obolibrary.org/obo/hp.obo)（版本 2025-05-06）。
 
 了解更多请访问：[http://www.human-phenotype-ontology.org](http://www.human-phenotype-ontology.org)
 
