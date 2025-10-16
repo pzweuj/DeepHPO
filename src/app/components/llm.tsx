@@ -1,4 +1,7 @@
-// 通用LLM API调用组件 - 兼容OpenAI格式的任何端点
+// HPO术语匹配组件
+import HPOSearchEngine from '@/lib/hpoSearchEngine';
+import { preprocessWithLLM, preprocessResultToQuery } from '@/lib/llmPreprocessor';
+
 interface LLMQueryProps {
   question: string;
   apiUrl?: string;
@@ -16,32 +19,50 @@ interface TableData {
   remark: string;
 }
 
-import HPOSearchEngine from '@/lib/hpoSearchEngine';
-import { getTermCount, LLMConfig } from '@/config/llm.config';
-import { preprocessQuery, isValidQuery, formatWarnings } from '@/lib/queryPreprocessor';
-
-// 使用搜索引擎查找相关术语
-const findRelevantTerms = async (input: string, maxTerms: number = 12): Promise<string> => {
-  if (!input || input.trim() === '') return '';
-  
+/**
+ * 搜索相关HPO术语
+ */
+async function searchRelevantTerms(query: string, maxTerms: number = 20): Promise<string> {
   try {
     const searchEngine = HPOSearchEngine.getInstance();
-    const relevantTerms = await searchEngine.findRelevantTerms(input, maxTerms);
+    await searchEngine.initialize();
     
-    if (relevantTerms.length === 0) return '';
+    // 将查询字符串拆分为单个症状词
+    const symptoms = query.split(/[、，,；;]/).map(s => s.trim()).filter(s => s.length > 0);
+    console.log(`📝 拆分为 ${symptoms.length} 个症状:`, symptoms);
     
-    // 构建相关术语的上下文信息
-    let context = "参考以下可能相关的HPO术语:\n";
-    relevantTerms.forEach(term => {
-      context += `- ${term.id} (${term.name}/${term.name_cn}): ${term.definition_cn}\n`;
+    // 为每个症状搜索HPO术语
+    const allTerms = new Map<string, any>();
+    
+    for (const symptom of symptoms) {
+      const terms = await searchEngine.findRelevantTerms(symptom, 3);
+      terms.forEach(term => {
+        if (!allTerms.has(term.id)) {
+          allTerms.set(term.id, term);
+        }
+      });
+    }
+    
+    const uniqueTerms = Array.from(allTerms.values()).slice(0, maxTerms);
+    
+    if (uniqueTerms.length === 0) {
+      console.warn('⚠️  未找到相关HPO术语');
+      return '';
+    }
+    
+    console.log(`✅ 找到 ${uniqueTerms.length} 个相关HPO术语`);
+    
+    let context = '以下是可能相关的HPO术语，请优先从中选择匹配:\n\n';
+    uniqueTerms.forEach(term => {
+      context += `${term.id} | ${term.name} | ${term.name_cn}\n${term.definition_cn}\n\n`;
     });
     
     return context;
   } catch (error) {
-    console.error('Error finding relevant terms:', error);
+    console.error('❌ 搜索HPO术语失败:', error);
     return '';
   }
-};
+}
 
 const parseResponseToTableData = async (response: string): Promise<TableData[]> => {
   try {
@@ -128,19 +149,11 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
                   process.env.OPENAI_MODEL || 
                   'deepseek-ai/DeepSeek-V3';
 
-    // 调试日志 - 服务端
-    console.log('=== 服务端环境变量检查 ===');
-    console.log('process.env.OPENAI_API_KEY存在:', !!process.env.OPENAI_API_KEY);
-    console.log('process.env.OPENAI_API_KEY前缀:', process.env.OPENAI_API_KEY?.substring(0, 10));
-    console.log('process.env.OPENAI_API_URL:', process.env.OPENAI_API_URL);
-    console.log('process.env.OPENAI_MODEL:', process.env.OPENAI_MODEL);
-    
-    console.log('\nAPI配置来源:', {
-      customKey: customApiKey ? (customApiKey.trim() ? '✅ 用户设置' : '❌ 空字符串') : '❌ 未传递',
-      envKey: process.env.OPENAI_API_KEY ? '✅ 环境变量' : '❌ 未配置',
-      finalKey: token ? `✅ 使用: ${token.substring(0, 10)}...` : '❌ 无可用Key',
+    // 简化的配置日志
+    console.log('🔧 API配置:', {
       apiUrl: apiUrl,
-      model: model
+      model: model,
+      hasKey: !!token
     });
 
     if (!token) {
@@ -150,52 +163,59 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
       throw new Error('API Key未配置 - 请在页面设置中配置或在.env文件中添加OPENAI_API_KEY。如果已配置.env，请确保已重启服务器！');
     }
 
-    // 预处理查询：过滤否定症状和家族史
-    const preprocessed = preprocessQuery(question);
+    // 使用LLM进行智能预处理
+    const llmPreprocessed = await preprocessWithLLM(question, {
+      apiUrl: customApiUrl,
+      apiKey: customApiKey,
+      model: customModel
+    });
     
-    // 记录预处理结果
-    if (preprocessed.warnings.length > 0) {
-      console.log('⚠️  查询预处理:');
-      console.log(formatWarnings(preprocessed));
-      console.log(`原始查询: ${question}`);
-      console.log(`清理后: ${preprocessed.cleanedQuery}`);
+    // 转换为查询字符串
+    let cleanedQuestion = preprocessResultToQuery(llmPreprocessed);
+    
+    console.log('🔍 LLM预处理:', {
+      症状: llmPreprocessed.symptoms,
+      既往病史: llmPreprocessed.medicalHistory,
+      诊断: llmPreprocessed.diagnosis,
+      查询字符串: cleanedQuestion
+    });
+    
+    // 如果LLM预处理返回空结果，使用原始输入
+    if (!cleanedQuestion || cleanedQuestion.trim().length === 0) {
+      console.warn('⚠️  预处理返回空，使用原始输入');
+      cleanedQuestion = question;
+    }
+    
+    // 生成警告信息
+    const preprocessWarnings: string[] = [];
+    if (llmPreprocessed.negatedSymptoms.length > 0) {
+      preprocessWarnings.push(`检测到否定症状: ${llmPreprocessed.negatedSymptoms.join('、')}`);
+    }
+    if (llmPreprocessed.familyHistory.length > 0) {
+      preprocessWarnings.push(`检测到家族史: ${llmPreprocessed.familyHistory.join('、')}`);
+    }
+    if (preprocessWarnings.length > 0) {
+      console.log('⚠️  警告:', preprocessWarnings.join('; '));
     }
     
     // 检查清理后是否还有内容
-    if (!isValidQuery(preprocessed)) {
+    if (!cleanedQuestion || cleanedQuestion.trim().length === 0) {
       console.warn('⚠️  查询清理后为空，可能全是否定症状或家族史');
       return [{
         hpo: 'HP:0000001',
         name: 'No Valid Symptoms',
         chineseName: '无有效症状',
         destination: '查询中仅包含否定症状或家族史',
-        description: formatWarnings(preprocessed),
+        description: preprocessWarnings.join('\n'),
         confidence: '-',
         remark: '请描述患者本人存在的症状'
       }];
     }
     
-    // 使用清理后的查询进行后续处理
-    const cleanedQuestion = preprocessed.cleanedQuery;
+    // 搜索相关HPO术语
+    const relevantTermsContext = await searchRelevantTerms(cleanedQuestion, 20);
     
-    // 动态调整相关术语数量：根据查询复杂度自适应
-    // 配置可在 src/config/llm.config.ts 中调整
-    const queryLength = cleanedQuestion.length;
-    const maxTerms = getTermCount(queryLength);
-    
-    if (LLMConfig.debug.logSearchTerms) {
-      console.log(`查询长度: ${queryLength}, 使用术语数: ${maxTerms}`);
-    }
-    
-    const startTime = Date.now();
-    // 使用清理后的查询搜索相关术语
-    const relevantTermsContext = await findRelevantTerms(cleanedQuestion, maxTerms);
-    
-    if (LLMConfig.debug.logTiming) {
-      console.log(`搜索相关术语耗时: ${Date.now() - startTime}ms`);
-    }
-    
-    console.log('Processing query:', cleanedQuestion.substring(0, 30) + '...');
+    console.log('🔎 开始匹配HPO术语...');
 
     // OpenAI格式的API调用
     const analysisOptions = {
@@ -208,48 +228,35 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
         model: `${model}`,
         messages: [{
           role: 'system',
-          content: `你是一位资深临床遗传学专家，擅长使用人类表型本体（HPO）进行精准表型分析。请按照以下要求处理临床特征信息：
-          
-          1. **术语规范**
-          - 严格使用HPO最新官方术语
-          - 仅匹配HPO明确收录的表型，拒绝推测性描述
-          - 优先匹配特异性高的表型术语
-          - **严禁输出否定症状**：如果描述中出现"无"、"否认"、"没有"等否定词，则完全忽略该症状
-          - **严禁输出家族史**：如果描述中出现"父亲"、"母亲"、"哥哥"、"姐姐"、"家族"等，则完全忽略该症状
-          - 不要输出没有把握的信息
-          - 输出结果数目不要超过5个
-          - 严格限制在用户描述的表型范畴内，不要过度推断
-          - 优先考虑参考信息中提供的表型
-          
-          2. **分析流程**
-          ① 特征分解：将复合描述拆解为独立表型要素
-          ② 同义词映射：处理"developmental delay"等常见同义表述
-          ③ 层级验证：确保所选术语符合HPO本体层级关系
-          ④ 证据分级：用"!"标记目测可确认的表型（如畸形类）
-          
-          3. **输出规范**
-          | HPO ID   | 英文术语 (HPO官方名称) | 中文译名 | 置信度 | 备注 |
-          |----------|------------------------|----------|--------|------|
-          | HP:0001250 | Seizure              | 癫痫发作 | 高     | 直接描述 |
-          | HP:0030177 | Palmoplantar keratoderma | 掌跖角化症 | 中   | 需病理证实 |
-          
-          4. **特殊处理**
-          - 对"特殊面容"等模糊描述，应分解为具体特征（如眼距过宽、鼻梁低平等）
-          - 对矛盾表述保留原始描述并添加[需复核]标记
-          - 实验室指标需标注参考范围
-          - 严格遵循用户描述的症状，不要添加用户未提及的症状
-          
-          ${relevantTermsContext ? `\n5. **参考信息**\n${relevantTermsContext}` : ''}`
+          content: `你是HPO术语匹配专家。你的任务是将临床症状描述精确匹配到HPO术语。
+
+**匹配规则**：
+1. 只匹配输入中明确提到的症状
+2. 不要推断、不要补充、不要从诊断推导症状
+3. 优先使用参考信息中的HPO术语
+4. 每个症状对应一个最合适的HPO术语
+5. 最多返回5个术语
+
+**输出格式**（Markdown表格）：
+| HPO ID | 英文术语 | 中文译名 | 置信度 | 备注 |
+|--------|---------|---------|--------|------|
+| HP:XXXXXXX | English Term | 中文 | 高/中/低 | 说明 |
+
+${relevantTermsContext ? `**参考HPO术语**：\n${relevantTermsContext}` : ''}`
         }, {
           role: 'user',
-          content: cleanedQuestion  // 使用清理后的查询
+          content: `请为以下症状匹配HPO术语：
+
+${cleanedQuestion}
+
+注意：只匹配上述明确提到的症状，不要添加其他内容。`
         }],
         stream: false,
-        max_tokens: LLMConfig.apiParams.maxTokens,
-        temperature: LLMConfig.apiParams.temperature,
-        top_p: LLMConfig.apiParams.topP,
-        frequency_penalty: LLMConfig.apiParams.frequencyPenalty,
-        presence_penalty: LLMConfig.apiParams.presencePenalty
+        max_tokens: 2048,
+        temperature: 0.2,
+        top_p: 0.5,
+        frequency_penalty: 0.2,
+        presence_penalty: 0.1
       })
     };
 
@@ -281,13 +288,6 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
       throw new Error(`无效的JSON响应: ${analysisText.substring(0, 100)}`);
     }
 
-    // 详细输出API响应结构以便调试
-    console.log('API响应结构:', {
-      hasChoices: !!analysisData.choices,
-      choicesLength: analysisData.choices?.length,
-      keys: Object.keys(analysisData),
-      firstChoice: analysisData.choices?.[0] ? Object.keys(analysisData.choices[0]) : null
-    });
 
     if (!analysisData.choices || analysisData.choices.length === 0) {
       console.error('完整API响应:', JSON.stringify(analysisData, null, 2));

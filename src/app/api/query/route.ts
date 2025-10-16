@@ -22,7 +22,6 @@ export async function GET(req: NextRequest) {
   
   // 检查缓存中是否已有结果
   if (requestCache.has(cacheKey)) {
-    console.log('Using cached result for query:', q);
     return new Response(JSON.stringify(requestCache.get(cacheKey)), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
@@ -30,7 +29,6 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    console.log('Processing new query:', q);
     const data = type === 'matcher' 
       ? await query({ 
           question: q,

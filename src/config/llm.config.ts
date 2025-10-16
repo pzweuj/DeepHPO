@@ -54,6 +54,14 @@ export const LLMConfig = {
   },
 
   /**
+   * 预处理选项
+   */
+  preprocessing: {
+    useLLM: true,              // 使用LLM预处理
+    fallbackToRegex: false,    // 不使用正则表达式fallback
+  },
+
+  /**
    * 调试选项
    */
   debug: {
@@ -61,6 +69,7 @@ export const LLMConfig = {
     logPrompt: false,          // 记录完整Prompt（可能很长）
     logResponse: true,         // 记录API响应
     logTiming: true,           // 记录耗时
+    logPreprocessing: true,    // 记录预处理结果
   },
 };
 
