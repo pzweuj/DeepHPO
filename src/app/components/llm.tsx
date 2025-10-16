@@ -1,6 +1,5 @@
-// deepseek-V3 使用硅基流动API
-// 移除未使用的接口定义
-interface DeepSeekProps {
+// 通用LLM API调用组件 - 兼容OpenAI格式的任何端点
+interface LLMQueryProps {
   question: string;
   apiUrl?: string;
   apiKey?: string;
@@ -17,7 +16,7 @@ interface TableData {
   remark: string;
 }
 
-// 新增hpo术语数据导入
+// 导入HPO术语数据
 const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
   id: string;
   name: string;
@@ -187,13 +186,13 @@ const parseResponseToTableData = (response: string): TableData[] => {
   }
 };
 
-// 单轮查询函数
-export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: DeepSeekProps): Promise<TableData[]> => {
+// 通用LLM查询函数 - 兼容OpenAI格式的API
+export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: LLMQueryProps): Promise<TableData[]> => {
   try {
     // 优先使用传入的API配置，如果没有则使用环境变量
-    const token = customApiKey || process.env.DEEPSEEK_API_KEY;
-    const apiUrl = customApiUrl || 'https://api.siliconflow.cn/v1/chat/completions';
-    const model = customModel || 'deepseek-ai/DeepSeek-V3';
+    const token = customApiKey || process.env.OPENAI_API_KEY;
+    const apiUrl = customApiUrl || process.env.OPENAI_API_URL || 'https://api.siliconflow.cn/v1/chat/completions';
+    const model = customModel || process.env.OPENAI_MODEL || 'deepseek-ai/DeepSeek-V3';
 
     if (!token) {
       throw new Error('API Key未配置');
@@ -204,7 +203,7 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
     
     console.log('Processing query:', question.substring(0, 30) + '...');
 
-    // 单轮分析
+    // OpenAI格式的API调用
     const analysisOptions = {
       method: 'POST',
       headers: {

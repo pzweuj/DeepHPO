@@ -5,6 +5,7 @@
 # 使用硅基流动API
 # 注意对话时间间隔
 
+import sys
 import json
 import ast
 import requests
@@ -106,7 +107,7 @@ def tran2json():
         json.dump(output_dict, f, ensure_ascii=False, indent=4)
 
 ###############
-run("<硅基流动API密钥>")
+run(sys.argv[1])
 tran2json()
 
 

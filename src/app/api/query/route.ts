@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { searchHPOTerms } from '../../components/greper';
-import { query } from '../../components/deepseek';
-// import { query } from '../../components/deepseek_tencent_lke';
+import { query } from '../../components/llm';
 
 export const maxDuration = 60;
 
