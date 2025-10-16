@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-env": "node check-env.js"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.20.6",

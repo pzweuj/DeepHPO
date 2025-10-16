@@ -16,122 +16,34 @@ interface TableData {
   remark: string;
 }
 
-// 导入HPO术语数据
-const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
-  id: string;
-  name: string;
-  definition: string;
-  name_cn: string;
-  definition_cn: string;
-}>;
+import HPOSearchEngine from '@/lib/hpoSearchEngine';
+import { getTermCount, LLMConfig } from '@/config/llm.config';
+import { preprocessQuery, isValidQuery, formatWarnings } from '@/lib/queryPreprocessor';
 
-// 改进的分词和相似度匹配函数
-const findRelevantTerms = (input: string, maxTerms: number = 8): string => {
+// 使用搜索引擎查找相关术语
+const findRelevantTerms = async (input: string, maxTerms: number = 12): Promise<string> => {
   if (!input || input.trim() === '') return '';
   
-  // 检测输入是否包含中文
-  const hasChinese = /[\u4e00-\u9fa5]/.test(input);
-  
-  // 增强分词：处理中英文混合情况
-  const words = input
-    .toLowerCase()
-    .replace(/[,.;:?!，。；：？！、]/g, ' ') // 增加更多标点符号
-    .split(/\s+/)
-    .filter(word => word.length > 1) // 过滤掉单字符词
-    .map(word => word.trim());
-  
-  // 提取可能的医学术语短语（2-4个词的组合）
-  const phrases: string[] = [];
-  for (let i = 0; i < words.length; i++) {
-    phrases.push(words[i]); // 单词
-    if (i + 1 < words.length) phrases.push(`${words[i]} ${words[i+1]}`); // 双词组合
-    if (i + 2 < words.length) phrases.push(`${words[i]} ${words[i+1]} ${words[i+2]}`); // 三词组合
-    if (i + 3 < words.length) phrases.push(`${words[i]} ${words[i+1]} ${words[i+2]} ${words[i+3]}`); // 四词组合
-  }
-  
-  // 中文分词处理
-  if (hasChinese) {
-    // 按字符分割中文，创建2-4字符的滑动窗口
-    const chineseChars = input.match(/[\u4e00-\u9fa5]/g) || [];
-    for (let i = 0; i < chineseChars.length; i++) {
-      phrases.push(chineseChars[i]); // 单字符
-      if (i + 1 < chineseChars.length) phrases.push(chineseChars.slice(i, i+2).join(''));
-      if (i + 2 < chineseChars.length) phrases.push(chineseChars.slice(i, i+3).join(''));
-      if (i + 3 < chineseChars.length) phrases.push(chineseChars.slice(i, i+4).join(''));
-    }
-  }
-  
-  // 记录每个术语的匹配分数
-  const termScores: Record<string, number> = {};
-  
-  // 遍历所有HPO术语
-  Object.entries(hpoTerms).forEach(([id, term]) => {
-    let score = 0;
-    const termNameLower = term.name.toLowerCase();
-    const termNameCnLower = term.name_cn.toLowerCase();
-    const termDefLower = term.definition.toLowerCase();
-    const termDefCnLower = term.definition_cn.toLowerCase();
+  try {
+    const searchEngine = HPOSearchEngine.getInstance();
+    const relevantTerms = await searchEngine.findRelevantTerms(input, maxTerms);
     
-    // 检查每个词/短语是否在术语中出现
-    phrases.forEach(phrase => {
-      const phraseLower = phrase.toLowerCase();
-      
-      // 精确匹配（完全匹配术语名称）
-      if (termNameLower === phraseLower || termNameCnLower === phraseLower) {
-        score += 10; // 精确匹配权重最高
-      }
-      
-      // 部分匹配（包含关系）
-      else {
-        // 英文名称匹配
-        if (termNameLower.includes(phraseLower)) {
-          score += 3 + (phraseLower.length / termNameLower.length) * 2; // 匹配度越高分数越高
-        }
-        // 中文名称匹配
-        if (termNameCnLower.includes(phraseLower)) {
-          score += 3 + (phraseLower.length / termNameCnLower.length) * 2;
-        }
-        // 英文定义匹配
-        if (termDefLower.includes(phraseLower)) {
-          score += 1 + (phraseLower.length / Math.min(100, termDefLower.length)) * 0.5;
-        }
-        // 中文定义匹配
-        if (termDefCnLower.includes(phraseLower)) {
-          score += 1 + (phraseLower.length / Math.min(100, termDefCnLower.length)) * 0.5;
-        }
-      }
+    if (relevantTerms.length === 0) return '';
+    
+    // 构建相关术语的上下文信息
+    let context = "参考以下可能相关的HPO术语:\n";
+    relevantTerms.forEach(term => {
+      context += `- ${term.id} (${term.name}/${term.name_cn}): ${term.definition_cn}\n`;
     });
     
-    // HPO ID直接匹配（如果用户输入了HPO ID）
-    if (input.toUpperCase().includes(id)) {
-      score += 15; // ID匹配权重最高
-    }
-    
-    if (score > 0) {
-      termScores[id] = score;
-    }
-  });
-  
-  // 按分数排序并获取前N个最相关的术语
-  const topTerms = Object.entries(termScores)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, maxTerms)
-    .map(([id]) => id);
-  
-  // 构建相关术语的上下文信息
-  let context = "";
-  if (topTerms.length > 0) {
-    context = "参考以下可能相关的HPO术语:\n";
-    topTerms.forEach(id => {
-      const term = hpoTerms[id];
-      context += `- ${id} (${term.name}/${term.name_cn}): ${term.definition_cn}\n`;
-    });
+    return context;
+  } catch (error) {
+    console.error('Error finding relevant terms:', error);
+    return '';
   }
-  
-  return context;
 };
 
-const parseResponseToTableData = (response: string): TableData[] => {
+const parseResponseToTableData = async (response: string): Promise<TableData[]> => {
   try {
     // 增加空响应检查
     if (!response || typeof response !== 'string') {
@@ -144,22 +56,35 @@ const parseResponseToTableData = (response: string): TableData[] => {
       throw new Error('Response does not contain valid table data');
     }
 
+    const searchEngine = HPOSearchEngine.getInstance();
     const tableData: TableData[] = [];
+    
+    // 批量获取HPO ID
+    const hpoIds = lines.slice(2)
+      .map(line => {
+        const columns = line.split('|').map(col => col.trim()).filter(Boolean);
+        return columns.length >= 5 ? columns[0].trim() : null;
+      })
+      .filter(Boolean) as string[];
+    
+    const hpoTerms = searchEngine.getTerms(hpoIds);
+    const termMap = new Map(hpoTerms.map(t => [t.id, t]));
+    
     lines.slice(2).forEach(line => {
       const columns = line.split('|').map(col => col.trim()).filter(Boolean);
       if (columns.length >= 5) {
         const hpoId = columns[0].trim();
-        const hpoTerm = hpoTerms[hpoId];
+        const hpoTerm = termMap.get(hpoId);
         
         if (hpoTerm) { // 只保留json中存在的术语
           tableData.push({
             hpo: hpoId,
-            name: hpoTerm.name, // 使用json中的英文术语
-            chineseName: hpoTerm.name_cn, // 使用json中的中文译名
-            destination: hpoTerm.definition, // 使用英文定义作为描述
-            description: hpoTerm.definition_cn, // 使用中文定义作为描述
-            confidence: columns[3], // 保留原始置信度
-            remark: columns[4] || '' // 保留原始备注
+            name: hpoTerm.name,
+            chineseName: hpoTerm.name_cn,
+            destination: hpoTerm.definition,
+            description: hpoTerm.definition_cn,
+            confidence: columns[3],
+            remark: columns[4] || ''
           });
         }
       }
@@ -173,7 +98,6 @@ const parseResponseToTableData = (response: string): TableData[] => {
     return tableData;
   } catch (error) {
     console.error('Parsing error:', error);
-    // 返回包含错误信息的默认行
     return [{
       hpo: 'HP:0000001',
       name: 'Parsing Error',
@@ -189,19 +113,89 @@ const parseResponseToTableData = (response: string): TableData[] => {
 // 通用LLM查询函数 - 兼容OpenAI格式的API
 export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: LLMQueryProps): Promise<TableData[]> => {
   try {
-    // 优先使用传入的API配置，如果没有则使用环境变量
-    const token = customApiKey || process.env.OPENAI_API_KEY;
-    const apiUrl = customApiUrl || process.env.OPENAI_API_URL || 'https://api.siliconflow.cn/v1/chat/completions';
-    const model = customModel || process.env.OPENAI_MODEL || 'deepseek-ai/DeepSeek-V3';
+    // 配置优先级：用户页面设置 > 环境变量 > 默认值/报错
+    // 注意：空字符串''也算"未设置"，需要fallback到环境变量
+    // 优先使用.env.local中的配置，避免系统环境变量干扰
+    const token = (customApiKey?.trim() || undefined) || 
+                  process.env.NEXT_PUBLIC_OPENAI_API_KEY || 
+                  process.env.OPENAI_API_KEY;
+    const apiUrl = (customApiUrl?.trim() || undefined) || 
+                   process.env.NEXT_PUBLIC_OPENAI_API_URL || 
+                   process.env.OPENAI_API_URL || 
+                   'https://api.siliconflow.cn/v1/chat/completions';
+    const model = (customModel?.trim() || undefined) || 
+                  process.env.NEXT_PUBLIC_OPENAI_MODEL || 
+                  process.env.OPENAI_MODEL || 
+                  'deepseek-ai/DeepSeek-V3';
+
+    // 调试日志 - 服务端
+    console.log('=== 服务端环境变量检查 ===');
+    console.log('process.env.OPENAI_API_KEY存在:', !!process.env.OPENAI_API_KEY);
+    console.log('process.env.OPENAI_API_KEY前缀:', process.env.OPENAI_API_KEY?.substring(0, 10));
+    console.log('process.env.OPENAI_API_URL:', process.env.OPENAI_API_URL);
+    console.log('process.env.OPENAI_MODEL:', process.env.OPENAI_MODEL);
+    
+    console.log('\nAPI配置来源:', {
+      customKey: customApiKey ? (customApiKey.trim() ? '✅ 用户设置' : '❌ 空字符串') : '❌ 未传递',
+      envKey: process.env.OPENAI_API_KEY ? '✅ 环境变量' : '❌ 未配置',
+      finalKey: token ? `✅ 使用: ${token.substring(0, 10)}...` : '❌ 无可用Key',
+      apiUrl: apiUrl,
+      model: model
+    });
 
     if (!token) {
-      throw new Error('API Key未配置');
+      console.error('❌ API Key未找到！');
+      console.error('传入的customApiKey:', customApiKey);
+      console.error('环境变量OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '存在但未显示' : '不存在');
+      throw new Error('API Key未配置 - 请在页面设置中配置或在.env文件中添加OPENAI_API_KEY。如果已配置.env，请确保已重启服务器！');
     }
 
-    // 获取相关术语作为上下文
-    const relevantTermsContext = findRelevantTerms(question, 12);
+    // 预处理查询：过滤否定症状和家族史
+    const preprocessed = preprocessQuery(question);
     
-    console.log('Processing query:', question.substring(0, 30) + '...');
+    // 记录预处理结果
+    if (preprocessed.warnings.length > 0) {
+      console.log('⚠️  查询预处理:');
+      console.log(formatWarnings(preprocessed));
+      console.log(`原始查询: ${question}`);
+      console.log(`清理后: ${preprocessed.cleanedQuery}`);
+    }
+    
+    // 检查清理后是否还有内容
+    if (!isValidQuery(preprocessed)) {
+      console.warn('⚠️  查询清理后为空，可能全是否定症状或家族史');
+      return [{
+        hpo: 'HP:0000001',
+        name: 'No Valid Symptoms',
+        chineseName: '无有效症状',
+        destination: '查询中仅包含否定症状或家族史',
+        description: formatWarnings(preprocessed),
+        confidence: '-',
+        remark: '请描述患者本人存在的症状'
+      }];
+    }
+    
+    // 使用清理后的查询进行后续处理
+    const cleanedQuestion = preprocessed.cleanedQuery;
+    
+    // 动态调整相关术语数量：根据查询复杂度自适应
+    // 配置可在 src/config/llm.config.ts 中调整
+    const queryLength = cleanedQuestion.length;
+    const maxTerms = getTermCount(queryLength);
+    
+    if (LLMConfig.debug.logSearchTerms) {
+      console.log(`查询长度: ${queryLength}, 使用术语数: ${maxTerms}`);
+    }
+    
+    const startTime = Date.now();
+    // 使用清理后的查询搜索相关术语
+    const relevantTermsContext = await findRelevantTerms(cleanedQuestion, maxTerms);
+    
+    if (LLMConfig.debug.logTiming) {
+      console.log(`搜索相关术语耗时: ${Date.now() - startTime}ms`);
+    }
+    
+    console.log('Processing query:', cleanedQuestion.substring(0, 30) + '...');
 
     // OpenAI格式的API调用
     const analysisOptions = {
@@ -220,7 +214,8 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
           - 严格使用HPO最新官方术语
           - 仅匹配HPO明确收录的表型，拒绝推测性描述
           - 优先匹配特异性高的表型术语
-          - 不要输出否定或患者不存在的表型
+          - **严禁输出否定症状**：如果描述中出现"无"、"否认"、"没有"等否定词，则完全忽略该症状
+          - **严禁输出家族史**：如果描述中出现"父亲"、"母亲"、"哥哥"、"姐姐"、"家族"等，则完全忽略该症状
           - 不要输出没有把握的信息
           - 输出结果数目不要超过5个
           - 严格限制在用户描述的表型范畴内，不要过度推断
@@ -247,37 +242,59 @@ export const query = async ({ question, apiUrl: customApiUrl, apiKey: customApiK
           ${relevantTermsContext ? `\n5. **参考信息**\n${relevantTermsContext}` : ''}`
         }, {
           role: 'user',
-          content: question
+          content: cleanedQuestion  // 使用清理后的查询
         }],
         stream: false,
-        max_tokens: 2048,
-        temperature: 0.2,
-        top_p: 0.5,
-        frequency_penalty: 0.2,
-        presence_penalty: 0.1
+        max_tokens: LLMConfig.apiParams.maxTokens,
+        temperature: LLMConfig.apiParams.temperature,
+        top_p: LLMConfig.apiParams.topP,
+        frequency_penalty: LLMConfig.apiParams.frequencyPenalty,
+        presence_penalty: LLMConfig.apiParams.presencePenalty
       })
     };
 
     const analysisRes = await fetch(apiUrl, analysisOptions);
+    
+    // 检查HTTP状态码
+    if (!analysisRes.ok) {
+      const errorText = await analysisRes.text();
+      console.error('API HTTP Error:', {
+        status: analysisRes.status,
+        statusText: analysisRes.statusText,
+        body: errorText
+      });
+      throw new Error(`API请求失败 (${analysisRes.status}): ${errorText.substring(0, 200)}`);
+    }
+    
     const analysisText = await analysisRes.text();
     
     if (!analysisText) {
-      throw new Error('Empty response from API');
+      throw new Error('API返回空响应');
     }
 
     let analysisData;
     try {
       analysisData = JSON.parse(analysisText);
     } catch (jsonError) {
-      console.error('JSON parsing error:', jsonError);
-      throw new Error(`Invalid JSON response: ${analysisText.substring(0, 100)}`);
+      console.error('JSON解析错误:', jsonError);
+      console.error('原始响应:', analysisText.substring(0, 500));
+      throw new Error(`无效的JSON响应: ${analysisText.substring(0, 100)}`);
     }
+
+    // 详细输出API响应结构以便调试
+    console.log('API响应结构:', {
+      hasChoices: !!analysisData.choices,
+      choicesLength: analysisData.choices?.length,
+      keys: Object.keys(analysisData),
+      firstChoice: analysisData.choices?.[0] ? Object.keys(analysisData.choices[0]) : null
+    });
 
     if (!analysisData.choices || analysisData.choices.length === 0) {
-      throw new Error('No choices in API response');
+      console.error('完整API响应:', JSON.stringify(analysisData, null, 2));
+      throw new Error(`API响应中没有choices字段。响应结构: ${JSON.stringify(Object.keys(analysisData))}`);
     }
 
-    return parseResponseToTableData(analysisData.choices[0].message.content);
+    return await parseResponseToTableData(analysisData.choices[0].message.content);
   } catch (error) {
     console.error('API Error:', error);
     return [{

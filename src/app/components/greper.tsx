@@ -1,11 +1,9 @@
-// 直接导入JSON文件并添加类型声明
-const hpoTerms = require('/public/hpo_terms_cn.json') as Record<string, {
-  id: string;
-  name: string;
-  definition: string;
-  name_cn: string;
-  definition_cn: string;
-}>;
+/**
+ * HPO术语搜索 - 服务端专用
+ * 使用优化的搜索引擎，避免全量遍历
+ */
+
+import HPOSearchEngine from '@/lib/hpoSearchEngine';
 
 interface TableData {
   hpo: string;
@@ -17,53 +15,51 @@ interface TableData {
   remark: string;
 }
 
-export function searchHPOTerms(query: string): TableData[] {
-  const results: TableData[] = [];
-  
-  // 将查询转换为小写以便不区分大小写
-  const lowerQuery = query?.toLowerCase() || '';
-  const enableFullTextSearch = lowerQuery.length > 15; // 添加长度判断
+export async function searchHPOTerms(query: string): Promise<TableData[]> {
+  try {
+    const searchEngine = HPOSearchEngine.getInstance();
+    
+    // 使用优化的搜索引擎
+    const results = await searchEngine.search(query, {
+      maxResults: 50,
+      includeDefinitions: query.length > 15
+    });
 
-  // 遍历JSON数据
-  Object.values(hpoTerms).forEach(term => {
-    // 基础匹配条件
-    const baseMatch = (term.id?.toLowerCase() || '').includes(lowerQuery) ||
-                      (term.name?.toLowerCase() || '').includes(lowerQuery) ||
-                      (term.name_cn?.toLowerCase() || '').includes(lowerQuery);
-
-    // 当查询长度大于15时，增加定义匹配
-    const fullTextMatch = enableFullTextSearch && 
-                         ((term.definition?.toLowerCase() || '').includes(lowerQuery) ||
-                          (term.definition_cn?.toLowerCase() || '').includes(lowerQuery));
-
-    if (baseMatch || fullTextMatch) {
-      const tableData: TableData = {
-        hpo: term.id,
-        name: term.name,
-        chineseName: term.name_cn,
-        destination: term.definition,
-        description: term.definition_cn,
-        confidence: '-',
-        remark: '搜索匹配'
-      };
-      
-      results.push(tableData);
-    }
-  });
-
-  // 如果没有找到任何结果，添加默认条目
-  if (results.length === 0 && query.trim() !== '') {
-    const defaultData: TableData = {
-      hpo: 'HP:0000001',
-      name: 'All',
-      chineseName: '所有表型',
-      destination: 'NOTFOUND',
-      description: '未找到结果',
+    // 转换为表格数据格式
+    const tableData: TableData[] = results.map(term => ({
+      hpo: term.id,
+      name: term.name,
+      chineseName: term.name_cn,
+      destination: term.definition,
+      description: term.definition_cn,
       confidence: '-',
-      remark: '查询失败'
-    };
-    results.push(defaultData);
-  }
+      remark: '搜索匹配'
+    }));
 
-  return results;
+    // 如果没有找到任何结果，返回提示
+    if (tableData.length === 0 && query.trim() !== '') {
+      return [{
+        hpo: 'HP:0000001',
+        name: 'No Results',
+        chineseName: '未找到结果',
+        destination: 'NOTFOUND',
+        description: '未找到匹配的HPO术语，请尝试其他关键词',
+        confidence: '-',
+        remark: '查询失败'
+      }];
+    }
+
+    return tableData;
+  } catch (error) {
+    console.error('Search error:', error);
+    return [{
+      hpo: 'HP:0000001',
+      name: 'Error',
+      chineseName: '搜索错误',
+      destination: 'ERROR',
+      description: error instanceof Error ? error.message : '搜索过程中发生错误',
+      confidence: '-',
+      remark: '系统错误'
+    }];
+  }
 }
