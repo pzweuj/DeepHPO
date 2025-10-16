@@ -3,7 +3,7 @@
 ## 项目简介
 DeepHPO是一个基于DeepSeek的临床表型HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-通过[Vercel在线使用](https://deephpo.vercel.app/)！ 该版本使用DeepSeek-V3（0324）。
+[在线使用](https://deephpo.biotools.site/)！ 该版本使用DeepSeek-V3（0324）。
 
 **Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
