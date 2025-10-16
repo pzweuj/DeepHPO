@@ -23,6 +23,8 @@ export default function Home({
   const [apiUrl, setApiUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
+  const [showFooter, setShowFooter] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // 从localStorage加载设置
   useEffect(() => {
@@ -34,6 +36,38 @@ export default function Home({
     if (savedApiKey) setApiKey(savedApiKey);
     if (savedModel) setModel(savedModel);
   }, []);
+
+  // 页脚自动隐藏逻辑
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // 向下滚动时隐藏页脚
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowFooter(false);
+      } else {
+        // 向上滚动时显示页脚
+        setShowFooter(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+
+      // 停止滚动2秒后显示页脚
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setShowFooter(true);
+      }, 2000);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeoutId);
+    };
+  }, [lastScrollY]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -186,7 +220,7 @@ export default function Home({
       </div>
 
       {/* 将HPO信息部分移动到这里 */}
-      <div className="fixed bottom-0 left-0 right-0 py-4 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 border-t border-gray-200 dark:border-gray-800">
+      <div className={`fixed bottom-0 left-0 right-0 py-4 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 border-t border-gray-200 dark:border-gray-800 transition-transform duration-300 ${showFooter ? 'translate-y-0' : 'translate-y-full'}`}>
         <div className="max-w-2xl mx-auto text-sm text-gray-500 dark:text-gray-400">
           <p className="text-center">
             内容由AI生成，请仔细甄别

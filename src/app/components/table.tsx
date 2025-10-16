@@ -27,7 +27,7 @@ interface TableProps {
 const columnHelper = createColumnHelper<TableData>();
 
 export default function Table({ data, isLoading }: TableProps) {
-  const [pageSize, setPageSize] = useState(20);
+  const pageSize = 20;
   const safeData = useMemo(() => data, [data]);
 
   const columns = [

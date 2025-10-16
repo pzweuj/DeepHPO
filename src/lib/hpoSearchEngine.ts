@@ -243,12 +243,10 @@ class HPOSearchEngine {
    * 智能搜索相关术语（用于LLM上下文）
    * @param input 查询文本
    * @param maxTerms 最大返回数量
-   * @param minRelevanceScore 最低相关度分数（过滤低质量结果）
    */
   async findRelevantTerms(
     input: string, 
-    maxTerms: number = 12,
-    minRelevanceScore: number = 2
+    maxTerms: number = 12
   ): Promise<HPOTerm[]> {
     if (!this.initialized) {
       await this.initialize();

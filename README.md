@@ -3,17 +3,9 @@
 ## 项目简介
 DeepHPO是一个基于大语言模型的临床表型 HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-### ✨ 最新优化
-- ⚡ **94%更小的bundle**：从8MB+减少到80%更快的加载速度
-- ⚡ **75%更快的搜索**：智能索引，毫秒级响应
-- ⚡ **90%更低的内存**：服务端优化，客户端轻量化
-- 📊 **分页展示**：支持大量结果流畅浏览
-
-📚 [查看完整优化文档](./OPTIMIZATION.md) | [快速开始指南](./PERFORMANCE_GUIDE.md)
-
 [在线使用](https://deephpo.biotools.site/)！ 默认使用DeepSeek-V3模型。
 
-**Vercel的超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
+**在线版本部署于Vercel，由于超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
 **支持任何兼容OpenAI格式的API端点和模型，您可以通过主页的设置按钮配置自己的API服务提供商、模型名称和API Key。**
 
@@ -90,11 +82,8 @@ OPENAI_MODEL=deepseek-ai/DeepSeek-V3
 - **OpenAI**: `https://api.openai.com/v1/chat/completions` [获取Key](https://platform.openai.com/)
 - **其他兼容OpenAI格式的端点**
 
-📝 [详细配置指南](./ENV_SETUP.md) | 🔧 [故障排查](./ENV_SETUP.md#常见问题排查)
-
 **动态配置**: 你也可以在网页左上角设置按钮中动态输入API配置（会覆盖环境变量）。
 
-**注：腾讯LKE已废弃。**
 
 接下来自行部署这个应用
 
