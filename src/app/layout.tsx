@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "DeepHPO",
-  description: "基于DeepSeek的临床表型HPO术语提取系统",
+  description: "基于大语言模型的临床表型HPO术语提取系统",
   icons: {
     icon: '/hpo-logo-white-no-words.png',
   },

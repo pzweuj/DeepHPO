@@ -4,9 +4,10 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 interface TableData {
   hpo: string;
@@ -25,10 +26,9 @@ interface TableProps {
 
 const columnHelper = createColumnHelper<TableData>();
 
-// const MAX_TABLE_SIZE = 1000;
-
 export default function Table({ data, isLoading }: TableProps) {
-  const safeData = useMemo(() => data.slice(0, 20), [data]);
+  const [pageSize, setPageSize] = useState(20);
+  const safeData = useMemo(() => data, [data]);
 
   const columns = [
     columnHelper.accessor('hpo', {
@@ -76,6 +76,12 @@ export default function Table({ data, isLoading }: TableProps) {
     data: safeData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: pageSize,
+      },
+    },
     state: {
       columnVisibility: {
         confidence: false,
@@ -86,7 +92,35 @@ export default function Table({ data, isLoading }: TableProps) {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-lg shadow-sm">
-      <div className="flex-1 overflow-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+      {/* 分页信息 */}
+      {!isLoading && safeData.length > 0 && (
+        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between">
+          <div>
+            显示 {table.getState().pagination.pageIndex * pageSize + 1} - {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, safeData.length)} / 共 {safeData.length} 条结果
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+            >
+              上一页
+            </button>
+            <span>
+              第 {table.getState().pagination.pageIndex + 1} / {table.getPageCount()} 页
+            </span>
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+            >
+              下一页
+            </button>
+          </div>
+        </div>
+      )}
+      
+      <div className="flex-1 overflow-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
         <div className="min-w-full">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
