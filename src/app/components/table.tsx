@@ -51,6 +51,8 @@ export default function Table({ data, isLoading }: TableProps) {
     columnHelper.accessor('chineseName', {
       header: '名称',
       cell: info => info.getValue(),
+      size: 200,
+      minSize: 200,
     }),
     columnHelper.accessor('destination', {
       header: 'Description',
@@ -130,6 +132,7 @@ export default function Table({ data, isLoading }: TableProps) {
                     <th
                       key={header.id}
                       className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700"
+                      style={{ width: header.getSize() }}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </th>
@@ -156,6 +159,7 @@ export default function Table({ data, isLoading }: TableProps) {
                       <td
                         key={cell.id}
                         className="px-4 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
+                        style={{ width: cell.column.getSize() }}
                       >
                         <div className="relative z-0">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
