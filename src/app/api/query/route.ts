@@ -53,7 +53,19 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('API Error:', error);
-    return new Response(JSON.stringify([{ error: '查询失败' }]), {
+    const errorMessage = error instanceof Error ? error.message : '查询失败';
+    const errorStack = error instanceof Error ? error.stack : '';
+    console.error('Error details:', errorMessage, errorStack);
+    
+    return new Response(JSON.stringify([{ 
+      hpo: 'HP:0000001',
+      name: 'Error',
+      chineseName: '搜索错误',
+      destination: 'ERROR',
+      description: errorMessage,
+      confidence: '-',
+      remark: '系统错误'
+    }]), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

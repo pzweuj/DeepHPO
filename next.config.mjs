@@ -15,6 +15,14 @@ const nextConfig = {
       };
     }
     
+    // 服务端配置：标记 nodejieba 为外部依赖
+    if (isServer) {
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push('nodejieba');
+      }
+    }
+    
     return config;
   },
   
