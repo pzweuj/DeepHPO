@@ -3,7 +3,7 @@
 ## 项目简介
 DeepHPO是一个基于大语言模型的临床表型 HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-[在线使用](https://deephpo.biotools.site/)！ 默认使用DeepSeek-V3模型。
+[在线使用](https://deephpo.biotools.space/)！ 默认使用DeepSeek-V3模型。
 
 **在线版本部署于Vercel，由于超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
