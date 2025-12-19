@@ -5,10 +5,10 @@
 
 import json
 
-data = json.load(open("hpo_terms_cn.json", "r", encoding="utf-8"))
+data = json.load(open("public/hpo_terms_cn.json", "r", encoding="utf-8"))
 done_list = list(data.keys())
 
-with open("done_list.txt", "w", encoding="utf-8") as f:
+with open("tools/done_list.txt", "w", encoding="utf-8") as f:
 	for i in done_list:
 		f.write(i + "\n")
 

@@ -226,7 +226,7 @@ export default function Home({
             内容由AI生成，请仔细甄别
           </p>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg">
-            <p>本应用使用Human Phenotype Ontology (2025-09-01)</p>
+            <p>本应用使用Human Phenotype Ontology (2025-11-24)</p>
             <Image
               src="/hpo-logo-white-no-words.png"
               alt="HPO Logo"
