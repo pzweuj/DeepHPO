@@ -16,7 +16,7 @@ def silicon_deepseek_v3(message, sdk):
     url = "https://api.siliconflow.cn/v1/chat/completions"
     
     payload = {
-        "model": "deepseek-ai/DeepSeek-V3",
+        "model": "deepseek-ai/DeepSeek-V3.2",
         "messages": [
             {
                 "role": "system",
