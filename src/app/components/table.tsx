@@ -13,8 +13,8 @@ interface TableData {
   hpo: string;
   name: string;
   chineseName: string;
-  destination: string;
-  description: string;
+  definition: string;
+  definitionCn: string;
   confidence: string;
   remark?: string;
 }
@@ -54,11 +54,11 @@ export default function Table({ data, isLoading }: TableProps) {
       size: 200,
       minSize: 200,
     }),
-    columnHelper.accessor('destination', {
+    columnHelper.accessor('definition', {
       header: 'Description',
       cell: info => info.getValue(),
     }),
-    columnHelper.accessor('description', {
+    columnHelper.accessor('definitionCn', {
       header: '描述',
       cell: info => info.getValue(),
     }),

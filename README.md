@@ -3,43 +3,30 @@
 ## 项目简介
 DeepHPO是一个基于大语言模型的临床表型 HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-[在线使用](https://deephpo.biotools.space/)！ 默认使用DeepSeek-V3模型。
+[在线使用](https://deephpo.biotools.space/)！ 默认使用DeepSeek-V4-Flash模型。
 
 **在线版本部署于Vercel，由于超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
 **支持任何兼容OpenAI格式的API端点和模型，您可以通过主页的设置按钮配置自己的API服务提供商、模型名称和API Key。**
 
-**HPO术语使用DeepSeek-V3翻译，请仔细甄别**
+**HPO术语使用DeepSeek-V4-Flash翻译，请仔细甄别**
 
-1. 用户可以通过输入患者的临床诊断信息，系统会使用大语言模型对信息进行提取，输出其中可能存在的HPO术语
+## 工作原理
 
-2. 用户可以通过以下方式查询表型信息：
-- HPO编号
-- 表型英文名称
-- 表型英文描述
-- 表型中文名称（由deepseek-V3生成，请仔细甄别）
-- 表型中文描述（由deepseek-V3生成，请仔细甄别）
+将完整的 HPO 术语表（约 20,000 条，含中英文名称和定义）直接注入大语言模型的上下文中（约 420K tokens），由 LLM 一次性完成症状提取和术语匹配。无需向量数据库、无需索引引擎，仅依赖模型自身的语义理解能力。
 
-3. 你可以在[这里下载](https://github.com/pzweuj/DeepHPO/blob/main/public/hpo_terms_cn.json)由deepseek-V3翻译的词表。
+你可以在[这里下载](https://github.com/pzweuj/DeepHPO/blob/main/public/hpo_terms_cn.json)由DeepSeek-V4-Flash翻译的词表。
 
 ## 主要功能
-1. 搜索引擎式主页界面
-2. 支持多种查询方式（HPO ID、中英文名称、描述）
-3. ⚡ **智能索引搜索**：毫秒级响应，精准匹配
-4. 基于大语言模型的患者临床信息HPO编号提取
-5. 兼容任何OpenAI格式的API端点（DeepSeek、OpenAI、硅基流动等）
-6. 📊 **分页展示**：支持大量搜索结果
-
-## 切换功能
-
-![shot](shot.png)
-
+1. 输入患者临床诊断信息，由大语言模型提取匹配的 HPO 术语
+2. 支持任何 OpenAI 格式的 API 端点（DeepSeek、OpenAI、硅基流动等）
+3. 19,000+ 条 HPO 术语全量注入上下文，无信息损失
+4. 分页展示搜索结果
 
 ## 技术栈
 - **框架**：Next.js 14 + React 18 + TypeScript
 - **UI**：Tailwind CSS + TanStack Table
-- **搜索引擎**：自研高性能索引系统
-- **AI**：兼容OpenAI格式的各种大模型
+- **AI**：兼容OpenAI格式的各种大模型（建议使用支持 1M 上下文的模型）
 
 ## 快速开始
 
@@ -63,8 +50,6 @@ Copy-Item .env.local.self .env.local
 # 或手动复制 .env.local.self 并重命名为 .env.local
 ```
 
-⚠️ **为什么使用 `.env.local`？** 它优先级高于系统环境变量，避免冲突！
-
 #### 步骤2: 配置API Key
 
 编辑 `.env` 文件，填入你的API配置：
@@ -72,7 +57,7 @@ Copy-Item .env.local.self .env.local
 ```env
 OPENAI_API_KEY=你的API密钥
 OPENAI_API_URL=https://api.siliconflow.cn/v1/chat/completions
-OPENAI_MODEL=deepseek-ai/DeepSeek-V3
+OPENAI_MODEL=deepseek-ai/Deepseek-V4-Flash
 ```
 
 #### 支持的API提供商
@@ -99,4 +84,3 @@ npm run build
 了解更多请访问：[http://www.human-phenotype-ontology.org](http://www.human-phenotype-ontology.org)
 
 Cite: [doi: 10.1093/nar/gkad1005](https://pmc.ncbi.nlm.nih.gov/articles/PMC10767975/)
-

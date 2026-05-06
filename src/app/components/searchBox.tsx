@@ -4,18 +4,12 @@ import React from 'react';
 import { useFormStatus } from 'react-dom';
 
 interface SearchBoxProps {
-  initialType: string;
   initialQuery: string;
 }
 
-export default function SearchBox({ initialType, initialQuery }: SearchBoxProps) {
+export default function SearchBox({ initialQuery }: SearchBoxProps) {
   const [localQuery, setLocalQuery] = React.useState(initialQuery);
-  const [searchType, setSearchType] = React.useState(initialType);
   const { pending } = useFormStatus();
-
-  const toggleSearchType = () => {
-    setSearchType(prev => prev === 'matcher' ? 'phenotype' : 'matcher');
-  };
 
   React.useEffect(() => {
     setLocalQuery(initialQuery);
@@ -29,41 +23,28 @@ export default function SearchBox({ initialType, initialQuery }: SearchBoxProps)
 
   return (
     <form action="/" method="GET" className="relative w-full max-w-2xl">
-      {/* 隐藏字段传递搜索类型 */}
-      <input type="hidden" name="type" value={searchType} />
-      
-      <div className="absolute left-3 top-[calc(50%-0.1rem)] -translate-y-1/2">
-        <button
-          type="button"
-          onClick={toggleSearchType}
-          className="bg-blue-500 dark:bg-blue-600 border-none text-white focus:outline-none focus:ring-0 px-2 py-1 rounded-md transition-colors cursor-pointer shadow-sm text-center"
-        >
-          {searchType === 'matcher' ? 'LLM' : '表型'}
-        </button>
-      </div>
-      
       <textarea
         id="phenotypeSearchInput"
         name="q"
         value={localQuery}
         onChange={(e) => setLocalQuery(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey && localQuery.length <= 600) {
+          if (e.key === 'Enter' && !e.shiftKey && localQuery.length <= 2000) {
             e.preventDefault();
             (e.currentTarget.form as HTMLFormElement)?.requestSubmit();
           }
         }}
         onFocus={(e) => e.target.select()}
-        placeholder={searchType === 'matcher' ? '输入临床信息, 使用LLM提取表型信息' : '搜索HPO编号或中英文表型信息'}
-        className="w-full pl-28 pr-6 py-[1rem] rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
+        placeholder="输入临床信息，提取HPO表型术语"
+        className="w-full pl-6 pr-16 py-[1rem] rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
         style={{ height: `${calculateRows(localQuery) * 24 + 32}px` }}
       />
-      
+
       <button
         type="submit"
-        disabled={pending || localQuery.length > 600}
+        disabled={pending || localQuery.length > 2000}
         className={`absolute right-3 top-[calc(50%-0.1rem)] -translate-y-1/2 p-2 rounded-full transition-colors ${
-          pending || localQuery.length > 600
+          pending || localQuery.length > 2000
             ? 'bg-gray-400 cursor-not-allowed'
             : 'bg-blue-500 hover:bg-blue-600'
         }`}

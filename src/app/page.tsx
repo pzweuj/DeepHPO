@@ -13,8 +13,8 @@ export default function Home({
     hpo: 'HP:0000001',
     name: 'All',
     chineseName: '所有表型',
-    destination: 'Ready',
-    description: '等待查询',
+    definition: 'Ready',
+    definitionCn: '等待查询',
     confidence: '-',
     remark: '等待查询'
   }]);
@@ -26,7 +26,6 @@ export default function Home({
   const [showFooter, setShowFooter] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // 从localStorage加载设置
   useEffect(() => {
     const savedApiUrl = localStorage.getItem('apiUrl');
     const savedApiKey = localStorage.getItem('apiKey');
@@ -37,24 +36,20 @@ export default function Home({
     if (savedModel) setModel(savedModel);
   }, []);
 
-  // 页脚自动隐藏逻辑
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // 向下滚动时隐藏页脚
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setShowFooter(false);
       } else {
-        // 向上滚动时显示页脚
         setShowFooter(true);
       }
-      
+
       setLastScrollY(currentScrollY);
 
-      // 停止滚动2秒后显示页脚
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         setShowFooter(true);
@@ -73,17 +68,14 @@ export default function Home({
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const type = searchParams?.type?.toString() || 'matcher';
         const query = searchParams?.q?.toString() || '';
-        
-        // 当没有查询参数时保持默认数据
+
         if (!query) {
           setIsLoading(false);
           return;
         }
 
-        // 调用API路由
-        const res = await fetch(`/api/query?type=${type}&q=${encodeURIComponent(query)}`, {
+        const res = await fetch(`/api/query?q=${encodeURIComponent(query)}`, {
           headers: {
             'x-api-url': apiUrl,
             'x-api-key': apiKey,
@@ -91,20 +83,18 @@ export default function Home({
           }
         });
         const data = await res.json();
-        // 仅当有数据时更新
         if (data && data.length > 0) {
           setTableData(data);
         }
       } catch (error) {
         console.error('数据获取失败:', error);
-        setTableData([/* 错误状态数据 */]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [searchParams, apiUrl, apiKey, model]); // 添加API设置作为依赖项
+  }, [searchParams, apiUrl, apiKey, model]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -167,7 +157,6 @@ export default function Home({
               </button>
               <button
                 onClick={() => {
-                  // 保存设置到localStorage
                   localStorage.setItem('apiUrl', apiUrl);
                   localStorage.setItem('apiKey', apiKey);
                   localStorage.setItem('model', model);
@@ -208,18 +197,17 @@ export default function Home({
           </h1>
         </div>
 
-        <SearchBox 
-          initialType={searchParams?.type?.toString() || 'matcher'}
+        <SearchBox
           initialQuery={searchParams?.q?.toString() || ''}
         />
       </div>
 
-      {/* 修改滚动区域 */}
+      {/* Results */}
       <div className="max-w-full mx-auto h-[calc(100vh-300px)] overflow-y-auto">
         <Table data={tableData} isLoading={isLoading} />
       </div>
 
-      {/* 将HPO信息部分移动到这里 */}
+      {/* Footer */}
       <div className={`fixed bottom-0 left-0 right-0 py-4 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 border-t border-gray-200 dark:border-gray-800 transition-transform duration-300 ${showFooter ? 'translate-y-0' : 'translate-y-full'}`}>
         <div className="max-w-2xl mx-auto text-sm text-gray-500 dark:text-gray-400">
           <p className="text-center">
@@ -236,9 +224,9 @@ export default function Home({
             />
           </div>
           <p className="text-center">
-            在 <a 
-              href="http://www.human-phenotype-ontology.org" 
-              target="_blank" 
+            在 <a
+              href="http://www.human-phenotype-ontology.org"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
