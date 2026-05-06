@@ -173,6 +173,7 @@ ${lookupTable}
           content: question
         }],
         stream: false,
+        enable_thinking: false,
         max_tokens: 512,
         temperature: 0.1,
         top_p: 0.3
