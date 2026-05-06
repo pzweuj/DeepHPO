@@ -79,7 +79,7 @@ npm run build
 
 ## 引用与许可
 
-应用数据库来源于[HPO obo文件](http://purl.obolibrary.org/obo/hp.obo)（版本 2025-09-01）。
+应用数据库来源于[HPO obo文件](http://purl.obolibrary.org/obo/hp.obo)（版本 2026-02-16）。
 
 了解更多请访问：[http://www.human-phenotype-ontology.org](http://www.human-phenotype-ontology.org)
 
