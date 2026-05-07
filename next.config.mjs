@@ -4,6 +4,8 @@ const nextConfig = {
     DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
   },
   
+  output: 'standalone',
+
   // 优化构建配置
   webpack: (config, { isServer }) => {
     // 排除大型JSON文件被打包到客户端bundle
