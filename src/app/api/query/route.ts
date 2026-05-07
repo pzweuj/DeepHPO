@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { query } from '../../components/llm';
+import { queryStream } from '../../components/llm';
 
 export const maxDuration = 60;
 
@@ -22,39 +22,14 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  try {
-    const data = await query({
-      question: q,
-      apiUrl,
-      apiKey,
-      model
-    });
+  const stream = queryStream({ question: q, apiUrl, apiKey, model });
 
-    requestCache.set(cacheKey, data);
-    if (requestCache.size > 100) {
-      const oldestKey = requestCache.keys().next().value;
-      if (oldestKey) requestCache.delete(oldestKey);
+  return new Response(stream, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
     }
-
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (error) {
-    console.error('API Error:', error);
-    const errorMessage = error instanceof Error ? error.message : '查询失败';
-
-    return new Response(JSON.stringify([{
-      hpo: 'HP:0000001',
-      name: 'Error',
-      chineseName: '搜索错误',
-      definition: 'ERROR',
-      definitionCn: errorMessage,
-      confidence: '-',
-      remark: '系统错误'
-    }]), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
+  });
 }

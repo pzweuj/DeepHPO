@@ -1,15 +1,15 @@
 'use client';
 
 import React from 'react';
-import { useFormStatus } from 'react-dom';
 
 interface SearchBoxProps {
   initialQuery: string;
+  onSearch: (query: string) => void;
+  isLoading?: boolean;
 }
 
-export default function SearchBox({ initialQuery }: SearchBoxProps) {
+export default function SearchBox({ initialQuery, onSearch, isLoading }: SearchBoxProps) {
   const [localQuery, setLocalQuery] = React.useState(initialQuery);
-  const { pending } = useFormStatus();
 
   React.useEffect(() => {
     setLocalQuery(initialQuery);
@@ -21,17 +21,26 @@ export default function SearchBox({ initialQuery }: SearchBoxProps) {
     return Math.min(Math.max(lineCount, Math.ceil(charCount / 80)), 6);
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isLoading && localQuery.trim() && localQuery.length <= 2000) {
+      onSearch(localQuery.trim());
+    }
+  };
+
   return (
-    <form action="/" method="GET" className="relative w-full max-w-2xl">
+    <form onSubmit={handleSubmit} className="relative w-full max-w-2xl">
       <textarea
         id="phenotypeSearchInput"
         name="q"
         value={localQuery}
         onChange={(e) => setLocalQuery(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey && localQuery.length <= 2000) {
+          if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            (e.currentTarget.form as HTMLFormElement)?.requestSubmit();
+            if (!isLoading && localQuery.trim() && localQuery.length <= 2000) {
+              onSearch(localQuery.trim());
+            }
           }
         }}
         onFocus={(e) => e.target.select()}
@@ -42,14 +51,14 @@ export default function SearchBox({ initialQuery }: SearchBoxProps) {
 
       <button
         type="submit"
-        disabled={pending || localQuery.length > 2000}
+        disabled={isLoading || !localQuery.trim() || localQuery.length > 2000}
         className={`absolute right-3 top-[calc(50%-0.1rem)] -translate-y-1/2 p-2 rounded-full transition-colors ${
-          pending || localQuery.length > 2000
+          isLoading || !localQuery.trim() || localQuery.length > 2000
             ? 'bg-gray-400 cursor-not-allowed'
             : 'bg-blue-500 hover:bg-blue-600'
         }`}
       >
-        {pending ? (
+        {isLoading ? (
           <div className="h-6 w-6 animate-spin">
             <svg
               xmlns="http://www.w3.org/2000/svg"

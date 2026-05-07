@@ -216,4 +216,150 @@ ${lookupTable}
   }
 };
 
-export default { query };
+/**
+ * Streaming 版本：LLM 使用 stream:true，token 实时转发给客户端保持连接
+ * 返回 ReadableStream，发送 SSE 事件：token / data / error / keepalive
+ */
+export const queryStream = ({ question, apiUrl: customApiUrl, apiKey: customApiKey, model: customModel }: LLMQueryProps): ReadableStream => {
+  const encoder = new TextEncoder();
+  let keepaliveInterval: ReturnType<typeof setInterval>;
+
+  return new ReadableStream({
+    start(controller) {
+      keepaliveInterval = setInterval(() => {
+        try {
+          controller.enqueue(encoder.encode('event: keepalive\ndata: {}\n\n'));
+        } catch {
+          clearInterval(keepaliveInterval);
+        }
+      }, 5000);
+
+      (async () => {
+        try {
+          const { token, apiUrl, model } = getApiConfig({
+            apiUrl: customApiUrl,
+            apiKey: customApiKey,
+            model: customModel
+          });
+
+          const lookupTable = loadLookupTable();
+          const hpoMap = loadHpoMap();
+
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model,
+              messages: [{
+                role: 'system',
+                content: `# Role
+你是一位HPO（Human Phenotype Ontology）术语匹配专家。你的任务是将临床描述中的症状、体征和疾病精确匹配到HPO术语。
+
+# Rules
+1. 只匹配输入中明确提到的症状、体征和疾病，不要推断或补充
+2. 忽略否定症状（如"无头痛"、"否认发热"）和家族史（如"父亲高血压"）
+3. 选择最具体、最精确的术语，不要选择过于宽泛的上级术语
+4. 一个临床表现匹配一个HPO术语，复合症状可拆分为多个术语
+5. HPO ID必须来自下方术语表，不得编造
+6. 最多返回10个术语
+
+# Output Format
+返回JSON数组，每个元素包含hpo_id、confidence、remark三个字段：
+[{"hpo_id":"HP:XXXXXXX","confidence":"高/中/低","remark":"对应的临床表现"}]
+
+- confidence: 精确匹配为"高"，近义匹配为"中"，模糊匹配为"低"
+- remark: 简要说明该术语对应输入中的哪个症状
+
+# Example
+输入："患者有癫痫发作，伴智力发育迟缓"
+输出：[{"hpo_id":"HP:0001250","confidence":"高","remark":"癫痫发作"},{"hpo_id":"HP:0001249","confidence":"高","remark":"智力发育迟缓"}]
+
+# HPO术语表
+以下为完整的HPO术语表，格式为 HP:ID|英文名|中文名|中文定义。请仅从该表中选取术语：
+---
+${lookupTable}
+---`
+              }, {
+                role: 'user',
+                content: question
+              }],
+              stream: true,
+              enable_thinking: false,
+              max_tokens: 512,
+              temperature: 0.1,
+              top_p: 0.3
+            })
+          });
+
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`API请求失败 (${res.status}): ${errorText.substring(0, 200)}`);
+          }
+
+          const reader = res.body!.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          let fullContent = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = (buffer + chunk).split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || !trimmed.startsWith('data: ')) continue;
+
+              const data = trimmed.slice(6);
+              if (data === '[DONE]') continue;
+
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  fullContent += content;
+                  controller.enqueue(
+                    encoder.encode(`event: token\ndata: ${JSON.stringify({ content })}\n\n`)
+                  );
+                }
+              } catch {
+                // 跳过无法解析的行
+              }
+            }
+          }
+
+          const tableData = parseResponseToTableData(fullContent, hpoMap);
+          controller.enqueue(
+            encoder.encode(`event: data\ndata: ${JSON.stringify(tableData)}\n\n`)
+          );
+        } catch (error) {
+          console.error('Streaming API Error:', error);
+          const errorMessage = error instanceof Error ? error.message : '未知错误';
+          const errorData = [{
+            hpo: 'HP:0000001',
+            name: 'Error',
+            chineseName: '匹配错误',
+            definition: 'ERROR',
+            definitionCn: errorMessage,
+            confidence: '-',
+            remark: '请检查输入或API配置'
+          }];
+          controller.enqueue(
+            encoder.encode(`event: error\ndata: ${JSON.stringify(errorData)}\n\n`)
+          );
+        } finally {
+          clearInterval(keepaliveInterval);
+          controller.close();
+        }
+      })();
+    }
+  });
+};
+
+export default { query, queryStream };

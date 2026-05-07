@@ -1,14 +1,27 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useRef, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from "next/image";
 import Table from './components/table';
 import SearchBox from './components/searchBox';
 
-export default function Home({
-  searchParams
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8 flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400">加载中...</div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
+
   const [tableData, setTableData] = useState<any[]>([{
     hpo: 'HP:0000001',
     name: 'All',
@@ -18,13 +31,16 @@ export default function Home({
     confidence: '-',
     remark: '等待查询'
   }]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [statusMessage, setStatusMessage] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [apiUrl, setApiUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
   const [showFooter, setShowFooter] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const savedApiUrl = localStorage.getItem('apiUrl');
@@ -64,37 +80,140 @@ export default function Home({
     };
   }, [lastScrollY]);
 
+  const handleSearch = useCallback((searchQuery: string) => {
+    router.push(`/?q=${encodeURIComponent(searchQuery)}`);
+  }, [router]);
+
+  // Streaming 数据获取
   useEffect(() => {
-    const fetchData = async () => {
+    if (!query) {
+      setIsLoading(false);
+      return;
+    }
+
+    // 取消上一个请求
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    let isMounted = true;
+
+    const fetchStreamingData = async () => {
       try {
         setIsLoading(true);
-        const query = searchParams?.q?.toString() || '';
-
-        if (!query) {
-          setIsLoading(false);
-          return;
-        }
+        setElapsedTime(0);
+        setStatusMessage('正在连接...');
 
         const res = await fetch(`/api/query?q=${encodeURIComponent(query)}`, {
           headers: {
             'x-api-url': apiUrl,
             'x-api-key': apiKey,
             'x-model': model
-          }
+          },
+          signal: controller.signal
         });
-        const data = await res.json();
-        if (data && data.length > 0) {
-          setTableData(data);
+
+        if (!res.ok) {
+          throw new Error(`请求失败 (${res.status})`);
         }
-      } catch (error) {
+
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          let currentEvent = '';
+          let tokenCount = 0;
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              const dataStr = line.slice(6);
+              if (!isMounted) return;
+
+              if (currentEvent === 'keepalive') {
+                setStatusMessage('正在分析中...');
+              } else if (currentEvent === 'token') {
+                tokenCount++;
+                if (tokenCount % 10 === 0) {
+                  setStatusMessage(`正在生成中... (${tokenCount} tokens)`);
+                }
+              } else if (currentEvent === 'data') {
+                try {
+                  const data = JSON.parse(dataStr);
+                  if (data && data.length > 0) {
+                    setTableData(data);
+                  }
+                } catch {
+                  console.error('解析数据失败');
+                }
+              } else if (currentEvent === 'error') {
+                try {
+                  const errorData = JSON.parse(dataStr);
+                  setTableData(errorData);
+                } catch {
+                  console.error('解析错误信息失败');
+                }
+              }
+            }
+          }
+        }
+      } catch (error: any) {
+        if (error.name === 'AbortError') return;
         console.error('数据获取失败:', error);
+        if (isMounted) {
+          setTableData([{
+            hpo: 'HP:0000001',
+            name: 'Error',
+            chineseName: '搜索错误',
+            definition: 'ERROR',
+            definitionCn: error.message || '查询失败',
+            confidence: '-',
+            remark: '请检查网络或API配置'
+          }]);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+          setStatusMessage('');
+        }
       }
     };
 
-    fetchData();
-  }, [searchParams, apiUrl, apiKey, model]);
+    fetchStreamingData();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [query, apiUrl, apiKey, model]);
+
+  // 计时器
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const timer = setInterval(() => {
+      setElapsedTime(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isLoading]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -198,9 +317,38 @@ export default function Home({
         </div>
 
         <SearchBox
-          initialQuery={searchParams?.q?.toString() || ''}
+          initialQuery={query}
+          onSearch={handleSearch}
+          isLoading={isLoading}
         />
       </div>
+
+      {/* Loading 状态 */}
+      {isLoading && (
+        <div className="max-w-2xl mx-auto mb-4">
+          <div className="flex items-center justify-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="h-5 w-5 animate-spin">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-full w-full text-blue-500"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 3v3m6.366-.366-2.12 2.12M21 12h-3m.366 6.366-2.12-2.12M12 21v-3m-6.366.366 2.12-2.12M3 12h3m-.366-6.366 2.12 2.12"
+                />
+              </svg>
+            </div>
+            <span className="text-sm text-blue-700 dark:text-blue-300">
+              {statusMessage || '处理中...'} 已用时 {formatTime(elapsedTime)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Results */}
       <div className="max-w-full mx-auto h-[calc(100vh-300px)] overflow-y-auto">
