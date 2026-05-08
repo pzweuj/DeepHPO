@@ -179,6 +179,27 @@ export default function Table({ data, isLoading }: TableProps) {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={() => {
+                const header = 'HPO\tName\t名称\tDescription\t描述\t置信度\t备注';
+                const rows = safeData.map(row =>
+                  [row.hpo, row.name, row.chineseName, row.definition, row.definitionCn, row.confidence, row.remark || '-'].join('\t')
+                );
+                const content = header + '\n' + rows.join('\n');
+                const blob = new Blob(['\uFEFF' + content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const now = new Date();
+                const pad = (n: number) => n.toString().padStart(2, '0');
+                a.download = `DeepHPO_${now.toISOString().slice(0,10)}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            >
+              导出
+            </button>
+            <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
