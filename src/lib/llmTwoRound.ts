@@ -349,7 +349,7 @@ ${candidateTable}
                 role: 'user',
                 content: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`
               }],
-              stream: true,
+              stream: false,
               max_tokens: 512,
               temperature: 0.1,
               thinking: { type: 'disabled' }
@@ -362,44 +362,12 @@ ${candidateTable}
             throw new Error(`API请求失败 (${res.status})`);
           }
 
-          const reader = res.body!.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-          let fullContent = '';
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = (buffer + chunk).split('\n');
-            buffer = lines.pop() || '';
-
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed || !trimmed.startsWith('data: ')) continue;
-
-              const dataStr = trimmed.slice(6);
-              if (dataStr === '[DONE]') continue;
-
-              try {
-                const parsed = JSON.parse(dataStr);
-                // Anthropic: content_block_delta event
-                if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                  fullContent += parsed.delta.text;
-                  controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify({ content: parsed.delta.text })}\n\n`));
-                }
-                // Anthropic: message_stop event
-                else if (parsed.type === 'message_stop') {
-                  // fullContent already accumulated, continue to parse
-                }
-              } catch {}
-            }
-          }
-
-          const tableData = parseResponseToTableData(fullContent, hpoMap);
-          console.log(`[匹配-流] 完成, 累积内容长度=${fullContent.length}, 解析出${tableData.length}条结果`);
-          console.log(`[匹配-流] 原始输出: ${fullContent.substring(0, 500)}`);
+          const data = await res.json();
+          console.log(`[匹配-流] 响应: model=${data.model}, stop_reason=${data.stop_reason}`);
+          const outputText = extractOutputText(data);
+          console.log(`[匹配-流] 输出: ${outputText?.substring(0, 500)}`);
+          const tableData = parseResponseToTableData(outputText || '', hpoMap);
+          console.log(`[匹配-流] 完成, 解析出${tableData.length}条结果`);
           controller.enqueue(encoder.encode(`event: data\ndata: ${JSON.stringify(tableData)}\n\n`));
 
         } catch (error) {
