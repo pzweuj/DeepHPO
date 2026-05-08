@@ -3,12 +3,12 @@
 ## 项目简介
 DeepHPO是一个基于大语言模型的临床表型 HPO术语提取的Web应用，旨在为用户提供便捷的HPO术语查询服务。
 
-[在线使用](https://deephpo.biotools.space/)！ 默认使用DeepSeek-V4-Flash模型。
+[在线使用](https://deephpo.biotools.space/)！ 默认使用GLM-5模型。在线版本部署于Hugging Face，所有输入均在Log中公开，**无隐私保护**，建议私有部署。
 
 
-**支持 Anthropic Messages API 格式的端点，默认使用 DeepSeek 的 Anthropic 兼容 API。可通过主页设置按钮配置自己的 API 服务。**
+**支持 Anthropic Messages API 格式的端点。可通过主页设置按钮配置自己的 API 服务。**
 
-**HPO术语使用DeepSeek-V4-Flash翻译，请仔细甄别**
+**HPO术语使用DeepSeek-V3翻译，请仔细甄别**
 
 ## 工作原理
 
