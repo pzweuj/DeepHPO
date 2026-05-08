@@ -1,0 +1,413 @@
+/**
+ * HPO术语匹配 - 两轮查询优化版
+ * 1. LLM预处理提取症状关键词
+ * 2. 本地搜索候选术语
+ * 3. LLM在候选中精确匹配
+ */
+
+import fs from 'fs';
+import path from 'path';
+import HPOSearchEngine from './hpoSearchEngine';
+import { preprocessWithLLM, preprocessResultToQuery } from './llmPreprocessor';
+
+interface TableData {
+  hpo: string;
+  name: string;
+  chineseName: string;
+  definition: string;
+  definitionCn: string;
+  confidence: string;
+  remark: string;
+}
+
+interface TwoRoundQueryProps {
+  question: string;
+  apiUrl?: string;
+  apiKey?: string;
+  model?: string;
+}
+
+// 加载完整 HPO 数据用于结果验证
+let cachedHpoMap: Map<string, any> | null = null;
+
+function loadHpoMap(): Map<string, any> {
+  if (cachedHpoMap) return cachedHpoMap;
+
+  const jsonPath = path.join(process.cwd(), 'public', 'hpo_terms_cn.json');
+  const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+  cachedHpoMap = new Map(Object.entries(data));
+  return cachedHpoMap;
+}
+
+function getApiConfig(custom?: { apiUrl?: string; apiKey?: string; model?: string }) {
+  const token = (custom?.apiKey?.trim() || undefined) ||
+                process.env.NEXT_PUBLIC_OPENAI_API_KEY ||
+                process.env.OPENAI_API_KEY;
+  const apiUrl = (custom?.apiUrl?.trim() || undefined) ||
+                 process.env.NEXT_PUBLIC_OPENAI_API_URL ||
+                 process.env.OPENAI_API_URL ||
+                 'https://api.siliconflow.cn/v1/chat/completions';
+  const model = (custom?.model?.trim() || undefined) ||
+                process.env.NEXT_PUBLIC_OPENAI_MODEL ||
+                process.env.OPENAI_MODEL ||
+                'deepseek-ai/DeepSeek-V4-Flash';
+
+  if (!token) {
+    throw new Error('API Key未配置');
+  }
+
+  return { token, apiUrl, model };
+}
+
+const parseResponseToTableData = (response: string, hpoMap: Map<string, any>): TableData[] => {
+  if (!response || typeof response !== 'string') {
+    throw new Error('Invalid or empty response');
+  }
+
+  let items: Array<{ hpo_id: string; confidence: string; remark: string }> = [];
+
+  try {
+    items = JSON.parse(response);
+  } catch {
+    const jsonMatch = response.match(/\[[\s\S]*?\]/);
+    if (jsonMatch) {
+      try {
+        items = JSON.parse(jsonMatch[0]);
+      } catch {
+        throw new Error('无法解析响应中的JSON');
+      }
+    }
+  }
+
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new Error('响应中没有有效的HPO术语');
+  }
+
+  const tableData: TableData[] = [];
+
+  for (const item of items) {
+    const hpoId = item.hpo_id;
+    const hpoTerm = hpoMap.get(hpoId);
+
+    if (hpoTerm) {
+      tableData.push({
+        hpo: hpoId,
+        name: hpoTerm.name,
+        chineseName: hpoTerm.name_cn,
+        definition: hpoTerm.definition,
+        definitionCn: hpoTerm.definition_cn,
+        confidence: item.confidence || '-',
+        remark: item.remark || ''
+      });
+    }
+  }
+
+  if (tableData.length === 0) {
+    throw new Error('响应中的HPO ID在术语表中不存在');
+  }
+
+  return tableData;
+};
+
+/**
+ * 两轮查询：预处理 → 搜索候选 → LLM精确匹配
+ */
+export async function queryTwoRound({
+  question,
+  apiUrl: customApiUrl,
+  apiKey: customApiKey,
+  model: customModel
+}: TwoRoundQueryProps): Promise<TableData[]> {
+  try {
+    const { token, apiUrl, model } = getApiConfig({
+      apiUrl: customApiUrl,
+      apiKey: customApiKey,
+      model: customModel
+    });
+
+    const hpoMap = loadHpoMap();
+    const searchEngine = HPOSearchEngine.getInstance();
+
+    // 第一轮：LLM预处理提取症状
+    console.log('第一轮：LLM预处理...');
+    const preprocessResult = await preprocessWithLLM(question, {
+      apiUrl: customApiUrl,
+      apiKey: customApiKey,
+      model: customModel
+    });
+
+    const symptoms = preprocessResultToQuery(preprocessResult);
+    console.log(`提取症状: ${symptoms}`);
+
+    if (!symptoms || symptoms.trim() === '') {
+      return [{
+        hpo: 'HP:0000001',
+        name: 'No Symptoms',
+        chineseName: '未提取到症状',
+        definition: 'NOTFOUND',
+        definitionCn: '未能从输入中提取到有效症状',
+        confidence: '-',
+        remark: '预处理结果为空'
+      }];
+    }
+
+    // 第二轮：本地搜索候选术语
+    console.log('第二轮：本地搜索候选术语...');
+    const candidateTerms = await searchEngine.findRelevantTerms(symptoms, 50);
+    console.log(`搜索到 ${candidateTerms.length} 个候选术语`);
+
+    if (candidateTerms.length === 0) {
+      return [{
+        hpo: 'HP:0000001',
+        name: 'No Candidates',
+        chineseName: '未找到候选术语',
+        definition: 'NOTFOUND',
+        definitionCn: '本地搜索未找到相关HPO术语',
+        confidence: '-',
+        remark: `症状: ${symptoms}`
+      }];
+    }
+
+    // 构建候选术语表（用于第三轮LLM上下文）
+    const candidateTable = candidateTerms.map(term =>
+      `${term.id}|${term.name}|${term.name_cn}|${term.definition_cn || term.definition}`
+    ).join('\n');
+
+    // 第三轮：LLM在候选中精确匹配
+    console.log('第三轮：LLM精确匹配...');
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model,
+        messages: [{
+          role: 'system',
+          content: `# Role
+你是一位HPO术语匹配专家。请从以下候选术语中选出最匹配输入症状的HPO术语。
+
+# Rules
+1. 只从候选术语表中选取，不得使用其他术语
+2. 选择最精确匹配的术语，优先选择具体术语而非宽泛术语
+3. 最多返回10个术语
+4. 如果候选术语中没有合适的，返回空数组 []
+
+# Output Format
+返回JSON数组：
+[{"hpo_id":"HP:XXXXXXX","confidence":"高/中/低","remark":"对应的症状"}]
+
+# 原始输入
+${question}
+
+# 提取的症状
+${symptoms}
+
+# 候选HPO术语表（HP:ID|英文名|中文名|中文定义）
+---
+${candidateTable}
+---`
+        }],
+        stream: false,
+        max_tokens: 512,
+        temperature: 0.1,
+        top_p: 0.3
+      })
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`API请求失败 (${res.status}): ${errorText.substring(0, 200)}`);
+    }
+
+    const responseText = await res.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      throw new Error(`无效的JSON响应: ${responseText.substring(0, 100)}`);
+    }
+
+    if (!data.choices || data.choices.length === 0) {
+      throw new Error('API响应中没有choices字段');
+    }
+
+    return parseResponseToTableData(data.choices[0].message.content, hpoMap);
+
+  } catch (error) {
+    console.error('两轮查询错误:', error);
+    return [{
+      hpo: 'HP:0000001',
+      name: 'Error',
+      chineseName: '匹配错误',
+      definition: 'ERROR',
+      definitionCn: error instanceof Error ? error.message : '未知错误',
+      confidence: '-',
+      remark: '请检查输入或API配置'
+    }];
+  }
+}
+
+/**
+ * 两轮查询 - Streaming版本
+ */
+export function queryTwoRoundStream({
+  question,
+  apiUrl: customApiUrl,
+  apiKey: customApiKey,
+  model: customModel
+}: TwoRoundQueryProps): ReadableStream {
+  const encoder = new TextEncoder();
+  let keepaliveInterval: ReturnType<typeof setInterval>;
+
+  return new ReadableStream({
+    start(controller) {
+      keepaliveInterval = setInterval(() => {
+        try {
+          controller.enqueue(encoder.encode('event: keepalive\ndata: {}\n\n'));
+        } catch {
+          clearInterval(keepaliveInterval);
+        }
+      }, 5000);
+
+      (async () => {
+        try {
+          const { token, apiUrl, model } = getApiConfig({
+            apiUrl: customApiUrl,
+            apiKey: customApiKey,
+            model: customModel
+          });
+
+          const hpoMap = loadHpoMap();
+          const searchEngine = HPOSearchEngine.getInstance();
+
+          // 第一轮：LLM预处理
+          controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"预处理","message":"正在提取症状关键词..."}\n\n'));
+
+          const preprocessResult = await preprocessWithLLM(question, {
+            apiUrl: customApiUrl,
+            apiKey: customApiKey,
+            model: customModel
+          });
+
+          const symptoms = preprocessResultToQuery(preprocessResult);
+          controller.enqueue(encoder.encode(`event: preprocess\ndata: ${JSON.stringify({ symptoms })}\n\n`));
+
+          if (!symptoms || symptoms.trim() === '') {
+            controller.enqueue(encoder.encode('event: data\ndata: [{"hpo":"HP:0000001","name":"No Symptoms","chineseName":"未提取到症状","definition":"NOTFOUND","definitionCn":"未能提取有效症状","confidence":"-","remark":"预处理为空"}]\n\n'));
+            return;
+          }
+
+          // 第二轮：本地搜索
+          controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"搜索","message":"正在搜索候选术语..."}\n\n'));
+
+          const candidateTerms = await searchEngine.findRelevantTerms(symptoms, 50);
+          controller.enqueue(encoder.encode(`event: candidates\ndata: ${JSON.stringify({ count: candidateTerms.length })}\n\n`));
+
+          if (candidateTerms.length === 0) {
+            controller.enqueue(encoder.encode('event: data\ndata: [{"hpo":"HP:0000001","name":"No Candidates","chineseName":"未找到候选","definition":"NOTFOUND","definitionCn":"未找到相关术语","confidence":"-","remark":"搜索无结果"}]\n\n'));
+            return;
+          }
+
+          const candidateTable = candidateTerms.map(term =>
+            `${term.id}|${term.name}|${term.name_cn}|${term.definition_cn || term.definition}`
+          ).join('\n');
+
+          // 第三轮：LLM精确匹配
+          controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"匹配","message":"正在精确匹配HPO术语..."}\n\n'));
+
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model,
+              messages: [{
+                role: 'system',
+                content: `# Role
+你是一位HPO术语匹配专家。请从以下候选术语中选出最匹配输入症状的HPO术语。
+
+# Rules
+1. 只从候选术语表中选取，不得使用其他术语
+2. 选择最精确匹配的术语，优先选择具体术语而非宽泛术语
+3. 最多返回10个术语
+4. 如果候选术语中没有合适的，返回空数组 []
+
+# Output Format
+返回JSON数组：
+[{"hpo_id":"HP:XXXXXXX","confidence":"高/中/低","remark":"对应的症状"}]
+
+# 原始输入
+${question}
+
+# 提取的症状
+${symptoms}
+
+# 候选HPO术语表（HP:ID|英文名|中文名|中文定义）
+---
+${candidateTable}
+---`
+              }],
+              stream: true,
+              max_tokens: 512,
+              temperature: 0.1,
+              top_p: 0.3
+            })
+          });
+
+          if (!res.ok) {
+            await res.text(); // consume response body
+            throw new Error(`API请求失败 (${res.status})`);
+          }
+
+          const reader = res.body!.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          let fullContent = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = (buffer + chunk).split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || !trimmed.startsWith('data: ')) continue;
+
+              const data = trimmed.slice(6);
+              if (data === '[DONE]') continue;
+
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  fullContent += content;
+                  controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify({ content })}\n\n`));
+                }
+              } catch {}
+            }
+          }
+
+          const tableData = parseResponseToTableData(fullContent, hpoMap);
+          controller.enqueue(encoder.encode(`event: data\ndata: ${JSON.stringify(tableData)}\n\n`));
+
+        } catch (error) {
+          console.error('两轮查询Stream错误:', error);
+          const errorMessage = error instanceof Error ? error.message : '未知错误';
+          controller.enqueue(encoder.encode(`event: error\ndata: ${JSON.stringify([{ hpo: 'HP:0000001', name: 'Error', chineseName: '匹配错误', definition: 'ERROR', definitionCn: errorMessage, confidence: '-', remark: '请检查配置' }])}\n\n`));
+        } finally {
+          clearInterval(keepaliveInterval);
+          controller.close();
+        }
+      })();
+    }
+  });
+}
+
+export default { queryTwoRound, queryTwoRoundStream };

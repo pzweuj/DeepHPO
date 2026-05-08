@@ -33,7 +33,7 @@ const nextConfig = {
   
   // 优化图片
   images: {
-    unoptimized: true,
+    formats: ['image/avif', 'image/webp'],
   },
   
   // 压缩
