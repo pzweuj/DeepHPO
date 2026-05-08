@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 interface SearchBoxProps {
   initialQuery: string;
@@ -15,6 +16,11 @@ interface SearchBoxProps {
 export default function SearchBox({ initialQuery, onSearch, isLoading, searchType, onTypeChange, elapsedTime = 0, wordMap }: SearchBoxProps) {
   const [localQuery, setLocalQuery] = React.useState(initialQuery);
   const highlightRef = React.useRef<HTMLDivElement>(null);
+  const [hoverTooltip, setHoverTooltip] = React.useState<{
+    hpoIds: string[];
+    position: { top: number; left: number };
+    placement: 'top' | 'bottom';
+  } | null>(null);
 
   React.useEffect(() => {
     setLocalQuery(initialQuery);
@@ -26,6 +32,30 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
       highlightRef.current.scrollLeft = (e.target as HTMLTextAreaElement).scrollLeft;
     }
   };
+
+  const handleWordMouseEnter = React.useCallback(
+    (e: React.MouseEvent<HTMLSpanElement>, hpoIds: string[]) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const viewportMidY = window.innerHeight / 2;
+      const tooltipHalfWidth = 140; // max-w-[280px] / 2
+      const centerX = rect.left + rect.width / 2;
+      const clampedLeft = Math.max(tooltipHalfWidth, Math.min(centerX, window.innerWidth - tooltipHalfWidth));
+
+      setHoverTooltip({
+        hpoIds,
+        position: {
+          top: rect.top > viewportMidY ? rect.top - 6 : rect.bottom + 4,
+          left: clampedLeft,
+        },
+        placement: rect.top > viewportMidY ? 'top' : 'bottom',
+      });
+    },
+    [],
+  );
+
+  const handleWordMouseLeave = React.useCallback(() => {
+    setHoverTooltip(null);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,39 +93,21 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
       }
     }
 
-    // 计算每个高亮词在容器中的大致位置（用于判断弹出框方向）
-    const getPositionClass = (index: number, total: number) => {
-      // 简单策略：前1/3的词左对齐，后1/3的词弹出框在上方
-      const isLeftSide = index < Math.ceil(total / 3);
-      const isBottomArea = index >= Math.ceil(total * 2 / 3);
-
-      const horizontalClass = isLeftSide ? 'left-0' : 'right-0';
-      const verticalClass = isBottomArea ? 'bottom-full mb-1' : 'top-full mt-1';
-
-      return `${horizontalClass} ${verticalClass}`;
-    };
-
     const result: React.ReactNode[] = [];
     let cursor = 0;
     retained.forEach((seg, i) => {
       if (seg.start > cursor) {
         result.push(<span key={`t-${i}`}>{localQuery.slice(cursor, seg.start)}</span>);
       }
-      const positionClass = getPositionClass(i, retained.length);
       result.push(
-        <span key={`h-${i}`} className="relative group inline pointer-events-auto">
+        <span
+          key={`h-${i}`}
+          className="relative inline pointer-events-auto"
+          onMouseEnter={(e) => handleWordMouseEnter(e, seg.hpoIds)}
+          onMouseLeave={handleWordMouseLeave}
+        >
           <span className={seg.type === 'exact' ? 'text-blue-600 dark:text-blue-400 font-medium border-b border-dashed border-blue-400 dark:border-blue-500 cursor-help' : 'text-purple-600 dark:text-purple-400 font-medium border-b border-dashed border-purple-400 dark:border-purple-500 cursor-help'}>
             {localQuery.slice(seg.start, seg.end)}
-          </span>
-          <span className={`opacity-0 group-hover:opacity-100 absolute ${positionClass} z-30 transition-opacity pointer-events-none`}>
-            <span className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg px-2 py-1.5 text-xs whitespace-normal max-w-[280px]">
-              {seg.hpoIds.map((id, j) => (
-                <span key={id}>
-                  {j > 0 && ', '}
-                  <a href={`https://hpo.jax.org/browse/${id}`} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-300 hover:text-blue-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>{id}</a>
-                </span>
-              ))}
-            </span>
           </span>
         </span>
       );
@@ -144,7 +156,7 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
         }}
         onFocus={(e) => e.target.select()}
         placeholder="输入临床信息，提取HPO表型术语"
-        className="w-full h-full pl-6 pr-6 pt-4 pb-14 rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-transparent shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
+        className="w-full h-full pl-6 pr-6 pt-4 pb-14 rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-gray-800 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
         style={{ caretColor: 'auto', color: highlightedContent ? 'transparent' : undefined } as React.CSSProperties}
       />
 
@@ -164,6 +176,34 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
           <span>搜索</span>
         )}
       </button>
+
+      {/* Tooltip via portal to escape overflow-hidden */}
+      {hoverTooltip && createPortal(
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{
+            top: hoverTooltip.position.top,
+            left: hoverTooltip.position.left,
+            transform: hoverTooltip.placement === 'top' ? 'translate(-50%, -100%)' : 'translateX(-50%)',
+          }}
+        >
+          <span className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg px-2 py-1.5 text-xs whitespace-normal max-w-[280px]">
+            {hoverTooltip.hpoIds.map((id, j) => (
+              <span key={id}>
+                {j > 0 && ', '}
+                <a
+                  href={`https://hpo.jax.org/browse/${id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-500 pointer-events-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >{id}</a>
+              </span>
+            ))}
+          </span>
+        </div>,
+        document.body,
+      )}
     </form>
   );
 }
