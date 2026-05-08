@@ -1,5 +1,5 @@
 'use client';
-import { Suspense, useEffect, useState, useRef, useCallback } from 'react';
+import { Suspense, useEffect, useState, useRef, useCallback, useMemo } from 'react';
 
 import Table from './components/table';
 import SearchBox from './components/searchBox';
@@ -14,6 +14,56 @@ export default function Home() {
       <HomeContent />
     </Suspense>
   );
+}
+
+function buildWordHighlightMap(tableData: any[], preprocessSymptoms: string): Map<string, string[]> {
+  const map = new Map<string, string[]>();
+
+  for (const row of tableData) {
+    const hpo = row.hpo as string;
+    const remark: string = row.remark || '';
+
+    // 表型匹配模式: "匹配词: word1, word2, ..."
+    if (remark.startsWith('匹配词:')) {
+      const words = remark.replace('匹配词:', '').split(',').map(w => w.trim()).filter(Boolean);
+      for (const w of words) {
+        const existing = map.get(w) || [];
+        if (!existing.includes(hpo)) existing.push(hpo);
+        map.set(w, existing);
+      }
+    } else if (remark && remark !== '直接匹配' && remark !== '查询失败' && remark !== '等待查询' && remark !== '预处理结果为空' && remark !== '系统错误') {
+      // LLM模式: remark 是LLM输出的症状描述
+      const words = remark.split(/[\s,，、；]+/).filter(w => w.length > 1);
+      for (const w of words) {
+        if (!map.has(w)) {
+          map.set(w, [hpo]);
+        } else {
+          const existing = map.get(w)!;
+          if (!existing.includes(hpo)) existing.push(hpo);
+        }
+      }
+    }
+  }
+
+  // 也加入预处理提取的症状词（即使remark中没有直接匹配）
+  if (preprocessSymptoms) {
+    const symptomWords = preprocessSymptoms.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
+    for (const w of symptomWords) {
+      if (!map.has(w)) {
+        // 尝试在tableData中查找包含该词的remark
+        for (const row of tableData) {
+          const remark: string = row.remark || '';
+          if (remark.includes(w)) {
+            const existing = map.get(w) || [];
+            if (!existing.includes(row.hpo)) existing.push(row.hpo);
+            map.set(w, existing);
+          }
+        }
+      }
+    }
+  }
+
+  return map;
 }
 
 function HomeContent() {
@@ -32,6 +82,7 @@ function HomeContent() {
   }]);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingLog, setStreamingLog] = useState('');
+  const [preprocessSymptoms, setPreprocessSymptoms] = useState('');
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [apiUrl, setApiUrl] = useState('');
@@ -39,6 +90,12 @@ function HomeContent() {
   const [model, setModel] = useState('');
   const abortControllerRef = useRef<AbortController | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const isInitial = tableData.length === 1 && tableData[0].hpo === 'HP:0000001' && tableData[0].remark === '等待查询';
+  const wordHighlightMap = useMemo(() => {
+    if (isInitial || isLoading) return new Map<string, string[]>();
+    return buildWordHighlightMap(tableData, preprocessSymptoms);
+  }, [tableData, preprocessSymptoms, isInitial, isLoading]);
 
   useEffect(() => {
     const savedApiUrl = localStorage.getItem('apiUrl');
@@ -54,7 +111,7 @@ function HomeContent() {
   const handleSearch = useCallback((searchQuery: string) => {
     setQuery(searchQuery);
     setSearchTrigger(prev => prev + 1);
-  }, [searchType]);
+  }, []);
 
   const handleTypeChange = useCallback((newType: string) => {
     setSearchType(newType);
@@ -82,6 +139,7 @@ function HomeContent() {
         setIsLoading(true);
         setElapsedTime(0);
         setStreamingLog('');
+        setPreprocessSymptoms('');
 
         const res = await fetch(`/api/query?type=${searchType}&q=${encodeURIComponent(query)}`, {
           headers: {
@@ -141,9 +199,9 @@ function HomeContent() {
                   JSON.parse(dataStr);
                 } catch {}
               } else if (currentEvent === 'preprocess') {
-                // 预处理完成
                 try {
-                  JSON.parse(dataStr);
+                  const d = JSON.parse(dataStr);
+                  if (d.symptoms) setPreprocessSymptoms(d.symptoms);
                 } catch {}
               } else if (currentEvent === 'candidates') {
                 // 搜索完成
@@ -346,9 +404,11 @@ function HomeContent() {
               searchType={searchType}
               onTypeChange={handleTypeChange}
               elapsedTime={elapsedTime}
+              wordMap={wordHighlightMap}
             />
           </div>
-          {streamingLog && (
+          {/* 流式日志 */}
+          {isLoading && streamingLog && (
             <div className="h-40 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 p-3 text-xs font-mono text-gray-700 dark:text-gray-300">
               {streamingLog}
             </div>
