@@ -111,7 +111,7 @@ const parseResponseToTableData = (response: string, hpoMap: Map<string, any>): T
 
 // 提取 Anthropic Messages API 输出文本
 function extractOutputText(data: any): string | null {
-  return data.content?.[0]?.text || null;
+  return data.content?.find((c: any) => c.type === 'text')?.text || null;
 }
 
 /**
@@ -180,7 +180,9 @@ export async function queryTwoRound({
 
     // 第三轮：LLM在候选中精确匹配 (Anthropic Messages API)
     console.log('第三轮：LLM精确匹配...');
-    const res = await fetch(`${apiUrl}/v1/messages`, {
+    const matchEndpoint = `${apiUrl}/v1/messages`;
+    console.log(`[匹配] 请求: POST ${matchEndpoint} | model=${model} | 候选术语数=${candidateTerms.length}`);
+    const res = await fetch(matchEndpoint, {
       method: 'POST',
       headers: {
         'x-api-key': token,
@@ -211,17 +213,21 @@ ${candidateTable}
           content: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`
         }],
         max_tokens: 512,
-        temperature: 0.1
+        temperature: 0.1,
+        thinking: { type: 'disabled' }
       })
     });
 
     if (!res.ok) {
       const errorText = await res.text();
+      console.error(`[匹配] 失败 ${res.status}: ${errorText.substring(0, 500)}`);
       throw new Error(`API请求失败 (${res.status}): ${errorText.substring(0, 200)}`);
     }
 
     const data = await res.json();
+    console.log(`[匹配] 响应: status=${res.status}, model=${data.model}, stop_reason=${data.stop_reason}`);
     const outputText = extractOutputText(data);
+    console.log(`[匹配] 输出: ${outputText?.substring(0, 300)}`);
 
     if (!outputText) {
       throw new Error('API响应中没有有效输出');
@@ -311,7 +317,9 @@ export function queryTwoRoundStream({
           // 第三轮：LLM精确匹配 (Anthropic Messages API streaming)
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"匹配","message":"正在精确匹配HPO术语..."}\n\n'));
 
-          const res = await fetch(`${apiUrl}/v1/messages`, {
+          const matchEndpoint = `${apiUrl}/v1/messages`;
+          console.log(`[匹配-流] 请求: POST ${matchEndpoint} | model=${model} | 候选术语数=${candidateTerms.length}`);
+          const res = await fetch(matchEndpoint, {
             method: 'POST',
             headers: {
               'x-api-key': token,
@@ -343,12 +351,14 @@ ${candidateTable}
               }],
               stream: true,
               max_tokens: 512,
-              temperature: 0.1
+              temperature: 0.1,
+              thinking: { type: 'disabled' }
             })
           });
 
           if (!res.ok) {
-            await res.text();
+            const errorText = await res.text();
+            console.error(`[匹配-流] 失败 ${res.status}: ${errorText.substring(0, 500)}`);
             throw new Error(`API请求失败 (${res.status})`);
           }
 
@@ -388,6 +398,8 @@ ${candidateTable}
           }
 
           const tableData = parseResponseToTableData(fullContent, hpoMap);
+          console.log(`[匹配-流] 完成, 累积内容长度=${fullContent.length}, 解析出${tableData.length}条结果`);
+          console.log(`[匹配-流] 原始输出: ${fullContent.substring(0, 500)}`);
           controller.enqueue(encoder.encode(`event: data\ndata: ${JSON.stringify(tableData)}\n\n`));
 
         } catch (error) {

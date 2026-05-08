@@ -44,7 +44,9 @@ export async function preprocessWithLLM(
       throw new Error('API Key未配置');
     }
 
-    const response = await fetch(`${apiUrl}/v1/messages`, {
+    const endpoint = `${apiUrl}/v1/messages`;
+    console.log(`[预处理] 请求: POST ${endpoint} | model=${model}`);
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'x-api-key': token,
@@ -108,25 +110,35 @@ export async function preprocessWithLLM(
           content: input
         }],
         max_tokens: 1024,
-        temperature: 0.1
+        temperature: 0.1,
+        thinking: { type: 'disabled' }
       })
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`[预处理] 失败 ${response.status}: ${errorBody.substring(0, 500)}`);
       throw new Error(`LLM预处理失败: ${response.status}`);
     }
 
     const data = await response.json();
-    const rawOutput = data.content?.[0]?.text;
+    console.log(`[预处理] 响应: status=${response.status}`);
+    console.log(`[预处理] 完整响应 keys: ${JSON.stringify(Object.keys(data))}`);
+    console.log(`[预处理] data.content: ${JSON.stringify(data.content)}`);
+    console.log(`[预处理] 完整响应体: ${JSON.stringify(data).substring(0, 1000)}`);
+    const rawOutput = data.content?.find((c: any) => c.type === 'text')?.text;
+    console.log(`[预处理] 输出: ${rawOutput?.substring(0, 300)}`);
 
     if (!rawOutput) {
       throw new Error('API响应中没有有效输出');
     }
 
-    // 解析JSON输出
+    // 解析JSON输出（去除 markdown 代码块）
+    let cleanOutput = rawOutput.trim();
+    cleanOutput = cleanOutput.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
     let parsed;
     try {
-      parsed = JSON.parse(rawOutput);
+      parsed = JSON.parse(cleanOutput);
     } catch (e) {
       throw new Error(`JSON解析失败: ${e instanceof Error ? e.message : '未知错误'}`);
     }

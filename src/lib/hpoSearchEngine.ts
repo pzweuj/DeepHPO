@@ -153,7 +153,7 @@ class HPOSearchEngine {
     }
 
     // 2. 前缀匹配
-    const queryWords = normalizedQuery.split(/\s+/);
+    const queryWords = normalizedQuery.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
     queryWords.forEach(word => {
       if (word.length >= 2) {
         // 英文前缀匹配
