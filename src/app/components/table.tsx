@@ -122,7 +122,7 @@ export default function Table({ data, isLoading }: TableProps) {
         </div>
       )}
       
-      <div className="flex-1 overflow-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
+      <div className="flex-1 overflow-auto">
         <div className="min-w-full">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">

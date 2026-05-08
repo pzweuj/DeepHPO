@@ -41,6 +41,7 @@ function HomeContent() {
   const [showFooter, setShowFooter] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const savedApiUrl = localStorage.getItem('apiUrl');
@@ -72,10 +73,25 @@ function HomeContent() {
       }, 2000);
     };
 
+    const handleTableScroll = () => {
+      setShowFooter(false);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setShowFooter(true);
+      }, 2000);
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    const tableEl = tableContainerRef.current;
+    if (tableEl) {
+      tableEl.addEventListener('scroll', handleTableScroll, { passive: true });
+    }
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (tableEl) {
+        tableEl.removeEventListener('scroll', handleTableScroll);
+      }
       clearTimeout(timeoutId);
     };
   }, [lastScrollY]);
@@ -351,7 +367,7 @@ function HomeContent() {
       )}
 
       {/* Results */}
-      <div className="max-w-full mx-auto h-[calc(100vh-300px)] overflow-y-auto">
+      <div ref={tableContainerRef} className="max-w-full mx-auto h-[calc(100vh-380px)] overflow-y-auto">
         <Table data={tableData} isLoading={isLoading} />
       </div>
 
