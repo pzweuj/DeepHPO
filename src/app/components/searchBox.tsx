@@ -51,7 +51,7 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
         }}
         onFocus={(e) => e.target.select()}
         placeholder="输入临床信息，提取HPO表型术语"
-        className="w-full h-full pl-16 pr-16 pt-14 pb-14 rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
+        className="w-full h-full pl-6 pr-6 pt-4 pb-14 rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
       />
 
       {/* 搜索按钮 - 右下角 */}
