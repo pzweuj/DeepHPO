@@ -57,10 +57,12 @@ export default function Table({ data, isLoading }: TableProps) {
     columnHelper.accessor('definition', {
       header: 'Description',
       cell: info => info.getValue(),
+      enableHiding: true,
     }),
     columnHelper.accessor('definitionCn', {
       header: '描述',
       cell: info => info.getValue(),
+      enableHiding: true,
     }),
     columnHelper.accessor('confidence', {
       header: '置信度',
@@ -86,6 +88,8 @@ export default function Table({ data, isLoading }: TableProps) {
     },
     state: {
       columnVisibility: {
+        definition: false,
+        definitionCn: false,
         confidence: false,
         remark: false,
       },
@@ -153,12 +157,12 @@ export default function Table({ data, isLoading }: TableProps) {
                 {table.getRowModel().rows.map(row => (
                   <tr
                     key={row.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors relative"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors relative group"
                   >
                     {row.getVisibleCells().map(cell => (
                       <td
                         key={cell.id}
-                        className="px-4 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300 relative group"
+                        className="px-4 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300"
                         style={{ width: cell.column.getSize() }}
                       >
                         <div className="relative z-0">
@@ -166,6 +170,19 @@ export default function Table({ data, isLoading }: TableProps) {
                         </div>
                       </td>
                     ))}
+                    {/* Hover 弹窗：显示 Description & 描述 */}
+                    <td className="hidden group-hover:block absolute left-0 right-0 top-full mt-1 z-20">
+                      <div className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 mx-4 text-sm">
+                        <div className="mb-1">
+                          <span className="font-medium text-gray-500 dark:text-gray-400">Description: </span>
+                          <span className="text-gray-700 dark:text-gray-300">{row.original.definition || '-'}</span>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-500 dark:text-gray-400">描述: </span>
+                          <span className="text-gray-700 dark:text-gray-300">{row.original.definitionCn || '-'}</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
