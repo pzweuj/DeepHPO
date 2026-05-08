@@ -255,7 +255,7 @@ function HomeContent() {
       {showSettings && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">设置</h2>
+            <h2 className="text-xl font-bold mb-4">设置 (Anthropic API)</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">API URL</label>
@@ -263,8 +263,10 @@ function HomeContent() {
                   type="text"
                   value={apiUrl}
                   onChange={(e) => setApiUrl(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="https://api.deepseek.com/anthropic"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm"
                 />
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Anthropic Messages API 基础地址</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">API Key</label>
@@ -272,7 +274,8 @@ function HomeContent() {
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="sk-xxxxxxxxxxxxxxxx"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm"
                 />
               </div>
               <div>
@@ -281,7 +284,8 @@ function HomeContent() {
                   type="text"
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="deepseek-v4-pro"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-sm"
                 />
               </div>
             </div>

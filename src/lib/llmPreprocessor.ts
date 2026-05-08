@@ -1,5 +1,5 @@
 /**
- * LLM预处理器 (Responses API)
+ * LLM预处理器 (Anthropic Messages API)
  * 使用LLM进行智能文本预处理，提取患者实际症状
  */
 
@@ -11,11 +11,6 @@ export interface LLMPreprocessResult {
   familyHistory: string[];         // 家族史
   rawExtraction: string;           // LLM原始输出
   processingTime: number;          // 处理耗时
-}
-
-function extractOutputText(data: any): string | null {
-  return data.output?.find((item: any) => item.type === 'message')
-    ?.content?.find((c: any) => c.type === 'output_text')?.text || null;
 }
 
 /**
@@ -34,30 +29,31 @@ export async function preprocessWithLLM(
   try {
     // 获取API配置
     const token = (apiConfig.apiKey?.trim() || undefined) ||
-                  process.env.NEXT_PUBLIC_OPENAI_API_KEY ||
-                  process.env.OPENAI_API_KEY;
+                  process.env.NEXT_PUBLIC_API_KEY ||
+                  process.env.API_KEY;
     const apiUrl = (apiConfig.apiUrl?.trim() || undefined) ||
-                   process.env.NEXT_PUBLIC_OPENAI_API_URL ||
-                   process.env.OPENAI_API_URL ||
-                   'https://dashscope.aliyuncs.com/compatible-mode/v1';
+                   process.env.NEXT_PUBLIC_API_URL ||
+                   process.env.API_URL ||
+                   'https://api.deepseek.com/anthropic';
     const model = (apiConfig.model?.trim() || undefined) ||
-                  process.env.NEXT_PUBLIC_OPENAI_MODEL ||
-                  process.env.OPENAI_MODEL ||
-                  'qwen3.6-plus';
+                  process.env.NEXT_PUBLIC_MODEL ||
+                  process.env.MODEL ||
+                  'deepseek-v4-pro';
 
     if (!token) {
       throw new Error('API Key未配置');
     }
 
-    const response = await fetch(`${apiUrl}/responses`, {
+    const response = await fetch(`${apiUrl}/v1/messages`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'x-api-key': token,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model,
-        instructions: `你是一位临床文本分析专家。请从病历中提取患者当前存在的症状和体征。
+        system: `你是一位临床文本分析专家。请从病历中提取患者当前存在的症状和体征。
 
 **严格规则**：
 1. **提取患者本人当前存在的症状**，包括：
@@ -107,9 +103,12 @@ export async function preprocessWithLLM(
   "negatedSymptoms": [],
   "familyHistory": []
 }`,
-        input,
-        temperature: 0.1,
-        max_tokens: 1024
+        messages: [{
+          role: 'user',
+          content: input
+        }],
+        max_tokens: 1024,
+        temperature: 0.1
       })
     });
 
@@ -118,7 +117,7 @@ export async function preprocessWithLLM(
     }
 
     const data = await response.json();
-    const rawOutput = extractOutputText(data);
+    const rawOutput = data.content?.[0]?.text;
 
     if (!rawOutput) {
       throw new Error('API响应中没有有效输出');

@@ -57,9 +57,9 @@ console.log('\n🔑 环境变量检查:');
 
 // 检查必需的变量
 const requiredVars = {
-  'OPENAI_API_KEY': 'API密钥',
-  'OPENAI_API_URL': 'API端点',
-  'OPENAI_MODEL': '模型名称'
+  'API_KEY': 'API密钥',
+  'API_URL': 'API端点',
+  'MODEL': '模型名称'
 };
 
 let hasErrors = false;
@@ -75,7 +75,7 @@ Object.entries(requiredVars).forEach(([key, description]) => {
   if (exists && !isEmpty) {
     status = '✅';
     // 隐藏API Key的大部分内容
-    if (key === 'OPENAI_API_KEY') {
+    if (key === 'API_KEY') {
       const masked = value.substring(0, 7) + '...' + value.substring(value.length - 4);
       message = masked;
     } else {
@@ -89,14 +89,14 @@ Object.entries(requiredVars).forEach(([key, description]) => {
 });
 
 // 验证API URL格式
-if (envVars.OPENAI_API_URL) {
-  const url = envVars.OPENAI_API_URL;
+if (envVars.API_URL) {
+  const url = envVars.API_URL;
   const isValid = url.startsWith('http://') || url.startsWith('https://');
   console.log(`\n🌐 API URL验证:`);
   console.log(`  ${isValid ? '✅' : '❌'} URL格式: ${isValid ? '正确' : '错误（必须以http://或https://开头）'}`);
   
-  if (!url.includes('/chat/completions')) {
-    console.log(`  ⚠️  警告: URL可能不正确，通常应包含 /chat/completions`);
+  if (!url.includes('/anthropic')) {
+    console.log(`  ⚠️  警告: URL可能不正确，应为Anthropic API基础地址`);
   }
 }
 
@@ -106,9 +106,9 @@ console.log('\n💡 建议:');
 if (hasErrors) {
   console.log('  ❌ 配置不完整，请完善 .env 文件');
   console.log('\n  示例配置:');
-  console.log('  OPENAI_API_KEY=sk-your-api-key-here');
-  console.log('  OPENAI_API_URL=https://api.siliconflow.cn/v1/chat/completions');
-  console.log('  OPENAI_MODEL=deepseek-ai/DeepSeek-V3');
+  console.log('  API_KEY=sk-your-api-key-here');
+  console.log('  API_URL=https://api.deepseek.com/anthropic');
+  console.log('  MODEL=deepseek-v4-pro');
 } else {
   console.log('  ✅ 配置看起来正确！');
   console.log('\n  下一步:');
@@ -125,26 +125,24 @@ if (hasErrors) {
 
 // API提供商识别
 console.log('\n🏢 API提供商:');
-const url = envVars.OPENAI_API_URL || '';
+const url = envVars.API_URL || '';
 let provider = '未知';
 
-if (url.includes('siliconflow.cn')) {
-  provider = '硅基流动 (SiliconFlow)';
-} else if (url.includes('deepseek.com')) {
-  provider = 'DeepSeek 官方';
-} else if (url.includes('openai.com')) {
-  provider = 'OpenAI';
+if (url.includes('deepseek.com')) {
+  provider = 'DeepSeek (Anthropic API)';
+} else if (url.includes('anthropic.com')) {
+  provider = 'Anthropic 官方';
 }
 
 console.log(`  识别为: ${provider}`);
 
 // 检查系统环境变量冲突
 console.log('\n⚠️  系统环境变量检查:');
-const sysEnvKey = process.env.OPENAI_API_KEY;
+const sysEnvKey = process.env.API_KEY;
 if (sysEnvKey) {
-  console.log('  ⚠️  检测到系统环境变量 OPENAI_API_KEY');
+  console.log('  ⚠️  检测到系统环境变量 API_KEY');
   console.log(`  系统值: ${sysEnvKey.substring(0, 10)}...`);
-  if (envVars.OPENAI_API_KEY && envVars.OPENAI_API_KEY !== sysEnvKey) {
+  if (envVars.API_KEY && envVars.API_KEY !== sysEnvKey) {
     console.log('  ❌ 警告: 系统环境变量与文件不同！');
     console.log('  Next.js会使用系统环境变量，忽略.env文件');
     console.log('  解决: 使用 .env.local 或删除系统环境变量');

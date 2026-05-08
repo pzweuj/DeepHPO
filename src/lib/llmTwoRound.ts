@@ -1,5 +1,5 @@
 /**
- * HPO术语匹配 - 两轮查询优化版 (Responses API)
+ * HPO术语匹配 - 两轮查询优化版 (Anthropic Messages API)
  * 1. LLM预处理提取症状关键词
  * 2. 本地搜索候选术语
  * 3. LLM在候选中精确匹配
@@ -41,16 +41,16 @@ function loadHpoMap(): Map<string, any> {
 
 function getApiConfig(custom?: { apiUrl?: string; apiKey?: string; model?: string }) {
   const token = (custom?.apiKey?.trim() || undefined) ||
-                process.env.NEXT_PUBLIC_OPENAI_API_KEY ||
-                process.env.OPENAI_API_KEY;
+                process.env.NEXT_PUBLIC_API_KEY ||
+                process.env.API_KEY;
   const apiUrl = (custom?.apiUrl?.trim() || undefined) ||
-                 process.env.NEXT_PUBLIC_OPENAI_API_URL ||
-                 process.env.OPENAI_API_URL ||
-                 'https://dashscope.aliyuncs.com/compatible-mode/v1';
+                 process.env.NEXT_PUBLIC_API_URL ||
+                 process.env.API_URL ||
+                 'https://api.deepseek.com/anthropic';
   const model = (custom?.model?.trim() || undefined) ||
-                process.env.NEXT_PUBLIC_OPENAI_MODEL ||
-                process.env.OPENAI_MODEL ||
-                'qwen3.6-plus';
+                process.env.NEXT_PUBLIC_MODEL ||
+                process.env.MODEL ||
+                'deepseek-v4-pro';
 
   if (!token) {
     throw new Error('API Key未配置');
@@ -109,10 +109,9 @@ const parseResponseToTableData = (response: string, hpoMap: Map<string, any>): T
   return tableData;
 };
 
-// 提取 Responses API 输出文本
+// 提取 Anthropic Messages API 输出文本
 function extractOutputText(data: any): string | null {
-  return data.output?.find((item: any) => item.type === 'message')
-    ?.content?.find((c: any) => c.type === 'output_text')?.text || null;
+  return data.content?.[0]?.text || null;
 }
 
 /**
@@ -137,9 +136,9 @@ export async function queryTwoRound({
     // 第一轮：LLM预处理提取症状
     console.log('第一轮：LLM预处理...');
     const preprocessResult = await preprocessWithLLM(question, {
-      apiUrl: customApiUrl,
+      apiUrl,
       apiKey: customApiKey,
-      model: customModel
+      model
     });
 
     const symptoms = preprocessResultToQuery(preprocessResult);
@@ -179,17 +178,18 @@ export async function queryTwoRound({
       `${term.id}|${term.name}|${term.name_cn}|${term.definition_cn || term.definition}`
     ).join('\n');
 
-    // 第三轮：LLM在候选中精确匹配 (Responses API)
+    // 第三轮：LLM在候选中精确匹配 (Anthropic Messages API)
     console.log('第三轮：LLM精确匹配...');
-    const res = await fetch(`${apiUrl}/responses`, {
+    const res = await fetch(`${apiUrl}/v1/messages`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        'x-api-key': token,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model,
-        instructions: `# Role
+        system: `# Role
 你是一位HPO术语匹配专家。请从以下候选术语中选出最匹配输入症状的HPO术语。
 
 # Rules
@@ -206,11 +206,12 @@ export async function queryTwoRound({
 ---
 ${candidateTable}
 ---`,
-        input: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`,
-        stream: false,
+        messages: [{
+          role: 'user',
+          content: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`
+        }],
         max_tokens: 512,
-        temperature: 0.1,
-        top_p: 0.3
+        temperature: 0.1
       })
     });
 
@@ -279,9 +280,9 @@ export function queryTwoRoundStream({
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"预处理","message":"正在提取症状关键词..."}\n\n'));
 
           const preprocessResult = await preprocessWithLLM(question, {
-            apiUrl: customApiUrl,
+            apiUrl,
             apiKey: customApiKey,
-            model: customModel
+            model
           });
 
           const symptoms = preprocessResultToQuery(preprocessResult);
@@ -307,18 +308,19 @@ export function queryTwoRoundStream({
             `${term.id}|${term.name}|${term.name_cn}|${term.definition_cn || term.definition}`
           ).join('\n');
 
-          // 第三轮：LLM精确匹配 (Responses API streaming)
+          // 第三轮：LLM精确匹配 (Anthropic Messages API streaming)
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"匹配","message":"正在精确匹配HPO术语..."}\n\n'));
 
-          const res = await fetch(`${apiUrl}/responses`, {
+          const res = await fetch(`${apiUrl}/v1/messages`, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${token}`,
+              'x-api-key': token,
+              'anthropic-version': '2023-06-01',
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               model,
-              instructions: `# Role
+              system: `# Role
 你是一位HPO术语匹配专家。请从以下候选术语中选出最匹配输入症状的HPO术语。
 
 # Rules
@@ -335,11 +337,13 @@ export function queryTwoRoundStream({
 ---
 ${candidateTable}
 ---`,
-              input: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`,
+              messages: [{
+                role: 'user',
+                content: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`
+              }],
               stream: true,
               max_tokens: 512,
-              temperature: 0.1,
-              top_p: 0.3
+              temperature: 0.1
             })
           });
 
@@ -370,13 +374,13 @@ ${candidateTable}
 
               try {
                 const parsed = JSON.parse(dataStr);
-                // Responses API: text delta event
-                if (parsed.type === 'response.output_text.delta' && parsed.delta) {
-                  fullContent += parsed.delta;
-                  controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify({ content: parsed.delta })}\n\n`));
+                // Anthropic: content_block_delta event
+                if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                  fullContent += parsed.delta.text;
+                  controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify({ content: parsed.delta.text })}\n\n`));
                 }
-                // Responses API: completed event
-                else if (parsed.type === 'response.completed') {
+                // Anthropic: message_stop event
+                else if (parsed.type === 'message_stop') {
                   // fullContent already accumulated, continue to parse
                 }
               } catch {}

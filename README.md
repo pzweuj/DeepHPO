@@ -7,7 +7,7 @@ DeepHPO是一个基于大语言模型的临床表型 HPO术语提取的Web应用
 
 **在线版本部署于Vercel，由于超时机制（60秒），可能会无法获取到完整信息导致查询失败。**
 
-**支持任何兼容OpenAI格式的API端点和模型，您可以通过主页的设置按钮配置自己的API服务提供商、模型名称和API Key。**
+**支持 Anthropic Messages API 格式的端点，默认使用 DeepSeek 的 Anthropic 兼容 API。可通过主页设置按钮配置自己的 API 服务。**
 
 **HPO术语使用DeepSeek-V4-Flash翻译，请仔细甄别**
 
@@ -19,14 +19,14 @@ DeepHPO是一个基于大语言模型的临床表型 HPO术语提取的Web应用
 
 ## 主要功能
 1. 输入患者临床诊断信息，由大语言模型提取匹配的 HPO 术语
-2. 支持任何 OpenAI 格式的 API 端点（DeepSeek、OpenAI、硅基流动等）
+2. 支持 Anthropic Messages API 格式
 3. 19,000+ 条 HPO 术语全量注入上下文，无信息损失
 4. 分页展示搜索结果
 
 ## 技术栈
 - **框架**：Next.js 14 + React 18 + TypeScript
 - **UI**：Tailwind CSS + TanStack Table
-- **AI**：兼容OpenAI格式的各种大模型（建议使用支持 1M 上下文的模型）
+- **AI**：兼容 Anthropic Messages API 格式的各种大模型（默认 DeepSeek-V4-Pro）
 
 ## 快速开始
 
@@ -52,22 +52,21 @@ Copy-Item .env.local.self .env.local
 
 #### 步骤2: 配置API Key
 
-编辑 `.env` 文件，填入你的API配置：
+编辑支持 Anthropic Messages API 的文件，填入你的API配置：
 
 ```env
-OPENAI_API_KEY=你的API密钥
-OPENAI_API_URL=https://api.siliconflow.cn/v1/chat/completions
-OPENAI_MODEL=deepseek-ai/Deepseek-V4-Flash
+API_KEY=你的API密钥
+API_URL=https://api.deepseek.com/anthropic
+MODEL=deepseek-v4-pro
 ```
 
-#### 支持的API提供商
+#### 支持的API
 
-- **硅基流动**: `https://api.siliconflow.cn/v1/chat/completions` [获取Key](https://cloud.siliconflow.cn/)
-- **DeepSeek官方**: `https://api.deepseek.com/v1/chat/completions` [获取Key](https://platform.deepseek.com/)
-- **OpenAI**: `https://api.openai.com/v1/chat/completions` [获取Key](https://platform.openai.com/)
-- **其他兼容OpenAI格式的端点**
+- **DeepSeek (Anthropic API)**: `https://api.deepseek.com/anthropic` [获取Key](https://platform.deepseek.com/)
+- **Anthropic 官方**: `https://api.anthropic.com` [获取Key](https://console.anthropic.com/)
+- **其他兼容 Anthropic Messages API 的端点**
 
-**动态配置**: 你也可以在网页左上角设置按钮中动态输入API配置（会覆盖环境变量）。
+**动态配置**: 你也可以在网页设置按钮中动态输入API配置（会覆盖环境变量）。
 
 
 接下来自行部署这个应用
