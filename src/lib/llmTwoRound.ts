@@ -156,9 +156,32 @@ export async function queryTwoRound({
       }];
     }
 
-    // 第二轮：本地搜索候选术语
+    // 第二轮：逐词搜索候选术语（每个症状独立搜索，合并去重）
     console.log('第二轮：本地搜索候选术语...');
-    const candidateTerms = await searchEngine.findRelevantTerms(symptoms, 50);
+    const symptomWords = symptoms.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
+    console.log(`拆分症状为 ${symptomWords.length} 个词: ${symptomWords.join(', ')}`);
+
+    const termMap = new Map<string, { term: any; matchedWords: string[]; score: number }>();
+    for (const word of symptomWords) {
+      const results = await searchEngine.search(word, {
+        maxResults: 20,
+        includeDefinitions: false
+      });
+      results.forEach(term => {
+        if (termMap.has(term.id)) {
+          const existing = termMap.get(term.id)!;
+          existing.matchedWords.push(word);
+          existing.score += 1;
+        } else {
+          termMap.set(term.id, { term, matchedWords: [word], score: 1 });
+        }
+      });
+    }
+
+    const candidateTerms = Array.from(termMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 50)
+      .map(r => r.term);
     console.log(`搜索到 ${candidateTerms.length} 个候选术语`);
 
     if (candidateTerms.length === 0) {
@@ -299,10 +322,33 @@ export function queryTwoRoundStream({
             return;
           }
 
-          // 第二轮：本地搜索
+          // 第二轮：逐词搜索候选术语
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"搜索","message":"正在搜索候选术语..."}\n\n'));
 
-          const candidateTerms = await searchEngine.findRelevantTerms(symptoms, 50);
+          const symptomWords = symptoms.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
+          console.log(`拆分症状为 ${symptomWords.length} 个词: ${symptomWords.join(', ')}`);
+
+          const termMap = new Map<string, { term: any; matchedWords: string[]; score: number }>();
+          for (const word of symptomWords) {
+            const results = await searchEngine.search(word, {
+              maxResults: 20,
+              includeDefinitions: false
+            });
+            results.forEach(term => {
+              if (termMap.has(term.id)) {
+                const existing = termMap.get(term.id)!;
+                existing.matchedWords.push(word);
+                existing.score += 1;
+              } else {
+                termMap.set(term.id, { term, matchedWords: [word], score: 1 });
+              }
+            });
+          }
+
+          const candidateTerms = Array.from(termMap.values())
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 50)
+            .map(r => r.term);
           controller.enqueue(encoder.encode(`event: candidates\ndata: ${JSON.stringify({ count: candidateTerms.length })}\n\n`));
 
           if (candidateTerms.length === 0) {
