@@ -63,18 +63,31 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
       }
     }
 
+    // 计算每个高亮词在容器中的大致位置（用于判断弹出框方向）
+    const getPositionClass = (index: number, total: number) => {
+      // 简单策略：前1/3的词左对齐，后1/3的词弹出框在上方
+      const isLeftSide = index < Math.ceil(total / 3);
+      const isBottomArea = index >= Math.ceil(total * 2 / 3);
+
+      const horizontalClass = isLeftSide ? 'left-0' : 'right-0';
+      const verticalClass = isBottomArea ? 'bottom-full mb-1' : 'top-full mt-1';
+
+      return `${horizontalClass} ${verticalClass}`;
+    };
+
     const result: React.ReactNode[] = [];
     let cursor = 0;
     retained.forEach((seg, i) => {
       if (seg.start > cursor) {
         result.push(<span key={`t-${i}`}>{localQuery.slice(cursor, seg.start)}</span>);
       }
+      const positionClass = getPositionClass(i, retained.length);
       result.push(
         <span key={`h-${i}`} className="relative group inline pointer-events-auto">
           <span className={seg.type === 'exact' ? 'text-blue-600 dark:text-blue-400 font-medium border-b border-dashed border-blue-400 dark:border-blue-500 cursor-help' : 'text-purple-600 dark:text-purple-400 font-medium border-b border-dashed border-purple-400 dark:border-purple-500 cursor-help'}>
             {localQuery.slice(seg.start, seg.end)}
           </span>
-          <span className="opacity-0 group-hover:opacity-100 absolute right-0 top-full mt-1 z-30 transition-opacity pointer-events-none">
+          <span className={`opacity-0 group-hover:opacity-100 absolute ${positionClass} z-30 transition-opacity pointer-events-none`}>
             <span className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg px-2 py-1.5 text-xs whitespace-normal max-w-[280px]">
               {seg.hpoIds.map((id, j) => (
                 <span key={id}>
