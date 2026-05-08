@@ -33,6 +33,7 @@ function HomeContent() {
     remark: '等待查询'
   }]);
   const [isLoading, setIsLoading] = useState(false);
+  const [streamingLog, setStreamingLog] = useState('');
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [apiUrl, setApiUrl] = useState('');
@@ -85,6 +86,7 @@ function HomeContent() {
       try {
         setIsLoading(true);
         setElapsedTime(0);
+        setStreamingLog('');
 
         const res = await fetch(`/api/query?type=${searchType}&q=${encodeURIComponent(query)}`, {
           headers: {
@@ -131,6 +133,13 @@ function HomeContent() {
 
               if (currentEvent === 'keepalive') {
                 // 保持连接活跃
+              } else if (currentEvent === 'token') {
+                try {
+                  const tokenData = JSON.parse(dataStr);
+                  if (tokenData.content) {
+                    setStreamingLog(prev => prev + tokenData.content);
+                  }
+                } catch {}
               } else if (currentEvent === 'stage') {
                 // 两轮查询阶段信息
                 try {
@@ -328,16 +337,23 @@ function HomeContent() {
           <Table data={tableData} isLoading={isLoading} />
         </div>
 
-        {/* 右侧：输入框 */}
-        <div className="w-[400px] flex-shrink-0">
-          <SearchBox
-            initialQuery={query}
-            onSearch={handleSearch}
-            isLoading={isLoading}
-            searchType={searchType}
-            onTypeChange={handleTypeChange}
-            elapsedTime={elapsedTime}
-          />
+        {/* 右侧：输入框 + 流式输出 */}
+        <div className="w-[400px] flex-shrink-0 flex flex-col gap-4">
+          <div className="flex-1">
+            <SearchBox
+              initialQuery={query}
+              onSearch={handleSearch}
+              isLoading={isLoading}
+              searchType={searchType}
+              onTypeChange={handleTypeChange}
+              elapsedTime={elapsedTime}
+            />
+          </div>
+          {streamingLog && (
+            <div className="h-40 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 p-3 text-xs font-mono text-gray-700 dark:text-gray-300">
+              {streamingLog}
+            </div>
+          )}
         </div>
       </div>
 

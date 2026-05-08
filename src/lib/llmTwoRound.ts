@@ -1,5 +1,5 @@
 /**
- * HPO术语匹配 - 两轮查询优化版
+ * HPO术语匹配 - 两轮查询优化版 (Responses API)
  * 1. LLM预处理提取症状关键词
  * 2. 本地搜索候选术语
  * 3. LLM在候选中精确匹配
@@ -46,11 +46,11 @@ function getApiConfig(custom?: { apiUrl?: string; apiKey?: string; model?: strin
   const apiUrl = (custom?.apiUrl?.trim() || undefined) ||
                  process.env.NEXT_PUBLIC_OPENAI_API_URL ||
                  process.env.OPENAI_API_URL ||
-                 'https://api.siliconflow.cn/v1/chat/completions';
+                 'https://dashscope.aliyuncs.com/compatible-mode/v1';
   const model = (custom?.model?.trim() || undefined) ||
                 process.env.NEXT_PUBLIC_OPENAI_MODEL ||
                 process.env.OPENAI_MODEL ||
-                'deepseek-ai/DeepSeek-V4-Flash';
+                'qwen3.6-plus';
 
   if (!token) {
     throw new Error('API Key未配置');
@@ -108,6 +108,12 @@ const parseResponseToTableData = (response: string, hpoMap: Map<string, any>): T
 
   return tableData;
 };
+
+// 提取 Responses API 输出文本
+function extractOutputText(data: any): string | null {
+  return data.output?.find((item: any) => item.type === 'message')
+    ?.content?.find((c: any) => c.type === 'output_text')?.text || null;
+}
 
 /**
  * 两轮查询：预处理 → 搜索候选 → LLM精确匹配
@@ -173,9 +179,9 @@ export async function queryTwoRound({
       `${term.id}|${term.name}|${term.name_cn}|${term.definition_cn || term.definition}`
     ).join('\n');
 
-    // 第三轮：LLM在候选中精确匹配
+    // 第三轮：LLM在候选中精确匹配 (Responses API)
     console.log('第三轮：LLM精确匹配...');
-    const res = await fetch(apiUrl, {
+    const res = await fetch(`${apiUrl}/responses`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -183,9 +189,7 @@ export async function queryTwoRound({
       },
       body: JSON.stringify({
         model,
-        messages: [{
-          role: 'system',
-          content: `# Role
+        instructions: `# Role
 你是一位HPO术语匹配专家。请从以下候选术语中选出最匹配输入症状的HPO术语。
 
 # Rules
@@ -198,17 +202,11 @@ export async function queryTwoRound({
 返回JSON数组：
 [{"hpo_id":"HP:XXXXXXX","confidence":"高/中/低","remark":"对应的症状"}]
 
-# 原始输入
-${question}
-
-# 提取的症状
-${symptoms}
-
 # 候选HPO术语表（HP:ID|英文名|中文名|中文定义）
 ---
 ${candidateTable}
----`
-        }],
+---`,
+        input: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`,
         stream: false,
         max_tokens: 512,
         temperature: 0.1,
@@ -221,19 +219,14 @@ ${candidateTable}
       throw new Error(`API请求失败 (${res.status}): ${errorText.substring(0, 200)}`);
     }
 
-    const responseText = await res.text();
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch {
-      throw new Error(`无效的JSON响应: ${responseText.substring(0, 100)}`);
+    const data = await res.json();
+    const outputText = extractOutputText(data);
+
+    if (!outputText) {
+      throw new Error('API响应中没有有效输出');
     }
 
-    if (!data.choices || data.choices.length === 0) {
-      throw new Error('API响应中没有choices字段');
-    }
-
-    return parseResponseToTableData(data.choices[0].message.content, hpoMap);
+    return parseResponseToTableData(outputText, hpoMap);
 
   } catch (error) {
     console.error('两轮查询错误:', error);
@@ -250,7 +243,7 @@ ${candidateTable}
 }
 
 /**
- * 两轮查询 - Streaming版本
+ * 两轮查询 - Streaming版本 (Responses API SSE)
  */
 export function queryTwoRoundStream({
   question,
@@ -314,10 +307,10 @@ export function queryTwoRoundStream({
             `${term.id}|${term.name}|${term.name_cn}|${term.definition_cn || term.definition}`
           ).join('\n');
 
-          // 第三轮：LLM精确匹配
+          // 第三轮：LLM精确匹配 (Responses API streaming)
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"匹配","message":"正在精确匹配HPO术语..."}\n\n'));
 
-          const res = await fetch(apiUrl, {
+          const res = await fetch(`${apiUrl}/responses`, {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -325,9 +318,7 @@ export function queryTwoRoundStream({
             },
             body: JSON.stringify({
               model,
-              messages: [{
-                role: 'system',
-                content: `# Role
+              instructions: `# Role
 你是一位HPO术语匹配专家。请从以下候选术语中选出最匹配输入症状的HPO术语。
 
 # Rules
@@ -340,17 +331,11 @@ export function queryTwoRoundStream({
 返回JSON数组：
 [{"hpo_id":"HP:XXXXXXX","confidence":"高/中/低","remark":"对应的症状"}]
 
-# 原始输入
-${question}
-
-# 提取的症状
-${symptoms}
-
 # 候选HPO术语表（HP:ID|英文名|中文名|中文定义）
 ---
 ${candidateTable}
----`
-              }],
+---`,
+              input: `# 原始输入\n${question}\n\n# 提取的症状\n${symptoms}`,
               stream: true,
               max_tokens: 512,
               temperature: 0.1,
@@ -359,7 +344,7 @@ ${candidateTable}
           });
 
           if (!res.ok) {
-            await res.text(); // consume response body
+            await res.text();
             throw new Error(`API请求失败 (${res.status})`);
           }
 
@@ -380,15 +365,19 @@ ${candidateTable}
               const trimmed = line.trim();
               if (!trimmed || !trimmed.startsWith('data: ')) continue;
 
-              const data = trimmed.slice(6);
-              if (data === '[DONE]') continue;
+              const dataStr = trimmed.slice(6);
+              if (dataStr === '[DONE]') continue;
 
               try {
-                const parsed = JSON.parse(data);
-                const content = parsed.choices?.[0]?.delta?.content;
-                if (content) {
-                  fullContent += content;
-                  controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify({ content })}\n\n`));
+                const parsed = JSON.parse(dataStr);
+                // Responses API: text delta event
+                if (parsed.type === 'response.output_text.delta' && parsed.delta) {
+                  fullContent += parsed.delta;
+                  controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify({ content: parsed.delta })}\n\n`));
+                }
+                // Responses API: completed event
+                else if (parsed.type === 'response.completed') {
+                  // fullContent already accumulated, continue to parse
                 }
               } catch {}
             }

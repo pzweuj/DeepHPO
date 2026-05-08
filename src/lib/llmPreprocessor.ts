@@ -1,5 +1,5 @@
 /**
- * LLM预处理器
+ * LLM预处理器 (Responses API)
  * 使用LLM进行智能文本预处理，提取患者实际症状
  */
 
@@ -11,6 +11,11 @@ export interface LLMPreprocessResult {
   familyHistory: string[];         // 家族史
   rawExtraction: string;           // LLM原始输出
   processingTime: number;          // 处理耗时
+}
+
+function extractOutputText(data: any): string | null {
+  return data.output?.find((item: any) => item.type === 'message')
+    ?.content?.find((c: any) => c.type === 'output_text')?.text || null;
 }
 
 /**
@@ -34,28 +39,25 @@ export async function preprocessWithLLM(
     const apiUrl = (apiConfig.apiUrl?.trim() || undefined) ||
                    process.env.NEXT_PUBLIC_OPENAI_API_URL ||
                    process.env.OPENAI_API_URL ||
-                   'https://api.siliconflow.cn/v1/chat/completions';
+                   'https://dashscope.aliyuncs.com/compatible-mode/v1';
     const model = (apiConfig.model?.trim() || undefined) ||
                   process.env.NEXT_PUBLIC_OPENAI_MODEL ||
                   process.env.OPENAI_MODEL ||
-                  'deepseek-ai/DeepSeek-V4-Flash';
+                  'qwen3.6-plus';
 
     if (!token) {
       throw new Error('API Key未配置');
     }
 
-    // 构建预处理Prompt
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${apiUrl}/responses`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: model,
-        messages: [{
-          role: 'system',
-          content: `你是一位临床文本分析专家。请从病历中提取患者当前存在的症状和体征。
+        model,
+        instructions: `你是一位临床文本分析专家。请从病历中提取患者当前存在的症状和体征。
 
 **严格规则**：
 1. **提取患者本人当前存在的症状**，包括：
@@ -104,11 +106,8 @@ export async function preprocessWithLLM(
   "diagnosis": ["脑梗死"],
   "negatedSymptoms": [],
   "familyHistory": []
-}`
-        }, {
-          role: 'user',
-          content: input
-        }],
+}`,
+        input,
         temperature: 0.1,
         max_tokens: 1024
       })
@@ -119,12 +118,11 @@ export async function preprocessWithLLM(
     }
 
     const data = await response.json();
+    const rawOutput = extractOutputText(data);
 
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('API响应格式错误');
+    if (!rawOutput) {
+      throw new Error('API响应中没有有效输出');
     }
-
-    const rawOutput = data.choices[0].message.content;
 
     // 解析JSON输出
     let parsed;
