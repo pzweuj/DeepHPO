@@ -31,7 +31,7 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
       <button
         type="button"
         onClick={() => onTypeChange(searchType === 'matcher' ? 'searcher' : 'matcher')}
-        className="absolute left-3 top-3 z-10 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-blue-500 text-white shadow-sm hover:bg-blue-600"
+        className="absolute left-3 bottom-3 z-10 px-4 py-2 rounded-xl transition-colors text-white text-sm font-medium bg-blue-500 shadow-sm hover:bg-blue-600"
       >
         {searchType === 'matcher' ? 'LLM' : '表型'}
       </button>

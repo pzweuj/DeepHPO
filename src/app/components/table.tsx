@@ -97,11 +97,10 @@ export default function Table({ data, isLoading }: TableProps) {
   });
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden rounded-lg shadow-sm">
-      <div className="flex-1 overflow-auto">
-        <div className="min-w-full">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+    <div className="w-full h-full flex flex-col rounded-lg shadow-sm overflow-hidden">
+      <div className="overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
@@ -116,7 +115,7 @@ export default function Table({ data, isLoading }: TableProps) {
                 </tr>
               ))}
             </thead>
-            {isLoading ? (
+            {isLoading && safeData.length === 0 ? (
               <tbody>
                 <tr>
                   <td colSpan={6} className="text-center py-4 text-gray-500 dark:text-gray-400">
@@ -131,7 +130,7 @@ export default function Table({ data, isLoading }: TableProps) {
                     key={row.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors relative group"
                   >
-                    {row.getVisibleCells().map(cell => (
+                    {row.getVisibleCells().map((cell, ci) => (
                       <td
                         key={cell.id}
                         className="px-4 py-4 whitespace-normal text-sm text-gray-700 dark:text-gray-300"
@@ -140,32 +139,41 @@ export default function Table({ data, isLoading }: TableProps) {
                         <div className="relative z-0">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </div>
+                        {/* Hover 弹窗：放在第一个 td 内 */}
+                        {ci === 0 && (
+                          <div className="opacity-0 group-hover:opacity-100 pointer-events-none absolute left-0 right-0 top-full mt-1 z-20 transition-opacity">
+                            <div className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 mr-4 text-sm max-w-xl space-y-1">
+                              <div>
+                                <span className="font-medium text-blue-600 dark:text-blue-400">Description: </span>
+                                <span className="text-gray-700 dark:text-gray-300">{row.original.definition || '-'}</span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-blue-600 dark:text-blue-400">描述: </span>
+                                <span className="text-gray-700 dark:text-gray-300">{row.original.definitionCn || '-'}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </td>
                     ))}
-                    {/* Hover 弹窗：显示 Description & 描述 */}
-                    <td className="hidden group-hover:block absolute left-0 right-0 top-full mt-1 z-20">
-                      <div className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 mx-4 text-sm">
-                        <div className="mb-1">
-                          <span className="font-medium text-gray-500 dark:text-gray-400">Description: </span>
-                          <span className="text-gray-700 dark:text-gray-300">{row.original.definition || '-'}</span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-gray-500 dark:text-gray-400">描述: </span>
-                          <span className="text-gray-700 dark:text-gray-300">{row.original.definitionCn || '-'}</span>
-                        </div>
-                      </div>
-                    </td>
+                  </tr>
+                ))}
+                {/* 填充空行使表格填满 */}
+                {Array.from({ length: Math.max(0, pageSize - table.getRowModel().rows.length) }).map((_, i) => (
+                  <tr key={`empty-${i}`} className="h-[56px]">
+                    {table.getVisibleLeafColumns().map((_, j) => (
+                      <td key={j} className="px-4 py-4 text-sm">&nbsp;</td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
             )}
           </table>
-        </div>
       </div>
 
       {/* 分页信息 - 底部 */}
       {!isLoading && safeData.length > 0 && (
-        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between border-t border-gray-200 dark:border-gray-600">
+        <div className="px-4 py-2 bg-white dark:bg-gray-800 text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between border-t border-gray-200 dark:border-gray-600">
           <div>
             显示 {table.getState().pagination.pageIndex * pageSize + 1} - {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, safeData.length)} / 共 {safeData.length} 条结果
           </div>
