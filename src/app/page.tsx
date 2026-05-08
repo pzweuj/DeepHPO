@@ -309,6 +309,7 @@ function HomeContent() {
           <span>内容由AI生成，请仔细甄别</span>
           <span className="text-gray-300 dark:text-gray-600">|</span>
           <span>基于 Human Phenotype Ontology (2026-02-16)</span>
+          <span className="text-gray-300 dark:text-gray-600">|</span>
           <a
             href="https://hpo.jax.org"
             target="_blank"
@@ -321,9 +322,9 @@ function HomeContent() {
       </div>
 
       {/* 左右布局：左侧表格，右侧输入框 */}
-      <div className="flex gap-6 h-[calc(100vh-160px)]">
+      <div className="flex gap-6 h-[calc(100vh-140px)]">
         {/* 左侧：结果表格 */}
-        <div ref={tableContainerRef} className="flex-1 min-w-0 overflow-y-auto">
+        <div ref={tableContainerRef} className="flex-1 min-w-0">
           <Table data={tableData} isLoading={isLoading} />
         </div>
 

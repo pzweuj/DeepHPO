@@ -98,34 +98,6 @@ export default function Table({ data, isLoading }: TableProps) {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-lg shadow-sm">
-      {/* 分页信息 */}
-      {!isLoading && safeData.length > 0 && (
-        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between">
-          <div>
-            显示 {table.getState().pagination.pageIndex * pageSize + 1} - {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, safeData.length)} / 共 {safeData.length} 条结果
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
-            >
-              上一页
-            </button>
-            <span>
-              第 {table.getState().pagination.pageIndex + 1} / {table.getPageCount()} 页
-            </span>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
-            >
-              下一页
-            </button>
-          </div>
-        </div>
-      )}
-      
       <div className="flex-1 overflow-auto">
         <div className="min-w-full">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -190,6 +162,34 @@ export default function Table({ data, isLoading }: TableProps) {
           </table>
         </div>
       </div>
+
+      {/* 分页信息 - 底部 */}
+      {!isLoading && safeData.length > 0 && (
+        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-700 text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between border-t border-gray-200 dark:border-gray-600">
+          <div>
+            显示 {table.getState().pagination.pageIndex * pageSize + 1} - {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, safeData.length)} / 共 {safeData.length} 条结果
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+            >
+              上一页
+            </button>
+            <span>
+              第 {table.getState().pagination.pageIndex + 1} / {table.getPageCount()} 页
+            </span>
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+            >
+              下一页
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
