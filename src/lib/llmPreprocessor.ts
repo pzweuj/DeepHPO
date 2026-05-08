@@ -169,6 +169,7 @@ export async function preprocessWithLLM(
 
 /**
  * 将预处理结果转换为查询字符串
+ * 对复杂中文症状进行拆分，提高搜索命中率
  */
 export function preprocessResultToQuery(result: LLMPreprocessResult): string {
   const allItems = [
@@ -177,7 +178,74 @@ export function preprocessResultToQuery(result: LLMPreprocessResult): string {
     ...result.diagnosis
   ];
 
-  return allItems.join('、');
+  // 对每个症状进行拆分，提取核心关键词
+  const expandedItems: string[] = [];
+  for (const item of allItems) {
+    expandedItems.push(item);
+
+    // 中文症状拆分策略
+    const subKeywords = extractSubKeywords(item);
+    for (const kw of subKeywords) {
+      if (!expandedItems.includes(kw) && kw.length >= 2) {
+        expandedItems.push(kw);
+      }
+    }
+  }
+
+  return expandedItems.join('、');
+}
+
+/**
+ * 从复杂症状描述中提取子关键词
+ */
+function extractSubKeywords(text: string): string[] {
+  const keywords: string[] = [];
+
+  // 常见症状词根拆分映射
+  const symptomPatterns: Array<[RegExp, string[]]> = [
+    // 心血管症状
+    [/胸闷痛|胸闷|胸痛/, ['胸闷', '胸痛']],
+    [/心前区.*疼痛|心前区.*痛/, ['心前区疼痛', '胸痛']],
+    [/压榨性.*疼痛|压榨性.*痛/, ['压榨性疼痛', '胸痛']],
+    [/活动后.*胸闷|活动后.*胸痛|劳力性.*胸痛/, ['劳力性胸痛', '胸痛', '胸闷']],
+    [/气促|呼吸困难/, ['气促', '呼吸困难']],
+
+    // 神经系统症状
+    [/认知障碍|记忆力下降/, ['认知障碍', '记忆力下降']],
+    [/肢体无力|偏瘫/, ['肢体无力', '偏瘫']],
+
+    // 诊断拆分
+    [/动脉粥样硬化性心脏病|冠心病/, ['冠心病', '动脉粥样硬化']],
+    [/高血压病\d*级/, ['高血压']],
+  ];
+
+  for (const [pattern, replacements] of symptomPatterns) {
+    if (pattern.test(text)) {
+      keywords.push(...replacements);
+    }
+  }
+
+  // 通用拆分：提取2-4字符的子串
+  if (text.length > 4) {
+    for (let i = 0; i < text.length - 1; i++) {
+      // 提取2字词
+      if (i < text.length - 1) {
+        const twoChar = text.substring(i, i + 2);
+        if (/^[a-zA-Z\u4e00-\u9fa5]+$/.test(twoChar)) {
+          keywords.push(twoChar);
+        }
+      }
+      // 提取3字词
+      if (i < text.length - 2) {
+        const threeChar = text.substring(i, i + 3);
+        if (/^[a-zA-Z\u4e00-\u9fa5]+$/.test(threeChar)) {
+          keywords.push(threeChar);
+        }
+      }
+    }
+  }
+
+  return keywords;
 }
 
 export default {

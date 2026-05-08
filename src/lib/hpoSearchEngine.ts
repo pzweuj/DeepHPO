@@ -187,7 +187,36 @@ class HPOSearchEngine {
       }
     });
 
-    // 4. 如果查询较长，进行全文搜索（仅在前面结果不足时）
+    // 4. 中文子串搜索：对中文查询词进行子串匹配
+    queryWords.forEach(word => {
+      // 只对中文词进行子串搜索（长度>2）
+      if (/[\u4e00-\u9fa5]/.test(word) && word.length > 2) {
+        // 滑动窗口提取2-4字符子串
+        for (let len = 2; len <= Math.min(4, word.length); len++) {
+          for (let i = 0; i <= word.length - len; i++) {
+            const subStr = word.substring(i, i + len);
+            // 前缀匹配子串
+            const subMatches = this.index.byNameCnPrefix.get(subStr);
+            if (subMatches) {
+              subMatches.forEach(id => {
+                resultIds.add(id);
+                scores.set(id, (scores.get(id) || 0) + 1); // 子串匹配权重较低
+              });
+            }
+            // 关键词匹配子串
+            const kwMatches = this.index.byKeyword.get(subStr);
+            if (kwMatches) {
+              kwMatches.forEach(id => {
+                resultIds.add(id);
+                scores.set(id, (scores.get(id) || 0) + 1);
+              });
+            }
+          }
+        }
+      }
+    });
+
+    // 5. 如果查询较长，进行全文搜索（仅在前面结果不足时）
     if (resultIds.size < maxResults && normalizedQuery.length > 15 && includeDefinitions) {
       this.terms.forEach((term, id) => {
         if (resultIds.size >= maxResults * 2) return; // 限制搜索范围
@@ -202,7 +231,7 @@ class HPOSearchEngine {
       });
     }
 
-    // 5. 精确名称匹配加分
+    // 6. 精确名称匹配加分
     resultIds.forEach(id => {
       const term = this.terms.get(id);
       if (term) {
@@ -212,7 +241,7 @@ class HPOSearchEngine {
       }
     });
 
-    // 6. 排序并返回结果
+    // 7. 排序并返回结果
     const sortedResults = Array.from(resultIds)
       .map(id => ({
         term: this.terms.get(id)!,
