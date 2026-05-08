@@ -34,7 +34,6 @@ function HomeContent() {
   }]);
   const [isLoading, setIsLoading] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [statusMessage, setStatusMessage] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [apiUrl, setApiUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -130,7 +129,6 @@ function HomeContent() {
       try {
         setIsLoading(true);
         setElapsedTime(0);
-        setStatusMessage('正在连接...');
 
         const res = await fetch(`/api/query?type=${searchType}&q=${encodeURIComponent(query)}`, {
           headers: {
@@ -168,7 +166,6 @@ function HomeContent() {
           buffer = lines.pop() || '';
 
           let currentEvent = '';
-          let tokenCount = 0;
           for (const line of lines) {
             if (line.startsWith('event: ')) {
               currentEvent = line.slice(7).trim();
@@ -181,26 +178,18 @@ function HomeContent() {
               } else if (currentEvent === 'stage') {
                 // 两轮查询阶段信息
                 try {
-                  const stageData = JSON.parse(dataStr);
-                  setStatusMessage(stageData.message || stageData.stage);
+                  JSON.parse(dataStr);
                 } catch {}
               } else if (currentEvent === 'preprocess') {
-                // 预处理完成，显示提取的症状
+                // 预处理完成
                 try {
-                  const preData = JSON.parse(dataStr);
-                  setStatusMessage(`已提取症状: ${preData.symptoms}`);
+                  JSON.parse(dataStr);
                 } catch {}
               } else if (currentEvent === 'candidates') {
-                // 搜索完成，显示候选数量
+                // 搜索完成
                 try {
-                  const candData = JSON.parse(dataStr);
-                  setStatusMessage(`搜索到 ${candData.count} 个候选术语`);
+                  JSON.parse(dataStr);
                 } catch {}
-              } else if (currentEvent === 'token') {
-                tokenCount++;
-                if (tokenCount % 10 === 0) {
-                  setStatusMessage(`正在匹配中... (${tokenCount} tokens)`);
-                }
               } else if (currentEvent === 'data') {
                 try {
                   const data = JSON.parse(dataStr);
@@ -238,7 +227,6 @@ function HomeContent() {
       } finally {
         if (isMounted) {
           setIsLoading(false);
-          setStatusMessage('');
         }
       }
     };
@@ -261,12 +249,6 @@ function HomeContent() {
 
     return () => clearInterval(timer);
   }, [isLoading]);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900 p-8">
@@ -362,70 +344,22 @@ function HomeContent() {
       </a>
 
       {/* Logo and Search */}
-      <div className="max-w-2xl mx-auto mb-8">
+      <div className="w-full mx-auto mb-8">
         <div className="flex justify-center mb-4">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
             DeepHPO
           </h1>
         </div>
 
-        {/* 模式切换按钮组 */}
-        <div className="flex justify-center mb-4 gap-2">
-          <button
-            onClick={() => handleTypeChange('matcher')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              searchType === 'matcher'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-            }`}
-          >
-            LLM模式
-          </button>
-          <button
-            onClick={() => handleTypeChange('searcher')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              searchType === 'searcher'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-            }`}
-          >
-            表型匹配
-          </button>
-        </div>
-
         <SearchBox
           initialQuery={query}
           onSearch={handleSearch}
           isLoading={isLoading}
+          searchType={searchType}
+          onTypeChange={handleTypeChange}
+          elapsedTime={elapsedTime}
         />
       </div>
-
-      {/* Loading 状态 */}
-      {isLoading && (
-        <div className="max-w-2xl mx-auto mb-4">
-          <div className="flex items-center justify-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <div className="h-5 w-5 animate-spin">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-full w-full text-blue-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 3v3m6.366-.366-2.12 2.12M21 12h-3m.366 6.366-2.12-2.12M12 21v-3m-6.366.366 2.12-2.12M3 12h3m-.366-6.366 2.12 2.12"
-                />
-              </svg>
-            </div>
-            <span className="text-sm text-blue-700 dark:text-blue-300">
-              {statusMessage || '处理中...'} 已用时 {formatTime(elapsedTime)}
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Results */}
       <div ref={tableContainerRef} className="max-w-full mx-auto h-[calc(100vh-380px)] overflow-y-auto">
@@ -456,12 +390,12 @@ function HomeContent() {
           </div>
           <p className="text-center">
             在 <a
-              href="http://www.human-phenotype-ontology.org"
+              href="https://hpo.jax.org"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
-              http://www.human-phenotype-ontology.org
+              https://hpo.jax.org
             </a> 上找到更多信息
           </p>
         </div>

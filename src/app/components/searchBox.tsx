@@ -6,9 +6,12 @@ interface SearchBoxProps {
   initialQuery: string;
   onSearch: (query: string) => void;
   isLoading?: boolean;
+  searchType: string;
+  onTypeChange: (type: string) => void;
+  elapsedTime?: number;
 }
 
-export default function SearchBox({ initialQuery, onSearch, isLoading }: SearchBoxProps) {
+export default function SearchBox({ initialQuery, onSearch, isLoading, searchType, onTypeChange, elapsedTime = 0 }: SearchBoxProps) {
   const [localQuery, setLocalQuery] = React.useState(initialQuery);
 
   React.useEffect(() => {
@@ -29,7 +32,16 @@ export default function SearchBox({ initialQuery, onSearch, isLoading }: SearchB
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full max-w-2xl">
+    <form onSubmit={handleSubmit} className="relative w-full">
+      {/* 模式切换 - 左侧内部 */}
+      <button
+        type="button"
+        onClick={() => onTypeChange(searchType === 'matcher' ? 'searcher' : 'matcher')}
+        className="absolute left-2 top-[calc(50%-0.1rem)] -translate-y-1/2 z-10 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-blue-500 text-white shadow-sm hover:bg-blue-600"
+      >
+        {searchType === 'matcher' ? 'LLM' : '表型'}
+      </button>
+
       <textarea
         id="phenotypeSearchInput"
         name="q"
@@ -45,40 +57,25 @@ export default function SearchBox({ initialQuery, onSearch, isLoading }: SearchB
         }}
         onFocus={(e) => e.target.select()}
         placeholder="输入临床信息，提取HPO表型术语"
-        className="w-full pl-6 pr-16 py-[1rem] rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
+        className="w-full pl-16 pr-16 py-[1rem] rounded-2xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-200/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100 shadow-sm transition-colors text-base resize-none scrollbar-hide leading-[1.35]"
         style={{ height: `${calculateRows(localQuery) * 24 + 32}px` }}
       />
 
       <button
         type="submit"
         disabled={isLoading || !localQuery.trim() || localQuery.length > 2000}
-        className={`absolute right-3 top-[calc(50%-0.1rem)] -translate-y-1/2 p-2 rounded-full transition-colors ${
+        className={`absolute right-3 top-[calc(50%-0.1rem)] -translate-y-1/2 px-3 py-1.5 rounded-full transition-colors text-white text-xs font-medium min-w-[2.5rem] ${
           isLoading || !localQuery.trim() || localQuery.length > 2000
             ? 'bg-gray-400 cursor-not-allowed'
             : 'bg-blue-500 hover:bg-blue-600'
         }`}
       >
         {isLoading ? (
-          <div className="h-6 w-6 animate-spin">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-full w-full text-white"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 3v3m6.366-.366-2.12 2.12M21 12h-3m.366 6.366-2.12-2.12M12 21v-3m-6.366.366 2.12-2.12M3 12h3m-.366-6.366 2.12 2.12"
-              />
-            </svg>
-          </div>
+          <span>{elapsedTime}s</span>
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-white"
+            className="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

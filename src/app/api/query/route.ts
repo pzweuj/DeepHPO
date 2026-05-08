@@ -47,8 +47,8 @@ export async function GET(req: NextRequest) {
         hpo: 'HP:0000001',
         name: 'Error',
         chineseName: '搜索错误',
-        destination: 'ERROR',
-        description: error instanceof Error ? error.message : '搜索失败',
+        definition: 'ERROR',
+        definitionCn: error instanceof Error ? error.message : '搜索失败',
         confidence: '-',
         remark: '系统错误'
       }]), {

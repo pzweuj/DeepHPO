@@ -13,8 +13,8 @@ interface TableData {
   hpo: string;
   name: string;
   chineseName: string;
-  destination: string;
-  description: string;
+  definition: string;
+  definitionCn: string;
   confidence: string;
   remark: string;
 }
@@ -82,8 +82,8 @@ export async function searchHPOTerms(query: string): Promise<TableData[]> {
         hpo: term.id,
         name: term.name,
         chineseName: term.name_cn,
-        destination: term.definition,
-        description: term.definition_cn,
+        definition: term.definition,
+        definitionCn: term.definition_cn,
         confidence: `${matchedWords.length}`,
         remark: `匹配词: ${matchedWords.join(', ')}`
       }));
@@ -93,8 +93,8 @@ export async function searchHPOTerms(query: string): Promise<TableData[]> {
           hpo: 'HP:0000001',
           name: 'No Results',
           chineseName: '未找到结果',
-          destination: 'NOTFOUND',
-          description: `分词结果: ${words.join(', ')}。未找到匹配的HPO术语`,
+          definition: 'NOTFOUND',
+          definitionCn: `分词结果: ${words.join(', ')}。未找到匹配的HPO术语`,
           confidence: '-',
           remark: '查询失败'
         }];
@@ -113,8 +113,8 @@ export async function searchHPOTerms(query: string): Promise<TableData[]> {
         hpo: term.id,
         name: term.name,
         chineseName: term.name_cn,
-        destination: term.definition,
-        description: term.definition_cn,
+        definition: term.definition,
+        definitionCn: term.definition_cn,
         confidence: '-',
         remark: '直接匹配'
       }));
@@ -125,8 +125,8 @@ export async function searchHPOTerms(query: string): Promise<TableData[]> {
           hpo: 'HP:0000001',
           name: 'No Results',
           chineseName: '未找到结果',
-          destination: 'NOTFOUND',
-          description: '未找到匹配的HPO术语，请尝试其他关键词',
+          definition: 'NOTFOUND',
+          definitionCn: '未找到匹配的HPO术语，请尝试其他关键词',
           confidence: '-',
           remark: '查询失败'
         }];
@@ -140,8 +140,8 @@ export async function searchHPOTerms(query: string): Promise<TableData[]> {
       hpo: 'HP:0000001',
       name: 'Error',
       chineseName: '搜索错误',
-      destination: 'ERROR',
-      description: error instanceof Error ? error.message : '搜索过程中发生错误',
+      definition: 'ERROR',
+      definitionCn: error instanceof Error ? error.message : '搜索过程中发生错误',
       confidence: '-',
       remark: '系统错误'
     }];
