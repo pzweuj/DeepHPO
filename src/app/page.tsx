@@ -1,6 +1,5 @@
 'use client';
 import { Suspense, useEffect, useState, useRef, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import Table from './components/table';
 import SearchBox from './components/searchBox';
@@ -18,10 +17,9 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
-  const searchType = searchParams.get('type') || 'matcher';
+  const [query, setQuery] = useState('');
+  const [searchType, setSearchType] = useState('matcher');
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
   const [tableData, setTableData] = useState<any[]>([{
     hpo: 'HP:0000001',
@@ -54,16 +52,13 @@ function HomeContent() {
 
 
   const handleSearch = useCallback((searchQuery: string) => {
-    router.push(`/?q=${encodeURIComponent(searchQuery)}&type=${searchType}`);
-  }, [router, searchType]);
+    setQuery(searchQuery);
+    setSearchTrigger(prev => prev + 1);
+  }, [searchType]);
 
   const handleTypeChange = useCallback((newType: string) => {
-    if (query) {
-      router.push(`/?q=${encodeURIComponent(query)}&type=${newType}`);
-    } else {
-      router.push(`/?type=${newType}`);
-    }
-  }, [router, query]);
+    setSearchType(newType);
+  }, []);
 
   // Streaming 数据获取
   useEffect(() => {
@@ -202,7 +197,7 @@ function HomeContent() {
       isMounted = false;
       controller.abort();
     };
-  }, [query, searchType, apiUrl, apiKey, model]);
+  }, [searchTrigger, apiUrl, apiKey, model]);
 
   // 计时器
   useEffect(() => {
