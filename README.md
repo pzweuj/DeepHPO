@@ -37,15 +37,12 @@ git clone https://github.com/pzweuj/DeepHPO.git
 
 ### 配置环境变量
 
-**重要**: 必须创建 `.env.local` 文件才能使用LLM功能！
+**重要**: 必须创建 `.env` 文件才能使用LLM功能！
 
-#### 步骤1: 创建 .env.local 文件
+#### 步骤1: 创建 .env 文件
 
 ```bash
-# Windows PowerShell - 使用 .env.local 避免系统环境变量冲突
-Copy-Item .env.local.self .env.local
-
-# 或手动复制 .env.local.self 并重命名为 .env.local
+cp .env.local.self .env
 ```
 
 #### 步骤2: 配置API Key
@@ -60,8 +57,6 @@ MODEL=deepseek-v4-pro
 
 #### 支持的API
 
-- **DeepSeek (Anthropic API)**: `https://api.deepseek.com/anthropic` [获取Key](https://platform.deepseek.com/)
-- **Anthropic 官方**: `https://api.anthropic.com` [获取Key](https://console.anthropic.com/)
 - **其他兼容 Anthropic Messages API 的端点**
 
 **动态配置**: 你也可以在网页设置按钮中动态输入API配置（会覆盖环境变量）。
