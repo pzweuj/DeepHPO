@@ -172,7 +172,7 @@ export default function Table({ data, isLoading }: TableProps) {
       </div>
 
       {/* 分页信息 - 底部 */}
-      {!isLoading && safeData.length > 0 && (
+      {safeData.length > 0 && (
         <div className="px-4 py-2 bg-white dark:bg-gray-800 text-sm text-gray-600 dark:text-gray-300 flex items-center justify-between border-t border-gray-200 dark:border-gray-600">
           <div>
             显示 {table.getState().pagination.pageIndex * pageSize + 1} - {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, safeData.length)} / 共 {safeData.length} 条结果
