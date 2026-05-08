@@ -9,7 +9,7 @@ interface SearchBoxProps {
   searchType: string;
   onTypeChange: (type: string) => void;
   elapsedTime?: number;
-  wordMap?: Map<string, string[]>;
+  wordMap?: Map<string, { hpoIds: string[]; type: 'exact' | 'substring' }>;
 }
 
 export default function SearchBox({ initialQuery, onSearch, isLoading, searchType, onTypeChange, elapsedTime = 0, wordMap }: SearchBoxProps) {
@@ -38,15 +38,15 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
   const highlightedContent = useMemo(() => {
     if (!wordMap || wordMap.size === 0 || !localQuery) return null;
 
-    const segments: { start: number; end: number; word: string; hpoIds: string[] }[] = [];
+    const segments: { start: number; end: number; word: string; hpoIds: string[]; type: 'exact' | 'substring' }[] = [];
     const lowerText = localQuery.toLowerCase();
-    wordMap.forEach((hpoIds, word) => {
+    wordMap.forEach((entry, word) => {
       let pos = 0;
       const lowerWord = word.toLowerCase();
       while (true) {
         const idx = lowerText.indexOf(lowerWord, pos);
         if (idx === -1) break;
-        segments.push({ start: idx, end: idx + word.length, word, hpoIds });
+        segments.push({ start: idx, end: idx + word.length, word, hpoIds: entry.hpoIds, type: entry.type });
         pos = idx + 1;
       }
     });
@@ -71,11 +71,11 @@ export default function SearchBox({ initialQuery, onSearch, isLoading, searchTyp
       }
       result.push(
         <span key={`h-${i}`} className="relative group inline pointer-events-auto">
-          <span className="text-blue-600 dark:text-blue-400 font-medium border-b border-dashed border-blue-400 dark:border-blue-500 cursor-help">
+          <span className={seg.type === 'exact' ? 'text-blue-600 dark:text-blue-400 font-medium border-b border-dashed border-blue-400 dark:border-blue-500 cursor-help' : 'text-purple-600 dark:text-purple-400 font-medium border-b border-dashed border-purple-400 dark:border-purple-500 cursor-help'}>
             {localQuery.slice(seg.start, seg.end)}
           </span>
-          <span className="opacity-0 group-hover:opacity-100 absolute left-0 bottom-full mb-1 z-30 transition-opacity">
-            <span className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg px-2 py-1.5 text-xs whitespace-nowrap">
+          <span className="opacity-0 group-hover:opacity-100 absolute right-0 top-full mt-1 z-30 transition-opacity pointer-events-none">
+            <span className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg px-2 py-1.5 text-xs whitespace-normal max-w-[280px]">
               {seg.hpoIds.map((id, j) => (
                 <span key={id}>
                   {j > 0 && ', '}

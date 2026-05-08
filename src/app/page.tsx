@@ -16,8 +16,10 @@ export default function Home() {
   );
 }
 
-function buildWordHighlightMap(tableData: any[], preprocessSymptoms: string): Map<string, string[]> {
-  const map = new Map<string, string[]>();
+type HighlightEntry = { hpoIds: string[]; type: 'exact' | 'substring' };
+
+function buildWordHighlightMap(tableData: any[], preprocessSymptoms: string): Map<string, HighlightEntry> {
+  const map = new Map<string, HighlightEntry>();
 
   for (const row of tableData) {
     const hpo = row.hpo as string;
@@ -27,19 +29,39 @@ function buildWordHighlightMap(tableData: any[], preprocessSymptoms: string): Ma
     if (remark.startsWith('匹配词:')) {
       const words = remark.replace('匹配词:', '').split(',').map(w => w.trim()).filter(Boolean);
       for (const w of words) {
-        const existing = map.get(w) || [];
-        if (!existing.includes(hpo)) existing.push(hpo);
-        map.set(w, existing);
+        const entry = map.get(w);
+        if (entry) {
+          if (!entry.hpoIds.includes(hpo)) entry.hpoIds.push(hpo);
+        } else {
+          map.set(w, { hpoIds: [hpo], type: 'exact' });
+        }
       }
     } else if (remark && remark !== '直接匹配' && remark !== '查询失败' && remark !== '等待查询' && remark !== '预处理结果为空' && remark !== '系统错误') {
-      // LLM模式: remark 是LLM输出的症状描述
+      // LLM模式: remark 是LLM输出的症状描述，可能被改写
+      // 1. 完整词加入映射 (exact)
       const words = remark.split(/[\s,，、；]+/).filter(w => w.length > 1);
       for (const w of words) {
-        if (!map.has(w)) {
-          map.set(w, [hpo]);
+        const entry = map.get(w);
+        if (entry) {
+          if (!entry.hpoIds.includes(hpo)) entry.hpoIds.push(hpo);
+          entry.type = 'exact';
         } else {
-          const existing = map.get(w)!;
-          if (!existing.includes(hpo)) existing.push(hpo);
+          map.set(w, { hpoIds: [hpo], type: 'exact' });
+        }
+      }
+      // 2. 拆分成子串（2~4字滑动窗口），子串也关联HPO (substring)
+      for (const w of words) {
+        if (w.length <= 2) continue;
+        for (let len = 4; len >= 2; len--) {
+          for (let i = 0; i <= w.length - len; i++) {
+            const sub = w.slice(i, i + len);
+            const existing = map.get(sub);
+            if (existing) {
+              if (!existing.hpoIds.includes(hpo)) existing.hpoIds.push(hpo);
+            } else {
+              map.set(sub, { hpoIds: [hpo], type: 'substring' });
+            }
+          }
         }
       }
     }
@@ -50,13 +72,15 @@ function buildWordHighlightMap(tableData: any[], preprocessSymptoms: string): Ma
     const symptomWords = preprocessSymptoms.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
     for (const w of symptomWords) {
       if (!map.has(w)) {
-        // 尝试在tableData中查找包含该词的remark
         for (const row of tableData) {
           const remark: string = row.remark || '';
           if (remark.includes(w)) {
-            const existing = map.get(w) || [];
-            if (!existing.includes(row.hpo)) existing.push(row.hpo);
-            map.set(w, existing);
+            const entry = map.get(w);
+            if (entry) {
+              if (!entry.hpoIds.includes(row.hpo)) entry.hpoIds.push(row.hpo);
+            } else {
+              map.set(w, { hpoIds: [row.hpo], type: 'exact' });
+            }
           }
         }
       }
@@ -93,7 +117,7 @@ function HomeContent() {
 
   const isInitial = tableData.length === 1 && tableData[0].hpo === 'HP:0000001' && tableData[0].remark === '等待查询';
   const wordHighlightMap = useMemo(() => {
-    if (isInitial || isLoading) return new Map<string, string[]>();
+    if (isInitial || isLoading) return new Map<string, HighlightEntry>();
     return buildWordHighlightMap(tableData, preprocessSymptoms);
   }, [tableData, preprocessSymptoms, isInitial, isLoading]);
 
