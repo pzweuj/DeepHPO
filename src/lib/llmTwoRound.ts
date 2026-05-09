@@ -8,6 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import HPOSearchEngine from './hpoSearchEngine';
+import logger from './logger';
 import { preprocessWithLLM, preprocessResultToQuery } from './llmPreprocessor';
 
 interface TableData {
@@ -91,7 +92,7 @@ function loadSynonymData(): void {
 
     _synDataLoaded = true;
   } catch (err) {
-    console.warn('[同义词] 加载 hpo_names.txt 失败，同义词扩展将跳过:', (err as Error).message);
+    logger.warn('[同义词] 加载 hpo_names.txt 失败，同义词扩展将跳过:', (err as Error).message);
     _namesLines = [];
     _namesTrigramIndex = new Map();
     _nameToHpoId = new Map();
@@ -375,7 +376,7 @@ export async function queryTwoRound({
     const searchEngine = HPOSearchEngine.getInstance();
 
     // 第一轮：LLM预处理提取症状
-    console.log('第一轮：LLM预处理...');
+    logger.log('第一轮：LLM预处理...');
     const preprocessResult = await preprocessWithLLM(question, {
       apiUrl,
       apiKey: customApiKey,
@@ -383,7 +384,7 @@ export async function queryTwoRound({
     });
 
     const symptoms = preprocessResultToQuery(preprocessResult);
-    console.log(`提取症状: ${symptoms}`);
+    logger.log(`提取症状: ${symptoms}`);
 
     if (!symptoms || symptoms.trim() === '') {
       return [{
@@ -398,9 +399,9 @@ export async function queryTwoRound({
     }
 
     // 第二轮：逐词搜索候选术语（每个症状独立搜索，合并去重）
-    console.log('第二轮：本地搜索候选术语...');
+    logger.log('第二轮：本地搜索候选术语...');
     const symptomWords = symptoms.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
-    console.log(`拆分症状为 ${symptomWords.length} 个词: ${symptomWords.join(', ')}`);
+    logger.log(`拆分症状为 ${symptomWords.length} 个词: ${symptomWords.join(', ')}`);
 
     const termMap = new Map<string, { term: any; matchedWords: string[]; score: number }>();
     for (const word of symptomWords) {
@@ -420,7 +421,7 @@ export async function queryTwoRound({
     }
 
     // 同义词扩展：从 hpo_names.txt 补充候选术语
-    console.log('同义词扩展...');
+    logger.log('同义词扩展...');
     const synonymIds = expandSynonyms(symptomWords, hpoMap);
     let synonymAdded = 0;
     for (const hpoId of synonymIds) {
@@ -432,13 +433,13 @@ export async function queryTwoRound({
         }
       }
     }
-    console.log(`同义词扩展: 新增 ${synonymAdded} 个候选术语`);
+    logger.log(`同义词扩展: 新增 ${synonymAdded} 个候选术语`);
 
     const candidateTerms = Array.from(termMap.values())
       .sort((a, b) => b.score - a.score)
       .slice(0, 50)
       .map(r => r.term);
-    console.log(`搜索到 ${candidateTerms.length} 个候选术语`);
+    logger.log(`搜索到 ${candidateTerms.length} 个候选术语`);
 
     if (candidateTerms.length === 0) {
       return [{
@@ -458,9 +459,9 @@ export async function queryTwoRound({
     ).join('\n');
 
     // 第三轮：LLM在候选中精确匹配 (Anthropic Messages API)
-    console.log('第三轮：LLM精确匹配...');
+    logger.log('第三轮：LLM精确匹配...');
     const matchEndpoint = `${apiUrl}/v1/messages`;
-    console.log(`[匹配] 请求: POST ${matchEndpoint} | model=${model} | 候选术语数=${candidateTerms.length}`);
+    logger.log(`[匹配] 请求: POST ${matchEndpoint} | model=${model} | 候选术语数=${candidateTerms.length}`);
     const res = await fetch(matchEndpoint, {
       method: 'POST',
       headers: {
@@ -483,14 +484,14 @@ export async function queryTwoRound({
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error(`[匹配] 失败 ${res.status}: ${errorText.substring(0, 500)}`);
+      logger.error(`[匹配] 失败 ${res.status}: ${errorText.substring(0, 500)}`);
       throw new Error(`API请求失败 (${res.status}): ${errorText.substring(0, 200)}`);
     }
 
     const data = await res.json();
-    console.log(`[匹配] 响应: status=${res.status}, model=${data.model}, stop_reason=${data.stop_reason}`);
+    logger.log(`[匹配] 响应: status=${res.status}, model=${data.model}, stop_reason=${data.stop_reason}`);
     const outputText = extractOutputText(data);
-    console.log(`[匹配] 输出: ${outputText?.substring(0, 300)}`);
+    logger.log(`[匹配] 输出: ${outputText?.substring(0, 300)}`);
 
     if (!outputText) {
       throw new Error('API响应中没有有效输出');
@@ -499,7 +500,7 @@ export async function queryTwoRound({
     return parseResponseToTableData(outputText, hpoMap);
 
   } catch (error) {
-    console.error('两轮查询错误:', error);
+    logger.error('两轮查询错误:', error);
     return [{
       hpo: 'HP:0000001',
       name: 'Error',
@@ -566,7 +567,7 @@ export function queryTwoRoundStream({
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"搜索","message":"正在搜索候选术语..."}\n\n'));
 
           const symptomWords = symptoms.split(/[\s、,;:.，。；：]+/).filter(w => w.length > 1);
-          console.log(`拆分症状为 ${symptomWords.length} 个词: ${symptomWords.join(', ')}`);
+          logger.log(`拆分症状为 ${symptomWords.length} 个词: ${symptomWords.join(', ')}`);
 
           const termMap = new Map<string, { term: any; matchedWords: string[]; score: number }>();
           for (const word of symptomWords) {
@@ -586,7 +587,7 @@ export function queryTwoRoundStream({
           }
 
           // 同义词扩展：从 hpo_names.txt 补充候选术语
-          console.log('同义词扩展...');
+          logger.log('同义词扩展...');
           const synonymIds = expandSynonyms(symptomWords, hpoMap);
           let synonymAdded = 0;
           for (const hpoId of synonymIds) {
@@ -598,7 +599,7 @@ export function queryTwoRoundStream({
               }
             }
           }
-          console.log(`同义词扩展: 新增 ${synonymAdded} 个候选术语`);
+          logger.log(`同义词扩展: 新增 ${synonymAdded} 个候选术语`);
 
           const candidateTerms = Array.from(termMap.values())
             .sort((a, b) => b.score - a.score)
@@ -619,7 +620,7 @@ export function queryTwoRoundStream({
           controller.enqueue(encoder.encode('event: stage\ndata: {"stage":"匹配","message":"正在精确匹配HPO术语..."}\n\n'));
 
           const matchEndpoint = `${apiUrl}/v1/messages`;
-          console.log(`[匹配-流] 请求: POST ${matchEndpoint} | model=${model} | 候选术语数=${candidateTerms.length}`);
+          logger.log(`[匹配-流] 请求: POST ${matchEndpoint} | model=${model} | 候选术语数=${candidateTerms.length}`);
           const res = await fetch(matchEndpoint, {
             method: 'POST',
             headers: {
@@ -643,20 +644,20 @@ export function queryTwoRoundStream({
 
           if (!res.ok) {
             const errorText = await res.text();
-            console.error(`[匹配-流] 失败 ${res.status}: ${errorText.substring(0, 500)}`);
+            logger.error(`[匹配-流] 失败 ${res.status}: ${errorText.substring(0, 500)}`);
             throw new Error(`API请求失败 (${res.status})`);
           }
 
           const data = await res.json();
-          console.log(`[匹配-流] 响应: model=${data.model}, stop_reason=${data.stop_reason}`);
+          logger.log(`[匹配-流] 响应: model=${data.model}, stop_reason=${data.stop_reason}`);
           const outputText = extractOutputText(data);
-          console.log(`[匹配-流] 输出: ${outputText?.substring(0, 500)}`);
+          logger.log(`[匹配-流] 输出: ${outputText?.substring(0, 500)}`);
           const tableData = parseResponseToTableData(outputText || '', hpoMap);
-          console.log(`[匹配-流] 完成, 解析出${tableData.length}条结果`);
+          logger.log(`[匹配-流] 完成, 解析出${tableData.length}条结果`);
           controller.enqueue(encoder.encode(`event: data\ndata: ${JSON.stringify(tableData)}\n\n`));
 
         } catch (error) {
-          console.error('两轮查询Stream错误:', error);
+          logger.error('两轮查询Stream错误:', error);
           const errorMessage = error instanceof Error ? error.message : '未知错误';
           controller.enqueue(encoder.encode(`event: error\ndata: ${JSON.stringify([{ hpo: 'HP:0000001', name: 'Error', chineseName: '匹配错误', definition: 'ERROR', definitionCn: errorMessage, confidence: '-', remark: '请检查配置' }])}\n\n`));
         } finally {

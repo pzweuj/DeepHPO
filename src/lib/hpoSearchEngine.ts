@@ -5,6 +5,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import logger from './logger';
 
 interface HPOTerm {
   id: string;
@@ -54,7 +55,7 @@ class HPOSearchEngine {
       const jsonPath = path.join(process.cwd(), 'public', 'hpo_terms_cn.json');
       const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8')) as Record<string, HPOTerm>;
 
-      console.log('Building HPO search index...');
+      logger.log('Building HPO search index...');
       const startTime = Date.now();
 
       // 构建索引
@@ -78,9 +79,9 @@ class HPOSearchEngine {
       });
 
       this.initialized = true;
-      console.log(`HPO index built in ${Date.now() - startTime}ms, ${this.terms.size} terms indexed`);
+      logger.log(`HPO index built in ${Date.now() - startTime}ms, ${this.terms.size} terms indexed`);
     } catch (error) {
-      console.error('Failed to initialize HPO search engine:', error);
+      logger.error('Failed to initialize HPO search engine:', error);
       throw error;
     }
   }

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { searchHPOTerms } from '../../components/greper';
 import { queryTwoRoundStream } from '@/lib/llmTwoRound';
+import logger from '@/lib/logger';
 
 export const maxDuration = 60;
 
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
         headers: { 'Content-Type': 'application/json' }
       });
     } catch (error) {
-      console.error('Search error:', error);
+      logger.error('Search error:', error);
       return new Response(JSON.stringify([{
         hpo: 'HP:0000001',
         name: 'Error',

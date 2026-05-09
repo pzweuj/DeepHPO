@@ -3,6 +3,8 @@
  * 使用LLM进行智能文本预处理，提取患者实际症状
  */
 
+import logger from './logger';
+
 export interface LLMPreprocessResult {
   symptoms: string[];              // 提取的症状列表
   medicalHistory: string[];        // 既往病史
@@ -45,7 +47,7 @@ export async function preprocessWithLLM(
     }
 
     const endpoint = `${apiUrl}/v1/messages`;
-    console.log(`[预处理] 请求: POST ${endpoint} | model=${model}`);
+    logger.log(`[预处理] 请求: POST ${endpoint} | model=${model}`);
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -123,17 +125,17 @@ export async function preprocessWithLLM(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error(`[预处理] 失败 ${response.status}: ${errorBody.substring(0, 500)}`);
+      logger.error(`[预处理] 失败 ${response.status}: ${errorBody.substring(0, 500)}`);
       throw new Error(`LLM预处理失败: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log(`[预处理] 响应: status=${response.status}`);
-    console.log(`[预处理] 完整响应 keys: ${JSON.stringify(Object.keys(data))}`);
-    console.log(`[预处理] data.content: ${JSON.stringify(data.content)}`);
-    console.log(`[预处理] 完整响应体: ${JSON.stringify(data).substring(0, 1000)}`);
+    logger.log(`[预处理] 响应: status=${response.status}`);
+    logger.log(`[预处理] 完整响应 keys: ${JSON.stringify(Object.keys(data))}`);
+    logger.log(`[预处理] data.content: ${JSON.stringify(data.content)}`);
+    logger.log(`[预处理] 完整响应体: ${JSON.stringify(data).substring(0, 1000)}`);
     const rawOutput = data.content?.find((c: any) => c.type === 'text')?.text;
-    console.log(`[预处理] 输出: ${rawOutput?.substring(0, 300)}`);
+    logger.log(`[预处理] 输出: ${rawOutput?.substring(0, 300)}`);
 
     if (!rawOutput) {
       throw new Error('API响应中没有有效输出');
@@ -162,7 +164,7 @@ export async function preprocessWithLLM(
     return result;
 
   } catch (error) {
-    console.error('LLM预处理错误:', error);
+    logger.error('LLM预处理错误:', error);
     throw error;
   }
 }
