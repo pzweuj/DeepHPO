@@ -141,14 +141,60 @@ export async function preprocessWithLLM(
       throw new Error('API响应中没有有效输出');
     }
 
-    // 解析JSON输出（去除 markdown 代码块）
+    // 解析JSON输出（去除 markdown 代码块，提取有效JSON）
     let cleanOutput = rawOutput.trim();
-    cleanOutput = cleanOutput.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+
+    // 方法1：尝试提取 markdown 代码块中的内容
+    const codeBlockMatch = cleanOutput.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+    if (codeBlockMatch) {
+      cleanOutput = codeBlockMatch[1].trim();
+    }
+
+    // 方法2：如果还有额外内容，尝试提取第一个完整的JSON对象
+    const jsonObjectMatch = cleanOutput.match(/\{[\s\S]*?\n\}/);
+    if (jsonObjectMatch && !cleanOutput.startsWith('{')) {
+      cleanOutput = jsonObjectMatch[0];
+    }
+
+    // 方法3：更精确地匹配JSON对象（从第一个 { 到最后一个闭合的 }）
+    if (!cleanOutput.startsWith('{')) {
+      const firstBrace = cleanOutput.indexOf('{');
+      if (firstBrace !== -1) {
+        // 找到匹配的闭合括号
+        let depth = 0;
+        let lastBrace = -1;
+        for (let i = firstBrace; i < cleanOutput.length; i++) {
+          if (cleanOutput[i] === '{') depth++;
+          if (cleanOutput[i] === '}') {
+            depth--;
+            if (depth === 0) {
+              lastBrace = i;
+              break;
+            }
+          }
+        }
+        if (lastBrace !== -1) {
+          cleanOutput = cleanOutput.substring(firstBrace, lastBrace + 1);
+        }
+      }
+    }
+
     let parsed;
     try {
       parsed = JSON.parse(cleanOutput);
     } catch (e) {
-      throw new Error(`JSON解析失败: ${e instanceof Error ? e.message : '未知错误'}`);
+      // 最后尝试：使用正则提取JSON对象（不含s flag，使用[\s\S]代替）
+      const jsonRegex = /\{[\s\S]*?"symptoms"[\s\S]*?\[[\s\S]*?\][\s\S]*?\}/;
+      const fallbackMatch = rawOutput.match(jsonRegex);
+      if (fallbackMatch) {
+        try {
+          parsed = JSON.parse(fallbackMatch[0]);
+        } catch {
+          throw new Error(`JSON解析失败: ${e instanceof Error ? e.message : '未知错误'}`);
+        }
+      } else {
+        throw new Error(`JSON解析失败: ${e instanceof Error ? e.message : '未知错误'}`);
+      }
     }
 
     const result: LLMPreprocessResult = {
