@@ -215,6 +215,7 @@ Abnormal 5th finger phalanx morphology
 Abnormal 5th metacarpal epiphysis morphology
 Abnormal 5th metacarpal morphology
 Abnormal abdomen morphology
+Abnormal abdominal aorta branch artery morphology
 Abnormal acetabulum morphology
 Abnormal activity of mitochondrial respiratory chain
 Abnormal adiponectin level
@@ -357,6 +358,9 @@ Abnormal branching pattern of left aortic arch
 Abnormal branching pattern of the aortic arch
 Abnormal breast morphology
 Abnormal breast physiology
+Abnormal breast-tissue biospecimen
+Abnormal breast-tissue cellular antigen expression
+Abnormal breast-tissue cellular finding
 Abnormal breath sound
 Abnormal bronchial artery morphology
 Abnormal bronchoalveolar fluid protein level
@@ -514,6 +518,7 @@ Abnormal circulating cytokine concentration
 Abnormal circulating dehydroepiandrosterone concentration
 Abnormal circulating deoxycorticosterone level
 Abnormal circulating dicarboxylic acid concentration
+Abnormal circulating disaccharide concentration
 Abnormal circulating eicosanoid concentration
 Abnormal circulating enzyme concentration
 Abnormal circulating enzyme concentration or activity
@@ -555,6 +560,7 @@ Abnormal circulating IgM concentration
 Abnormal circulating immunoglobulin concentration
 Abnormal circulating inhibin B concentration
 Abnormal circulating inhibin level
+Abnormal circulating inorganic anion concentration
 Abnormal circulating insulin concentration
 Abnormal circulating insulin-like growth factor 3 concentration
 Abnormal circulating interferon concentration
@@ -586,6 +592,7 @@ Abnormal circulating membrane cofactor protein concentration
 Abnormal circulating metabolite concentration
 Abnormal circulating methionine concentration
 Abnormal circulating monocarboxylic acid concentration
+Abnormal circulating monosaccharide concentration
 Abnormal circulating neopterin concentration
 Abnormal circulating nicotinurate concentration
 Abnormal circulating nitrogen compound concentration
@@ -622,6 +629,7 @@ Abnormal circulating serine concentration
 Abnormal circulating serine family amino acid concentration
 Abnormal circulating sex hormone concentration
 Abnormal circulating short-chain fatty-acid concentration
+Abnormal circulating sugar alcohol concentration
 Abnormal circulating sulfur amino acid concentration
 Abnormal circulating T4 concentration
 Abnormal circulating testosterone concentration
@@ -639,6 +647,7 @@ Abnormal circulating valine concentration
 Abnormal circulating vitamin A concentration
 Abnormal circulating vitamin B12 concentration
 Abnormal circulating vitamin B6 concentration
+Abnormal circulating vitamin concentration
 Abnormal circulating vitamin E concentration
 Abnormal clavicle morphology
 Abnormal clitoris morphology
@@ -654,6 +663,7 @@ Abnormal communication
 Abnormal communicative facial expressions
 Abnormal complex N-glycan level
 Abnormal concentration of acylcarnitine in the urine
+Abnormal concentration of circulating metanephrines
 Abnormal confrontational visual field test
 Abnormal conjugate eye movement
 Abnormal conjunctiva morphology
@@ -707,6 +717,7 @@ Abnormal CSF carboxylic acid concentration
 Abnormal CSF carnosine concentration
 Abnormal CSF citrulline concentration
 Abnormal CSF dopamine concentration
+Abnormal CSF folate concentration
 Abnormal CSF glucose concentration
 Abnormal CSF glutamate concentration
 Abnormal CSF glutamine concentration
@@ -1244,6 +1255,7 @@ Abnormal megakaryocyte morphology
 Abnormal meiosis
 Abnormal meningeal morphology
 Abnormal meniscus morphology
+Abnormal mental imagery
 Abnormal mesentery morphology
 Abnormal metabolic brain imaging by MRS
 Abnormal metabolism
@@ -1315,6 +1327,7 @@ Abnormal motor neuron morphology
 Abnormal mouth floor morphology
 Abnormal movement during sleep
 Abnormal mucociliary clearance
+Abnormal mucosal-associated invariant T cell proportion
 Abnormal multifocal electroretinogram
 Abnormal muscle fiber alpha dystroglycan
 Abnormal muscle fiber alpha sarcoglycan
@@ -1563,6 +1576,7 @@ Abnormal proportion of double-negative alpha-beta regulatory T cell
 Abnormal proportion of effector memory CD8-positive, alpha-beta T cells
 Abnormal proportion of exhausted T cells
 Abnormal proportion of gamma-delta T cells
+Abnormal proportion of HLA-DR+ T cells
 Abnormal proportion of immature B cells
 Abnormal proportion of immature gamma-delta T cells
 Abnormal proportion of marginal zone B cells
@@ -1623,6 +1637,7 @@ Abnormal radial metaphysis morphology
 Abnormal radial ray morphology
 Abnormal radioactive iodine uptake test result
 Abnormal rapid eye movement sleep
+Abnormal rectosigmoid index
 Abnormal rectum morphology
 Abnormal rectus muscle physiology
 Abnormal red blood cell count
@@ -2945,6 +2960,10 @@ Adenoiditis
 Adenoma sebaceum
 Adenomatous colonic polyposis
 Adenomyosis
+Adenovirus colitis
+Adenovirus encephalitis
+Adenovirus hepatitis
+Adenovirus pneumonitis
 Adermatoglyphia
 Adipocyte hypertrophy
 Adipose tissue loss
@@ -3178,6 +3197,7 @@ Amniotic constriction ring
 Amniotic constriction rings of arms
 Amniotic constriction rings of legs
 Amniotic Sheet
+Amoebic liver abscess
 Amplification of comfort with casual physical contact
 Amplification of emotional expression
 Amplification of emotional responsiveness
@@ -3749,6 +3769,7 @@ Apathy
 Aphakia
 Aphalangy of hands and feet
 Aphalangy of the hands
+Aphantasia
 Aphasia
 Aphasic status epilepticus
 Aphonia
@@ -4162,6 +4183,7 @@ Asthma
 Astigmatism
 Astrocytoma
 Astrocytosis
+Astrovirus central nervous system infection
 Asymmetric abdominal aortic aneurysm
 Asymmetric bilateral cleft lip
 Asymmetric blood pressure between arms
@@ -4348,9 +4370,16 @@ Back pain
 Bacteremia
 Bacteria allergy
 Bacteria in cerebrospinal fluid
+Bacterial brain abscess
 Bacterial cell casts
+Bacterial cellulitis
 Bacterial encephalitis
 Bacterial endocarditis
+Bacterial kidney abscess
+Bacterial liver abscess
+Bacterial meningitis
+Bacterial sepsis
+Bacterial splenic abscess
 Bacteriuria
 Balanced double aortic arch
 Balanitis
@@ -4381,6 +4410,7 @@ Basilar invagination
 Basilar meningeal enhancement
 Bathrocephaly
 Battle sign
+BCG-associated disease
 BCGitis
 BCGosis
 BCL2 expression
@@ -4570,6 +4600,12 @@ Bitot spots of the conjunctiva
 Biventricular heart with straddling right sided atrioventricular valve and absent left sided atrioventricular connection
 Biventricular hypertrophy
 Biventricular noncompaction cardiomyopathy
+BK virus cystitis
+BK virus encephalitis
+BK virus nephropathy
+BK病毒性脑炎
+BK病毒性膀胱炎
+BK病毒相关性肾病
 Black pigment gallstones
 Bladder carcinoma
 Bladder diverticulum
@@ -4629,6 +4665,7 @@ Blue irides
 Blue nevus
 Blue sclerae
 Blue urine
+Blue-field entoptic phenomenon
 Blunted aldosterone response to aldosterone suppression test
 Blurred vision
 Body ache
@@ -5123,6 +5160,7 @@ Cartilage destruction
 Cartilaginous ossification of larynx
 Cartilaginous ossification of nose
 Cartilaginous tracheobronchomalacia
+Caseating granulomatosis
 Caseous vernix-like desquamation
 Cat cry
 Cataplexy
@@ -5461,8 +5499,10 @@ Chronic (near) absent circulating IgG1
 Chronic (near) absent circulating IgG2
 Chronic (near) absent circulating IgG3
 Chronic (near) absent circulating IgG4
+Chronic absent circulating IgA
 Chronic absent circulating IgD
 Chronic absent circulating IgE
+Chronic absent circulating IgM
 Chronic absent circulating total IgG
 Chronic acidosis
 Chronic active Epstein-Barr virus infection
@@ -5470,6 +5510,7 @@ Chronic active hepatitis
 Chronic axonal neuropathy
 Chronic bronchitis
 Chronic calcifying pancreatitis
+Chronic Candida auris infection
 Chronic colitis
 Chronic constipation
 Chronic cough
@@ -5481,6 +5522,7 @@ Chronic decreased circulating IgG1
 Chronic decreased circulating IgG2
 Chronic decreased circulating IgG3
 Chronic decreased circulating IgG4
+Chronic decreased circulating IgM concentration
 Chronic decreased circulating total IgG
 Chronic diarrhea
 Chronic disseminated intravascular coagulation
@@ -5491,6 +5533,7 @@ Chronic hemolytic anemia
 Chronic hepatic encephalopathy
 Chronic hepatic failure
 Chronic hepatitis
+Chronic hepatitis due to Cryptococcus
 Chronic hepatitis due to cryptosporidium infection
 Chronic idiopathic urticaria
 Chronic infection
@@ -5509,6 +5552,7 @@ Chronic myelogenous leukemia
 Chronic myelomonocytic leukemia
 Chronic neutropenia
 Chronic noninfectious lymphadenopathy
+Chronic norovirus infection
 Chronic oral candidiasis
 Chronic otitis media
 Chronic pain
@@ -5517,15 +5561,21 @@ Chronic partially decreased circulating IgG1
 Chronic partially decreased circulating IgG2
 Chronic partially decreased circulating IgG3
 Chronic partially decreased circulating IgG4
+Chronic poliovirus excretion
 Chronic pulmonary obstruction
 Chronic respiratory acidosis
+Chronic respiratory syncytial virus infection
 Chronic rhinitis
 Chronic rhinitis due to narrow nasal airway
+Chronic rhinovirus infection
+Chronic SARS-CoV-2 infection
+Chronic seasonal coronavirus infection
 Chronic sensorineural polyneuropathy
 Chronic sinusitis
 Chronic tinea infection
 Chronic tubulointerstitial nephritis
 Chronic villitis
+Chronic warts
 Chronotropic incompetence
 Chvostek sign
 Chvostek征
@@ -5769,6 +5819,7 @@ Complete left sided absence of pericardium
 Complete or near-complete absence of specific antibody response to Haemophilus influenzae type b (Hib) vaccine
 Complete or near-complete absence of specific antibody response to hepatitis B vaccine
 Complete or near-complete absence of specific antibody response to meningococcus vaccine
+Complete or near-complete absence of specific antibody response to Salmonella typhi vaccine
 Complete or near-complete absence of specific antibody response to tetanus vaccine
 Complete or near-complete absence of specific antibody response to unconjugated pneumococcus vaccine
 Complete right sided absence of pericardium
@@ -5981,6 +6032,7 @@ Conjunctivitis
 Conjunctivochalasis
 Connective tissue nevi
 Conotruncal defect
+Consanguinity
 Consecutive esotropia
 Consecutive exotropia
 Consonant expressive impediment
@@ -6207,6 +6259,7 @@ Cryofibrinogenemia
 Cryoglobulinemia
 Crypt hyperplasia
 Cryptococcal meningitis
+Cryptococcoma
 Cryptophthalmos
 Cryptorchidism
 Cryptotia
@@ -6365,6 +6418,10 @@ Cytochrome C oxidase-negative muscle fibers
 Cytokine storm
 Cytologic atypia in mantle cells
 Cytomegalovirus colitis
+Cytomegalovirus encephalitis
+Cytomegalovirus hepatitis
+Cytomegalovirus pneumonitis
+Cytomegalovirus retinitis
 Cytoplasmic antineutrophil antibody positivity
 C反射增强
 C型主动脉弓中断
@@ -6558,6 +6615,7 @@ Decreased circulating renin concentration
 Decreased circulating reverse T3 concentration
 Decreased circulating selenium concentration
 Decreased circulating sialic acid concentration
+Decreased circulating specific Haemophilus influenzae type b antibody concentration
 Decreased circulating sulfate concentration
 Decreased circulating T4 concentration
 Decreased circulating terminal complement component concentration
@@ -6794,6 +6852,7 @@ Decreased proportion of central memory CD8-positive, alpha-beta T cells
 Decreased proportion of class-switched memory B cells
 Decreased proportion of effector memory CD8-positive, alpha-beta T cells
 Decreased proportion of gamma-delta T cells
+Decreased proportion of HLA-DR+ T cells
 Decreased proportion of immature B cells
 Decreased proportion of immature gamma-delta T cells
 Decreased proportion of marginal zone B cells
@@ -7287,16 +7346,21 @@ Disproportionate short-trunk short stature
 Disproportionate shortening of the tibia
 Disproportionate tall stature
 Disruption of carpal arcs
+Disseminated astrovirus infection
 Disseminated candidiasis
+Disseminated Cryptococcus infection
 Disseminated cryptosporidium infection
 Disseminated cutaneous warts
 Disseminated dermatophytosis
+Disseminated herpes simplex virus infection
 Disseminated histoplasmosis
 Disseminated infection with live vaccine virus
 Disseminated intravascular coagulation
 Disseminated molluscum contagiosum
 Disseminated nontuberculous mycobacterial infection
+Disseminated tuberculosis infection
 Disseminated viral infection
+Disseminated warts
 Dissociated horizontal deviation
 Dissociated sensory loss
 Dissociated vertical deviation
@@ -7306,6 +7370,7 @@ Distal amyotrophy
 Distal aortic arch hypoplasia
 Distal arthrogryposis
 Distal biceps tendon ruptre
+Distal clavicular osteolysis
 Distal clavicular thinning
 Distal femoral bowing
 Distal femoral metaphyseal irregularity
@@ -7598,11 +7663,15 @@ Eating-induced seizure
 Ebstein anomaly of the tricuspid valve
 EBV encephalitis
 EBV meningitis
+EBV-driven HLH
+EBV相关性噬血细胞性淋巴组织细胞增多症
 EB病毒性脑炎
 EB病毒性脑膜炎
+EB病毒感染的罕见表现
 Eccentric visual fixation
 Ecchymosis
 Eccrine syringofibroadenoma
+Echinococcal liver cyst
 Echogenic fetal bowel
 Echogenic fetal colon
 Echogenic intracardiac focus
@@ -7759,6 +7828,7 @@ Elevated aldosterone:renin ratio
 Elevated alkaline phosphatase of bone origin
 Elevated alkaline phosphatase of hepatic origin
 Elevated alkaline phosphatase of renal origin
+Elevated alveolar-arterial (A-a) oxygen gradient
 Elevated amniotic fluid alpha-fetoprotein
 Elevated aortic transvalvular pressure gradient
 Elevated aromatase activity
@@ -7807,6 +7877,7 @@ Elevated circulating 3-hydroxylinoleylcarnitine concentration
 Elevated circulating 3-hydroxypalmitoleylcarnitine concentration
 Elevated circulating 3-methyl-2-oxovaleric acid concentration
 Elevated circulating 3-methylhistidine concentration
+Elevated circulating 3-O-methyldopa concentration
 Elevated circulating 4-hydroxybutyric acid concentration
 Elevated circulating 4-hydroxyphenylacetic acid concentration
 Elevated circulating 4-methyl-2-oxopentanoic acid concentration
@@ -7987,6 +8058,7 @@ Elevated circulating sitosterol concentration
 Elevated circulating soluble CD163 concentration
 Elevated circulating soluble CD25 concentration
 Elevated circulating soluble FASL concentration
+Elevated circulating somatostatin concentration
 Elevated circulating stearoylcarnitine concentration
 Elevated circulating suberic acid concentration
 Elevated circulating succinate
@@ -8015,6 +8087,7 @@ Elevated circulating vitamin B6 concentration
 Elevated coagulation factor V activity
 Elevated creatine kinase after exercise
 Elevated CSF 14-3-3 protein concentration
+Elevated CSF 3-O-methyldopa concentration
 Elevated CSF 4-hydroxybutyric acid concentration
 Elevated CSF 5-amino-4-imidazolecarboxyamide concentration
 Elevated CSF 5-hydroxyindoleacetic acid concentration
@@ -8324,6 +8397,7 @@ Encysted hydrocele of the cord
 Endocardial fibroelastosis
 Endocardial fibrosis
 Endocarditis
+Endocarditis caused by Streptococcus viridans infection
 Endocrine-type tubular atrophy
 Endogenous lipoid pneumonia
 Endolymphatic sac tumor
@@ -8441,9 +8515,11 @@ Enteric intraneuronal nuclear inclusion bodies
 Enteric neuronal degeneration
 Enterocolitis
 Enterocutaneous fistula
+Enteroviral central nervous system infection
 Enteroviral dermatomyositis syndrome
 Enteroviral encephalitis
 Enteroviral hepatitis
+Enteroviral sepsis
 Enthesitis
 Entoptic phenomenon
 Entrapment neuropathy
@@ -8820,8 +8896,14 @@ Fallopian tube torsion
 Falls
 False perception of self-motion
 Family history
+Family history of autoimmunity
 Family history of cancer
+Family history of death due to infection
 Family history of heart disease
+Family history of immune deficiency
+Family history of leukaemia
+Family history of lymphoma
+Family history of unusual infection
 Fascicular left ventricular tachycardia
 Fasciculations
 Fasciitis
@@ -8897,6 +8979,7 @@ Fetal cyclophosphamide exposure
 Fetal cystic hygroma
 Fetal cytarabine exposure
 Fetal distress
+Fetal enterolithiasis
 Fetal exposure history
 Fetal extra-axial hemorrhage
 Fetal fifth finger clinodactyly
@@ -9018,6 +9101,7 @@ Fixation-off epileptiform discharges
 Fixed elbow flexion
 Fixed facial expression
 Fixed fetal extremities
+Fixed fetal head flexion
 Fixed head retroflexion
 Fixed splitting of the second heart sound
 Flail chest
@@ -9657,9 +9741,15 @@ Fundus albipunctatus
 Fundus atrophy
 Fundus hemorrhage
 Fungal bloodstream infection
+Fungal brain abscess
+Fungal encephalitis
 Fungal hair infection
 Fungal hyphae in sputum
+Fungal kidney abscess
+Fungal liver abscess
 Fungal meningitis
+Fungal sepsis
+Fungal splenic abscess
 Fungi allergy
 Furcate cord insertion
 Furrowed tongue
@@ -9850,6 +9940,7 @@ Giant cell tumor of bone
 Giant conjunctival papillae
 Giant hypertrophic gastritis
 Giant melanosomes in melanocytes
+Giant molluscum
 Giant neutrophil granules
 Giant platelets
 Giant somatosensory evoked potentials
@@ -9999,17 +10090,25 @@ Granulocytic hypoplasia
 Granulocytopenia
 Granulocytosis
 Granuloma
+Granuloma annulare
 Granulomatosis
 Granulomatous arteriolitis of the arteriolar intima/media
 Granulomatous cholangitis
 Granulomatous conjunctivitis
 Granulomatous coronary arteritis
+Granulomatous gingivitis
+Granulomatous iritis
+Granulomatous lymphadenopathy
+Granulomatous lymphocytic interstitial lung disease
+Granulomatous synovitis
+Granulomatous uveitis
 Granulovacuolar degeneration
 Grasp reflex
 Graves disease
 Gray matter heterotopia
 Grayish enamel
 Greater auricular nerve thickening
+Greek warrior helmet sign
 Green teeth
 Green urine
 Greenstick fracture
@@ -10167,6 +10266,7 @@ Hepatic arteriovenous malformation
 Hepatic artery hyperplasia
 Hepatic bridging fibrosis
 Hepatic calcification
+Hepatic candidiasis
 Hepatic cystine accumulation
 Hepatic cysts
 Hepatic encephalopathy
@@ -10186,6 +10286,7 @@ Hepatic necrosis
 Hepatic periportal necrosis
 Hepatic polyglucosan accumulation
 Hepatic reticuloendothelial system cell iron deposition
+Hepatic schistosomiasis
 Hepatic sinusoidal dilatation
 Hepatic steatosis
 Hepatic vascular malformations
@@ -10336,6 +10437,9 @@ HLA DR+ CD8+ T细胞比例增高
 HLA DR+ CD8+ T细胞比例异常
 HLA DR+ CD8+ T细胞比例降低
 HLA DR+ T细胞比例增加
+HLA-DR阳性T细胞比例升高
+HLA-DR阳性T细胞比例降低
+HLA-DR阳性T细胞的异常比例。
 Hoarse cry
 Hoarse voice
 Hobby horse gait
@@ -10380,6 +10484,7 @@ Hot cross bun sign
 Hot flashes
 Hot water-induced seizure
 Howell-Jolly bodies
+HSV hepatitis
 Humeral cortical irregularity
 Humeral cortical thickening
 Humeral cortical thinning
@@ -10546,6 +10651,7 @@ Hyperperistalsis
 Hyperphalangy of the 2nd finger
 Hyperphalangy of the 3rd finger
 Hyperphalangy of the 4th finger
+Hyperphantasia
 Hyperphenylalaninemia
 Hyperphoria
 Hyperphosphatemia
@@ -11193,6 +11299,9 @@ Increased body weight
 Increased bone density with cystic changes
 Increased bone marrow iron
 Increased bone mineral density
+Increased breast-tissue estrogen receptor expression
+Increased breast-tissue HER2 expression
+Increased breast-tissue progesterone receptor expression
 Increased Burr cell count
 Increased C-peptide level
 Increased cardiac index
@@ -11502,6 +11611,7 @@ Increased mid-arm muscle circumference
 Increased mitochondrial number
 Increased mixed venous oxygen saturation
 Increased monosialylated core 1 O-glycan level
+Increased mucosal-associated invariant T cell proportion
 Increased multinucleated megakaryocyte count
 Increased muscle fatiguability
 Increased muscle glycogen content
@@ -11550,6 +11660,7 @@ Increased proportion of effector memory CD8-positive, alpha-beta T cells
 Increased proportion of exhausted T cells
 Increased proportion of gamma-delta T cells
 Increased proportion of HLA DR+ T cells
+Increased proportion of HLA-DR+ T cells
 Increased proportion of immature B cells
 Increased proportion of immature gamma-delta T cells
 Increased proportion of marginal zone B cells
@@ -11631,6 +11742,8 @@ Increased urinary 1-methylhistidine
 Increased urinary 11-deoxycorticosterone level
 Increased urinary 11-deoxycortisol level
 Increased urinary 11-deoxytetrahydrocorticosterone level
+Increased urinary 18-hydroxycortisol level
+Increased urinary 18-oxocortisol level
 Increased urinary 3-methylhistidine
 Increased urinary 8-oxo-7,8-dihydroguanosine level
 Increased urinary bile acid level
@@ -11718,6 +11831,8 @@ Infection following live vaccination
 Infection-associated lymphopenia
 Infection-related seizure
 Infectious encephalitis
+Infectious granulomatosis
+Infectious hepatitis
 Inferior cerebellar vermis hypoplasia
 Inferior chorioretinal coloboma
 Inferior crossed fused renal ectopia
@@ -12162,6 +12277,10 @@ Jaw mass
 Jaw neoplasm
 Jaw pain
 Jaw swelling
+JC encephalitis
+JC nephropathy
+JC病毒性脑炎
+JC病毒相关性肾病
 Jejunal adenocarcinoma
 Jejunal arteriovenous malformation
 Jejunal atresia
@@ -12230,6 +12349,7 @@ Kinesiophobia
 Kinetic tremor
 Kinked brainstem
 Klazomania
+Klebsiella liver abscess
 Knee clonus
 Knee contracture
 Knee dislocation
@@ -12265,6 +12385,7 @@ Labial melanotic macule
 Labial pseudohypertrophy
 Labile Hypertension
 Labiomental fasciculations
+Lack of attached gingiva
 Lack of bowel sounds
 Lack of expressed empathy
 Lack of facial subcutaneous fat
@@ -12396,6 +12517,7 @@ Laterally deficient tibial plateaux
 Laterally extended eyebrow
 Laterally sloping humeral metaphysis
 Latex allergy
+Latissimus dorsi rupture
 Lattice corneal dystrophy
 Lattice retinal degeneration
 Leaden paralysis
@@ -12574,12 +12696,15 @@ Lipomyelomeningocele
 Liposarcoma
 Lisch nodules
 Lisch结节
+Lisfranc injury
+Lisfranc损伤
 Lissencephaly
 Lithoptysis
 Livedo
 Livedo racemosa
 Livedo reticularis
 Liver abscess
+Liver abscess due to Streptococcus viridans
 Liver angiomyolipoma
 Liver hamartoma
 Liver kidney microsome type 1 antibody positivity
@@ -12899,10 +13024,12 @@ Male-limited expression
 Malformation of mandibular premolar
 Malformation of the hepatic ductal plate
 Malformed lacrimal duct
+Malignant cells in CSF
 Malignant eosinophil proliferation
 Malignant gastrointestinal tract tumors
 Malignant genitourinary tract tumor
 Malignant hyperthermia
+Malignant melanotic nerve sheath tumor
 Malignant mesothelioma
 Malignant neoplasm of the central nervous system
 Malignant ovarian granulosa cell tumor
@@ -12920,6 +13047,8 @@ Malrotation of colon
 Malrotation of small bowel
 Mammary blocked duct
 Mammary duct ectasia
+Mammary ductal apocrine metaplasia
+Mammary ductal epithelial cell hyperplasia
 Mandibular aplasia
 Mandibular condyle aplasia
 Mandibular condyle hypoplasia
@@ -12955,6 +13084,7 @@ Maternal diabetes
 Maternal fever in pregnancy
 Maternal first trimester fever
 Maternal folate deficiency
+Maternal history of recurrent miscarriage
 Maternal household cat exposure
 Maternal hyperphenylalaninemia
 Maternal hypertension
@@ -13559,6 +13689,10 @@ Musty odor
 Muted facial expression
 Mutism
 Myalgia
+Mycobacterial brain abscess
+Mycobacterial encephalitis
+Mycobacterial meningitis
+Mycobacterial sepsis
 Mycobacterium abscessus abscessus infection
 Mycobacterium bacteremia
 Mydriasis
@@ -13955,11 +14089,13 @@ Nodular-random pattern on pulmonary HRCT
 Non-accomodative esotropia
 Non-acidotic proximal tubulopathy
 Non-caseating epithelioid cell granulomatosis
+Non-caseating granulomatosis
 Non-convulsive status epilepticus with coma
 Non-convulsive status epilepticus without coma
 Non-epileptic seizure
 Non-glucose reducing substance in urine
 Non-Hodgkin lymphoma
+Non-infectious granulomatosis
 Non-infectious meningitis
 Non-medullary thyroid carcinoma
 Non-Mendelian inheritance
@@ -13979,6 +14115,7 @@ Non-restrictive ventricular septal defect
 Non-secretory adrenocortical adenoma
 Non-small cell lung carcinoma
 Non-spinning vertigo
+Non-tuberculous mycobacterial infection
 Nonarteriosclerotic cerebral calcification
 Nonarteritic anterior ischemic optic neuropathy
 Noncommunicating hydrocephalus
@@ -14616,6 +14753,8 @@ Oppenheim reflex
 Opportunistic bacterial infection
 Opportunistic fungal infection
 Opportunistic infection
+Opportunistic mycobacterial infection
+Opportunistic parasitic infection
 Opportunistic viral infection
 Opposable triphalangeal thumb
 Oppositional defiant disorder
@@ -14889,6 +15028,7 @@ Palate neoplasm
 Palate telangiectasia
 Palatine myxoma
 Palilalia
+Palinopsia
 Pallidal degeneration
 Pallor
 Pallor of dorsal columns of the spinal cord
@@ -15005,6 +15145,12 @@ Parasagittal parieto-occipital polymicrogyria
 Paraseptal
 Paraseptal emphysema
 Parasite allergy
+Parasitic brain abscess
+Parasitic encephalitis
+Parasitic kidney abscess
+Parasitic liver abscess
+Parasitic meningitis
+Parasitic splenic abscess
 Parasomnia
 Paraspinal arteriovenous malformation
 Paraspinal hemangioma
@@ -15065,6 +15211,7 @@ Partial absence of foot
 Partial absence of specific antibody response to Haemophilus influenzae type b (Hib) vaccine
 Partial absence of specific antibody response to hepatitis B vaccine
 Partial absence of specific antibody response to meningococcus vaccine
+Partial absence of specific antibody response to Salmonella typhi vaccine
 Partial absence of specific antibody response to tetanus vaccine
 Partial absence of specific antibody response to unconjugated pneumococcus vaccine
 Partial absence of the septum pellucidum
@@ -15227,6 +15374,7 @@ Pectoral muscle hypoplasia/aplasia
 Pectoralis amyotrophy
 Pectoralis hypoplasia
 Pectoralis major hypoplasia
+Pectoralis major tear
 Pectus carinatum
 Pectus excavatum
 Pectus excavatum of inferior sternum
@@ -15431,6 +15579,7 @@ Persecutory delusion
 Perseverative thought
 Persistence of hemoglobin F
 Persistence of primary teeth
+Persistent adenovirus viremia
 Persistent asymmetrical tonic neck reflex
 Persistent bleeding after trauma
 Persistent cloaca
@@ -15439,10 +15588,12 @@ Persistent EBV viremia
 Persistent falcine venous sinus
 Persistent fetal circulation
 Persistent fever
+Persistent Giardia lamblia infection
 Persistent head lag
 Persistent human papillomavirus infection
 Persistent lactic acidosis
 Persistent left superior vena cava
+Persistent molluscum infection
 Persistent open anterior fontanelle
 Persistent patent ductus venosus
 Persistent preoccupation with parts of objects
@@ -15450,6 +15601,7 @@ Persistent pupillary membrane
 Persistent repetition of sounds
 Persistent stapedial artery
 Persistent viremia
+Persitent influenza virema
 Personality changes
 Personality disorder
 Pes cavus
@@ -15485,6 +15637,7 @@ Phocomelia
 Phonic tics
 Phonophobia
 Phosphaturic mesenchymal tumor
+Phosphene
 Phosphoethanolaminuria
 Phosphohydroxylysinuria
 Photophobia
@@ -15622,6 +15775,7 @@ Pneumocystis cysts in respiratory secretions
 Pneumocystis jirovecii pneumonia
 Pneumomediastinum
 Pneumonia
+Pneumonia with consolidation
 Pneumothorax
 Podagra
 Podocyte cytoskeletal condensation
@@ -15856,6 +16010,7 @@ Positive respiratory tract SARS-CoV-2 coronavirus nucleic acid test
 Positive Romberg sign
 Positive rubella CSF culture
 Positive saliva rabies nucleic acid test
+Positive scapular compression test
 Positive serum amyloid P scintigraphy
 Positive shoulder apprehension test
 Positive shoulder cross-body adduction test
@@ -15902,6 +16057,7 @@ Post-capillary pulmonary hypertension
 Post-partum hemorrhage
 Post-transfusion thrombocytopenia
 Post-vaccination measles
+Post-vaccination mumps
 Post-vaccination polio
 Post-vaccination rotavirus infection
 Post-vaccination rubella
@@ -15936,6 +16092,7 @@ Posterior fossa localization
 Posterior fossa mass lesion
 Posterior fusion of lumbosacral vertebrae
 Posterior helix pit
+Posterior humeral circumflex artery occlusion
 Posterior lenticonus
 Posterior leukoencephalopathy
 Posterior mediastinal mass
@@ -16478,6 +16635,7 @@ Pulmonary capillary hemangiomatosis
 Pulmonary carcinoid tumor
 Pulmonary cavity
 Pulmonary chondroma
+Pulmonary cryptococcosis
 Pulmonary cylindroma
 Pulmonary cyst
 Pulmonary edema
@@ -16669,6 +16827,8 @@ Rectovestibular fistula
 Rectus femoris muscle atrophy
 Recurrent
 Recurrent abscess formation
+Recurrent Acinetobacter baumannii infection
+Recurrent Actinomyces infection
 Recurrent acute respiratory tract infection
 Recurrent aphthous stomatitis
 Recurrent Aspergillus infections
@@ -16677,44 +16837,72 @@ Recurrent bacterial infections
 Recurrent bacterial meningitis
 Recurrent bacterial skin infections
 Recurrent bacterial upper respiratory tract infections
+Recurrent Bacteroides infection
+Recurrent Blastomyces dermatitidis infection
+Recurrent boils
 Recurrent bronchiolitis
 Recurrent bronchitis
 Recurrent bronchopulmonary infections
 Recurrent Burkholderia cepacia infections
 Recurrent candida infections
 Recurrent cerebral hemorrhage
+Recurrent chickenpox infection
+Recurrent Citrobacter infection
+Recurrent Clostridium infection
+Recurrent coagulase-negative Staphylococcus infection
+Recurrent Coccidioides infection
+Recurrent conjunctivitis
 Recurrent corneal erosions
 Recurrent coughing spasms
+Recurrent Cryptococcus infection
+Recurrent Cryptosporidium infection
 Recurrent cutaneous abscess formation
 Recurrent cutaneous fungal infections
 Recurrent cystitis
 Recurrent deep organ abscess formation
 Recurrent deep vein thrombosis
+Recurrent dental abscesses
+Recurrent dermatophyte infection
+Recurrent diaper rash
 Recurrent E. coli infections
 Recurrent ear infections
 Recurrent encephalopathy
+Recurrent endocarditis
+Recurrent Enterobacter infection
+Recurrent Enterococcus faecalis infection
+Recurrent Enterococcus faecium infection
+Recurrent Enterococcus infection
 Recurrent enteroviral infections
 Recurrent external ophthalmoplegia
 Recurrent fever
 Recurrent fractures
 Recurrent fungal infections
+Recurrent Fusobacterium infection
 Recurrent gastroenteritis
 Recurrent genital herpes
+Recurrent Giardia lamblia infection
 Recurrent gingivitis
 Recurrent gram-negative bacterial infections
 Recurrent Haemophilus influenzae infections
 Recurrent hand flapping
 Recurrent herpes
+Recurrent herpes simplex virus infection
+Recurrent Histoplasma capsulatum infection
 Recurrent hypoglycemia
 Recurrent infantile hypoglycemia
 Recurrent infection of the gastrointestinal tract
 Recurrent infections
 Recurrent infections due to aspiration
 Recurrent infections in infancy and early childhood
+Recurrent infectious vasculitis
 Recurrent interdigital mycosis
 Recurrent intrapulmonary hemorrhage
 Recurrent joint dislocation
+Recurrent keratitis
 Recurrent Klebsiella infections
+Recurrent Legionella pneumophila infection
+Recurrent Leishmania infection
+Recurrent Listeria infection
 Recurrent long bone fractures
 Recurrent loss of toenails and fingernails
 Recurrent lower respiratory tract infections
@@ -16722,25 +16910,47 @@ Recurrent maladaptive behavior
 Recurrent mandibular subluxations
 Recurrent meningitis
 Recurrent meningococcal disease
+Recurrent Moraxella catarrhalis infection
 Recurrent mycobacterial infections
+Recurrent Mycobacterium abscessus infection
+Recurrent Mycobacterium avium complex infection
 Recurrent mycobacterium avium complex infections
+Recurrent Mycoplasma infection
+Recurrent myocarditis
 Recurrent myoglobinuria
+Recurrent Neisseria gonorrhoeae infection
 Recurrent Neisserial infections
+Recurrent Nocardia infection
+Recurrent non-tuberculous mycobacterial infection
+Recurrent onychomycosis
 Recurrent opportunistic infections
 Recurrent oral herpes
+Recurrent otitis externa
 Recurrent otitis media
 Recurrent pancreatitis
+Recurrent Paracoccidioides brasiliensis infection
+Recurrent parainfluenza virus infection
 Recurrent parasitic infections
 Recurrent paroxysmal headache
 Recurrent patellar dislocation
+Recurrent pericarditis
+Recurrent periodontitis
 Recurrent pharyngitis
 Recurrent plantar mycosis
+Recurrent pleural empyema
+Recurrent Pneumocystis jirovecii infection
 Recurrent pneumonia
+Recurrent Prevotella infection
+Recurrent Proteus infection
 Recurrent protozoan infections
+Recurrent Pseudomonas aeruginosa infection
 Recurrent pyelonephritis
 Recurrent respiratory infections
+Recurrent retinitis
+Recurrent Salmonella infection
 Recurrent sepsis
 Recurrent Serratia marcescens infections
+Recurrent Shigella infection
 Recurrent shingles
 Recurrent shoulder dislocation
 Recurrent singultus
@@ -16750,22 +16960,29 @@ Recurrent skin infections
 Recurrent spontaneous abortion
 Recurrent staphylococcal infections
 Recurrent Staphylococcus aureus infections
+Recurrent stomatitis
 Recurrent streptococcal infections
+Recurrent Streptococcus agalactiae infection
+Recurrent Streptococcus pneumoniae infection
 Recurrent streptococcus pneumoniae infections
+Recurrent Streptococcus pyogenes infection
 Recurrent subcortical infarcts
 Recurrent systemic pyogenic infections
 Recurrent thromboembolism
 Recurrent thrombophlebitis
 Recurrent tonsillitis
 Recurrent trauma-related distressing dreams
+Recurrent tuberculosis infection
 Recurrent upper and lower respiratory tract infections
 Recurrent upper respiratory tract infections
 Recurrent urinary tract infections
+Recurrent Vibrio cholerae infection
 Recurrent viral infections
 Recurrent viral pneumonia
 Recurrent viral skin infections
 Recurrent viral upper respiratory tract infections
 Recurrent vulvovaginal candidiasis
+Recurrent warts
 Recurrent, involuntary, and intrusive distressing memories
 Red blood cell keratocytosis
 Red desaturation
@@ -17637,6 +17854,7 @@ Scapuloperoneal amyotrophy
 Scapuloperoneal myopathy
 Scapuloperoneal weakness
 Scapulothoracic dissociation
+Scapulothoracic incongruity
 Scarring
 Scarring alopecia of scalp
 Scattered lymph node individual epithelioid histiocytes
@@ -17660,6 +17878,8 @@ Sclerocornea
 Sclerodactyly
 Scleroderma
 Sclerosing cholangitis
+Sclerosing cholangitis due to Cryptococcus
+Sclerosing cholangitis due to Cryptosporidium infection
 Sclerosis of 2nd finger phalanx
 Sclerosis of 2nd toe phalanx
 Sclerosis of 3rd finger phalanx
@@ -17835,45 +18055,106 @@ Sertoli cell neoplasm
 Sertoli cell-only phenotype
 Setting-sun eye phenomenon
 Severe
+Severe Acinetobacter baumannii infection
+Severe Actinomyces infection
 Severe adenovirus infection
 Severe albuminuria
+Severe Aspergillus infection
 Severe B lymphocytopenia
+Severe Bacteroides infection
+Severe Blastomyces dermatitidis infection
+Severe Burkholderia cepacia infection
+Severe Candida auris infection
+Severe chickenpox infection
+Severe Citrobacter infection
+Severe Clostridium infection
+Severe coagulase-negative Staphylococcus infection
+Severe Coccidioides infection
 Severe combined immunodeficiency
 Severe conductive hearing impairment
+Severe conjunctivitis
 Severe constriction of peripheral visual field
 Severe cytomegalovirus infection
 Severe demyelination of the white matter
+Severe dental abscess
+Severe endocarditis
+Severe Enterobacter infection
+Severe Enterococcus faecalis infection
+Severe Enterococcus faecium infection
+Severe Enterococcus infection
 Severe Epstein Barr virus infection
+Severe Escherichia coli infection
 Severe expressive language delay
 Severe failure to thrive
+Severe Fusobacterium infection
 Severe generalized osteoporosis
 Severe giardiasis
+Severe gingivitis
 Severe global developmental delay
+Severe Haemophilus influenzae infection
 Severe hearing impairment
 Severe hydrocephalus
 Severe infection
+Severe infectious vasculitis
 Severe influenza infection
 Severe intrauterine growth retardation
+Severe keratitis
+Severe Klebsiella infection
 Severe lactic acidosis
+Severe Legionella pneumophila infection
+Severe Leishmania infection
 Severe limb shortening
+Severe Listeria infection
+Severe Moraxella catarrhalis infection
 Severe muscular hypotonia
+Severe Mycobacterium abscessus infection
+Severe Mycobacterium avium complex infection
+Severe Mycoplasma infection
+Severe myocarditis
+Severe Neisseria gonorrhoeae infection
+Severe Neisseria meningitidis infection
+Severe Nocardia infection
 Severe norovirus infection
 Severe oligozoospermia
+Severe oral thrush
+Severe otitis externa
+Severe otitis media
+Severe Paracoccidioides brasiliensis infection
 Severe parainfluenza infection
+Severe pericarditis
 Severe periodontitis
+Severe pharyngitis
 Severe photosensitivity
 Severe platyspondyly
+Severe pleural empyema
+Severe Pneumocystis jirovecii infection
 Severe postnatal growth retardation
+Severe Prevotella infection
+Severe Proteus infection
+Severe Pseudomonas aeruginosa infection
 Severe receptive language delay
 Severe recurrent varicella
+Severe respiratory syncytial virus infection
+Severe retinitis
+Severe rotavirus infection
+Severe Salmonella infection
 Severe SARS-CoV-2 infection
+Severe seasonal coronavirus infection
 Severe sensorineural hearing impairment
+Severe Serratia infection
+Severe Shigella infection
 Severe short stature
 Severe short-limb dwarfism
+Severe Staphylococcus aureus infection
+Severe stomatitis
+Severe Streptococcus agalactiae infection
+Severe Streptococcus pneumoniae infection
+Severe Streptococcus pyogenes infection
 Severe T-cell immunodeficiency
 Severe temper tantrums
 Severe toxoplasmosis
 Severe varicella zoster infection
+Severe Vibrio cholerae infection
 Severe viral infection
 Severely decreased neutrophil count
 Severely reduced contrast sensitivity
@@ -18320,6 +18601,7 @@ Solitary median maxillary central incisor
 Somatic hallucination
 Somatic sensory dysfunction
 Somatosensory-induced seizure
+Somatostatinoma
 Somnambulism
 Sonographic non-visualized fetal bladder
 Sonographic renal salt and pepper pattern
@@ -18453,6 +18735,7 @@ Spongiosis
 Spontaneous cerebrospinal fluid leak
 Spontaneous chorioamniotic separation
 Spontaneous conjunctival filtering bleb
+Spontaneous diaphragmatic rupture
 Spontaneous esophageal perforation
 Spontaneous hematomas
 Spontaneous hemolytic crises
@@ -18504,6 +18787,7 @@ Stage 5 chronic kidney disease
 Staghorn calculus
 Stahl ear
 Stapes ankylosis
+Staphylococcal liver abscess
 Starch intolerance
 Staring gaze
 Starry sky appearance on hepatic sonography
@@ -19358,6 +19642,8 @@ Total hyposmia
 Total intestinal aganglionosis
 Total ophthalmoplegia
 Toxemia of pregnancy
+Toxoplasma eye infection
+Toxoplasma infection of the central nervous system (CNS)
 Tracheal atresia
 Tracheal bronchus
 Tracheal calcification
@@ -19388,6 +19674,7 @@ Transient decreased circulating IgG1
 Transient decreased circulating IgG2
 Transient decreased circulating IgG3
 Transient decreased circulating IgG4
+Transient decreased circulating IgM concentration
 Transient decreased circulating total IgG
 Transient erythroblastopenia
 Transient global amnesia
@@ -19635,6 +19922,8 @@ Truncal titubation
 Truncus arteriosus
 Tryptophanuria
 Tube feeding
+Tuberculosis infection
+Tuberculous osteomyelitis
 Tuberous xanthoma
 Tubo-ovarian abscess
 Tubular accumulation of uromodulin
@@ -19772,6 +20061,7 @@ Ultra-low vision with retained light perception
 Ultra-low vision with retained light projection
 Ultra-low vision with retained motion projection
 Umbilical cord cyst
+Umbilical cord edema
 Umbilical cord hematoma
 Umbilical cord knot
 Umbilical cord prolapse
@@ -19823,6 +20113,7 @@ Undulate clavicles
 Undulate ribs
 Unesterified cholesterol accumulation in cultured fibroblasts
 Unexplained fevers
+Unexplained sibling death
 Unfavorable response of muscle weakness to acetylcholine esterase inhibitors
 Ungual fibroma
 Unguarded tricuspid valve
@@ -19881,18 +20172,173 @@ Unossified sacrum
 Unossified vertebral bodies
 Unroofed coronary sinus
 Unsteady gait
+Unusual Acinetobacter baumannii infection
+Unusual Actinomyces infection
+Unusual adenovirus infection
+Unusual Aichi virus hepatitis
+Unusual Aspergillus infection
+Unusual astrovirus infection
+Unusual bacterial arthritis
+Unusual bacterial cholangitis
+Unusual bacterial colitis
+Unusual bacterial cystitis
+Unusual bacterial gastroenteritis
+Unusual bacterial infection
+Unusual bacterial myositis
+Unusual bacterial nail bed infection
+Unusual bacterial osteomyelitis
+Unusual bacterial pancreatitis
+Unusual bacterial skin abscess
+Unusual bacterial skin infection
+Unusual bacterial vaginal infection
+Unusual Bacteroides infection
+Unusual BK virus infection
+Unusual Blastomyces dermatitidis infection
+Unusual Burkholderia cepacia infection
+Unusual Burkholderia pseudomallei infection
+Unusual Candida auris infection
+Unusual Candida infection
+Unusual cardiovascular system infection
+Unusual cholangitis
+Unusual Citrobacter infection
+Unusual Clostridium infection
 Unusual CNS infection
+Unusual coagulase-negative Staphylococcus infection
+Unusual Coccidioides infection
+Unusual conjunctivitis
+Unusual Cryptococcus infection
+Unusual Cryptosporidium infection
+Unusual cutaneous larva migrans
+Unusual cutaneous leishmaniasis
+Unusual cystitis
+Unusual cytomegalovirus infection
 Unusual dermatoglyphics
+Unusual dermatophyte infection
+Unusual EBV infection
+Unusual endocarditis
+Unusual Enterobacter infection
+Unusual Enterococcus faecalis infection
+Unusual Enterococcus faecium infection
+Unusual Enterococcus infection
+Unusual enterovirus infection
+Unusual Escherichia coli infection
+Unusual eye infection
+Unusual fascia infection
+Unusual fungal arthritis
+Unusual fungal colitis
+Unusual fungal cystitis
+Unusual fungal gastroenteritis
 Unusual fungal infection
+Unusual fungal myositis
+Unusual fungal osteomyelitis
+Unusual fungal pancreatitis
+Unusual fungal skin infection
+Unusual fungal vaginal infection
+Unusual Fusobacterium infection
 Unusual gastrointestinal infection
+Unusual genitourinary infection
+Unusual Giardia lamblia infection
+Unusual gram-negative bacterial infection
+Unusual gram-positive bacterial infection
+Unusual Haemophilus influenzae infection
 Unusual helminthic infection
+Unusual hemorrhagic cystitis
+Unusual HHV6 infection
+Unusual HHV7 infection
+Unusual HHV8 infection
+Unusual HSV infection
+Unusual HSV skin infection
+Unusual human metapneumovirus infection
 Unusual infection
 Unusual infection by anatomical site
+Unusual infectious arthritis
+Unusual infectious colitis
+Unusual infectious gastroenteritis
+Unusual infectious myositis
+Unusual infectious osteomyelitis
+Unusual infectious pancreatitis
+Unusual infectious vasculitis
+Unusual influenza infection
+Unusual JC virus infection
+Unusual keratitis
+Unusual kidney abscess
+Unusual Klebsiella infection
+Unusual Legionella pneumophila infection
+Unusual Leishmania infection
+Unusual Listeria infection
+Unusual liver infection
+Unusual lower respiratory tract infection
+Unusual lymphatic system infection
+Unusual mold infection
+Unusual Moraxella catarrhalis infection
+Unusual mucormycosis
+Unusual musculoskeletal infection
+Unusual mycobacterial arthritis
+Unusual mycobacterial infection
+Unusual mycobacterial myositis
+Unusual mycobacterial osteomyelitis
+Unusual mycobacterial skin infection
+Unusual Mycobacterium abscessus infection
+Unusual Mycobacterium avium complex infection
+Unusual Mycoplasma infection
+Unusual myocarditis
+Unusual nail infection
+Unusual Neisseria gonorrhoeae infection
+Unusual Neisseria meningitidis infection
+Unusual Nocardia infection
+Unusual norovirus infection
+Unusual oral cavity infection
+Unusual oral thrush
+Unusual Paracoccidioides brasiliensis infection
+Unusual parainfluenza infection
+Unusual parasitic colitis
+Unusual parasitic gastroenteritis
 Unusual parasitic infection
+Unusual parasitic pancreatitis
+Unusual parasitic skin infection
+Unusual parasitic vaginal infection
+Unusual pericarditis
+Unusual periodontitis
+Unusual pharyngitis
+Unusual pleural empyema
+Unusual Pneumocystis jirovecii infection
+Unusual poliovirus infection
+Unusual Prevotella infection
+Unusual Proteus infection
 Unusual protozoan infection
+Unusual Pseudomonas aeruginosa infection
+Unusual pyelonephritis
+Unusual respiratory syncytial virus infection
+Unusual retinitis
+Unusual Salmonella infection
+Unusual Serratia infection
+Unusual Shigella infection
 Unusual skin infection
+Unusual spinal cord infection
+Unusual Staphylococcus aureus infection
+Unusual stomatitis
+Unusual Streptococcus agalactiae infection
+Unusual Streptococcus infection
+Unusual Streptococcus pneumoniae infection
+Unusual Streptococcus pyogenes infection
+Unusual Talaromyces marneffei infection
+Unusual Toxoplasma infection
+Unusual upper respiratory tract infection
+Unusual Ureaplasma infection
+Unusual vaginal infection
+Unusual Vibrio cholerae infection
+Unusual viral colitis
+Unusual viral gastroenteritis
 Unusual viral infection
+Unusual viral myositis
+Unusual viral pancreatitis
+Unusual viral skin infection
+Unusual viral vaginal infection
+Unusual Viridans Streptococci infection
 Unusual virus reactivation
+Unusual VZV infection
+Unusual VZV skin infection
+Unusual warts
 Upbeat nystagmus
 Upgaze palsy
 Uplifted earlobe
@@ -20165,6 +20611,8 @@ Violet lip discoloration
 Viral encephalitis
 Viral hepatitis
 Viral infection-induced rhabdomyolysis
+Viral meningitis
+Viral sepsis
 Virchow-Robin间隙扩张
 Viremia
 Visceral angiomatosis
@@ -20225,6 +20673,9 @@ Vulvar intraepithelial neoplasia
 Vulvar melanoma
 Vulvar neoplasm
 Vulvodynia
+VZV encephalitis
+VZV meningitis
+VZV pneumonitis
 V型动脉粥样硬化病变
 V字征
 V级膀胱输尿管反流
@@ -20424,6 +20875,7 @@ Z盘形态异常
 一过性循环IgE浓度降低
 一过性循环IgG3降低
 一过性循环IgG4降低
+一过性循环IgM浓度降低
 一过性循环总免疫球蛋白G降低
 一过性肺部浸润
 一过性肾病综合征
@@ -20846,6 +21298,23 @@ Z盘形态异常
 下颌髁突发育不全
 下颌髁突短缩
 不公正识别不良
+不典型JC病毒感染
+不典型假鼻疽伯克霍尔德菌感染
+不典型大肠杆菌感染
+不典型屎肠球菌感染
+不典型感染性关节炎
+不典型水痘-带状疱疹病毒感染
+不典型球孢子菌感染
+不典型疣
+不典型的铜绿假单胞菌感染
+不典型皮炎芽生菌感染
+不典型皮肤幼虫移行症
+不典型真菌性关节炎
+不典型耶氏肺孢子菌感染
+不典型脑膜炎奈瑟菌感染
+不典型脓胸
+不典型视网膜炎
+不典型金黄色葡萄球菌感染
 不动杆菌感染
 不动精子
 不协调性骨龄加速
@@ -20873,13 +21342,36 @@ Z盘形态异常
 不对称性生长
 不对称性线性皮肤缺损
 不对称臀沟
+不寻常HHV6感染
+不寻常屎肠球菌感染
+不寻常感染性骨髓炎
+不寻常泌尿生殖系统感染
+不寻常的咽炎
+不寻常的寄生虫性结肠炎
+不寻常的洋葱伯克霍尔德菌感染
+不寻常的草绿色链球菌感染
 不射精症
+不常见卡他莫拉菌感染
+不常见性心肌炎
+不常见病毒性肌炎
+不常见的下呼吸道感染
+不常见的利什曼原虫感染
+不常见的变形杆菌感染
+不常见的感染性胃肠炎
+不常见的放线菌感染
+不常见的淋病奈瑟菌感染
+不常见的真菌性胃肠炎
+不常见的脲原体感染
+不常见真菌性膀胱炎
+不常见细菌性结肠炎
+不常见结膜炎
 不平衡性房室通道缺损
 不成比例性身材矮小
 不成比例性身材高大
 不成比例的短肢型身材矮小
 不成比例的短躯干型矮小症
 不明原因发热 (Fever of Unknown Origin, FUO)
+不明原因同胞猝死（SUDC，Sudden Unexplained Death in Childhood）
 不沿Blaschko线分布的色素减退和色素沉着区域
 不稳定性高血压
 不自主发声
@@ -20947,22 +21439,52 @@ Z盘形态异常
 严重T细胞免疫缺陷
 严重乳酸酸中毒
 严重产后生长迟缓
+严重克雷伯菌属感染
+严重凝固酶阴性葡萄球菌感染
+严重化脓性链球菌感染
 严重发育迟缓
+严重变形杆菌感染
 严重复发性水痘
+严重大肠杆菌感染
 严重宫内生长受限
 严重少精子症
 严重急性呼吸综合征冠状病毒2型感染
+严重急性呼吸综合征冠状病毒2型慢性感染
+严重感染性血管炎
+严重放线菌感染
+严重无乳链球菌感染
+严重曲霉菌感染
+严重梭杆菌感染
+严重梭菌感染
+严重沙门氏菌感染
+严重洋葱伯克霍尔德菌感染
+严重流感嗜血杆菌感染
+严重牙脓肿
 严重病毒感染
 严重的全面性发育迟缓
 严重的情绪爆发（Severe temper tantrums）
+严重的普雷沃菌感染
+严重的沙雷氏菌感染
+严重的皮炎芽生菌感染
 严重程度
+严重耳念珠菌感染
+严重耶氏肺孢子菌感染
 严重联合免疫缺陷症
+严重肠球菌属感染
 严重肢体短缩
+严重肺炎链球菌感染
+严重脓肿分枝杆菌感染
+严重脓胸
 严重表达性语言发育迟缓
 严重视力减退
+严重角膜炎
 严重诺如病毒感染
 严重身材矮小
+严重金黄色葡萄球菌感染
+严重铜绿假单胞菌感染
 严重降低的对比敏感度
+严重鲍曼不动杆菌感染
+严重鸟分枝杆菌复合群感染
 丧失行走能力
 中位假性唇裂
 中位心
@@ -21303,7 +21825,9 @@ Z盘形态异常
 乳腺发育不全
 乳腺囊肿
 乳腺大汗腺腺瘤
+乳腺导管上皮细胞增生
 乳腺导管内乳头状瘤
+乳腺导管大汗腺化生
 乳腺导管扩张症
 乳腺导管阻塞
 乳腺异常
@@ -21313,6 +21837,11 @@ Z盘形态异常
 乳腺痛
 乳腺癌
 乳腺纤维腺瘤
+乳腺组织HER2表达上调。
+乳腺组织孕激素受体表达增加
+乳腺组织细胞学异常发现
+乳腺组织细胞抗原表达异常
+乳腺组织雌激素受体表达增加
 乳腺结构扭曲
 乳腺肉芽肿
 乳腺肥大症
@@ -21466,6 +21995,7 @@ Z盘形态异常
 传染性软疣
 伤口愈合不良
 伤口组织中抗酸杆菌的检测
+伤寒疫苗特异性抗体反应部分缺失
 伯基特淋巴瘤
 伴有先兆的偏头痛
 伴有前庭特征的局灶性意识受损感觉性癫痫发作
@@ -21822,6 +22352,7 @@ Z盘形态异常
 光学相干断层扫描（OCT）测量的中心凹厚度降低
 光学相干断层扫描（OCT）测量的黄斑厚度降低
 光学空玻璃体
+光幻视
 光感无定位视力
 光敏性强直-阵挛性发作
 光敏性肌阵挛-强直-阵挛性癫痫发作
@@ -21835,6 +22366,7 @@ Z盘形态异常
 光适应障碍
 克罗恩病
 克隆性T细胞受体基因重排
+克雷伯菌肝脓肿
 免疫失调
 免疫性超敏反应
 免疫抑制治疗后症状缓解
@@ -21843,6 +22375,7 @@ Z盘形态异常
 免疫系统形态异常
 免疫系统生理功能异常
 免疫缺陷
+免疫缺陷家族史
 免疫缺陷导致的陈旧性肝脓肿
 免疫缺陷导致的陈旧性蜂窝织炎
 免疫缺陷导致的陈旧性骨髓炎
@@ -22131,6 +22664,10 @@ Z盘形态异常
 分叶状的
 分叶舌
 分布性休克
+分枝杆菌性脑炎
+分枝杆菌性脑脓肿
+分枝杆菌性脑膜炎
+分枝杆菌性脓毒症
 分枝杆菌滑膜核酸阳性检测
 分枝杆菌血症
 分泌型免疫球蛋白A缺乏症
@@ -22555,7 +23092,9 @@ Z盘形态异常
 单纯性热性惊厥
 单纯性耳炎
 单纯性肾囊肿
+单纯疱疹病毒性肝炎
 单纯疱疹病毒性脑炎
+单纯疱疹病毒脑炎
 单结节性甲状腺肿
 单羧酸尿症
 单脐动脉
@@ -22567,6 +23106,9 @@ Z盘形态异常
 卟啉尿症
 卡介苗炎
 卡介苗病
+卡介苗相关疾病
+卡他莫拉菌严重感染
+卡他莫拉菌反复感染
 卡氏肺孢子虫肺炎
 卡波西肉瘤
 卡马西平暴露
@@ -22631,6 +23173,7 @@ Z盘形态异常
 原发孔型房间隔缺损
 原发性中枢神经系统淋巴瘤
 原发性先天性青光眼
+原发性卵巢功能不全
 原发性卵巢功能衰竭
 原发性小头畸形
 原发性干骺端松质骨缺失
@@ -22772,10 +23315,12 @@ Z盘形态异常
 反向性视网膜色素变性
 反向脐动脉舒张末期血流
 反复冷水暴露
+反复发作性角膜炎
 反复局灶性运动性癫痫发作
 反复性手部拍打动作
 反复手部冲击暴露
 反复种植失败
+反复隐孢子虫感染
 反射亢进
 反射减弱
 反射性心脏停搏性晕厥
@@ -23597,47 +24142,82 @@ Z盘形态异常
 复发性克雷伯菌感染
 复发性全身性化脓性感染
 复发性关节脱位
+复发性凝固酶阴性葡萄球菌感染
 复发性分枝杆菌感染
 复发性创伤相关痛苦梦境
+复发性利什曼原虫感染
+复发性副流感病毒感染
+复发性化脓性链球菌感染
+复发性单纯疱疹病毒感染
 复发性原虫感染
 复发性发热
+复发性变形杆菌感染
+复发性口炎
 复发性口腔疱疹
 复发性吸入性肺炎
 复发性呃逆
 复发性呼吸道感染
 复发性咳嗽痉挛
 复发性咽炎
+复发性嗜肺军团菌感染
 复发性外眼肌麻痹
+复发性外耳道炎
 复发性外阴阴道念珠菌病
 复发性大肠杆菌感染
 复发性奈瑟菌感染
 复发性婴儿低血糖症
 复发性寄生虫感染
+复发性尿布皮炎
 复发性尿路感染
+复发性巴西副球孢子菌感染
 复发性带状疱疹
+复发性心内膜炎
+复发性心包炎
+复发性心肌炎
+复发性志贺菌感染
 复发性念珠菌感染
 复发性急性呼吸道感染
 复发性感染
+复发性感染性血管炎
 复发性扁桃体炎
+复发性拟杆菌感染
 复发性指间真菌病
 复发性指（趾）甲脱落
+复发性支原体感染
 复发性支气管炎
 复发性支气管肺感染
+复发性放线菌感染
+复发性普雷沃菌感染
 复发性曲霉菌感染
 复发性机会性感染
+复发性李斯特菌感染
+复发性柠檬酸杆菌感染
+复发性梭杆菌感染
+复发性梭菌感染
 复发性气胸
+复发性水痘感染
+复发性沙门菌感染
 复发性洋葱伯克霍尔德菌感染
+复发性流产孕产史
 复发性流感嗜血杆菌感染
+复发性淋球菌感染
 复发性深部器官脓肿形成
 复发性深静脉血栓形成
+复发性牙周炎
+复发性牙脓肿
 复发性牙龈炎
+复发性球孢子菌感染
 复发性生殖器疱疹
+复发性甲癣
+复发性疖肿
+复发性疣
 复发性疱疹
 复发性病毒性上呼吸道感染
 复发性病毒性皮肤感染
 复发性病毒性肺炎
 复发性病毒感染
 复发性皮肤感染
+复发性皮肤癣菌感染
 复发性皮肤真菌感染
 复发性皮肤脓肿形成
 复发性皮质下梗死
@@ -23648,8 +24228,13 @@ Z盘形态异常
 复发性细菌性皮肤感染
 复发性细菌性脑膜炎
 复发性细菌感染
+复发性结核感染
+复发性结膜炎
 复发性耳部感染
+复发性耶氏肺孢子虫感染
 复发性肌红蛋白尿症
+复发性肠杆菌感染
+复发性肠球菌感染
 复发性肠道病毒感染
 复发性肩关节脱位
 复发性肺内出血
@@ -23663,13 +24248,19 @@ Z盘形态异常
 复发性脑膜炎
 复发性脑膜炎球菌病
 复发性脓毒症
+复发性脓肿分枝杆菌感染
 复发性脓肿形成
+复发性脓胸
 复发性膀胱炎
 复发性自然流产
+复发性荚膜组织胞浆菌感染
 复发性葡萄球菌感染
+复发性蓝氏贾第鞭毛虫感染
 复发性血栓性静脉炎
 复发性血栓栓塞
+复发性视网膜炎
 复发性角膜上皮糜烂
+复发性诺卡菌感染
 复发性足底真菌感染
 复发性适应不良行为
 复发性金黄色葡萄球菌感染
@@ -23677,10 +24268,14 @@ Z盘形态异常
 复发性长骨骨折
 复发性阵发性头痛
 复发性阿弗他口炎
+复发性隐球菌感染
+复发性霍乱弧菌感染
+复发性非结核分枝杆菌感染
 复发性革兰氏阴性菌感染
 复发性骨折
 复发性髌骨脱位
 复发性鸟分枝杆菌复合体感染
+复发性鸟分枝杆菌复合群感染
 复发性鼻窦炎
 复发性鼻窦肺部感染
 复合型N-聚糖水平降低
@@ -24254,7 +24849,9 @@ Z盘形态异常
 宫颈透明细胞腺癌
 宫颈鳞状细胞乳头状瘤
 家族史
+家族史中有因感染导致的死亡病例
 家族性心脏病史
+家族性罕见感染病史
 家畜暴露
 宽人中
 宽剑突
@@ -24281,6 +24878,12 @@ Z盘形态异常
 宽颏
 宽鼻小柱
 寄生妄想症
+寄生虫性肝脓肿
+寄生虫性肾脓肿
+寄生虫性脑炎
+寄生虫性脑脓肿
+寄生虫性脑膜炎
+寄生虫性脾脓肿
 寄生虫过敏
 富含组氨酸糖蛋白水平降低
 寒冷诱发
@@ -24302,6 +24905,7 @@ Z盘形态异常
 对乙酰胆碱酯酶抑制剂的虚弱症状呈现良好反应
 对他人的攻击性行为
 对他人试图获取直接注意力的反应减弱
+对伤寒沙门氏菌疫苗的特异性抗体反应完全或几乎完全缺失
 对作用于神经肌肉传递的药物反应
 对冠状病毒229E的易感性
 对外部刺激的异常解读
@@ -24522,6 +25126,7 @@ Z盘形态异常
 少突胶质细胞减少
 少突胶质细胞瘤
 少精子症
+少见感染性胰腺炎
 少量咖啡牛奶斑
 尖头畸形
 尖端扭转型室性心动过速
@@ -24582,6 +25187,7 @@ Z盘形态异常
 尾骨过长
 尾骨骨折
 尿11-脱氧四氢皮质酮水平升高
+尿18-羟基皮质醇排泄量增高
 尿3-甲基组氨酸水平降低
 尿3-羟基癸二酸水平升高
 尿4-羟基异戊酸水平升高
@@ -24701,6 +25307,7 @@ Z盘形态异常
 尿果糖水平升高
 尿桑葚细胞
 尿次黄嘌呤水平异常
+尿液18-氧皮质醇水平升高
 尿液4-羟基-2-酮戊二酸水平升高
 尿液D-乳酸水平升高
 尿液D-木糖试验异常
@@ -25211,6 +25818,8 @@ Z盘形态异常
 屈曲步态
 屈曲缓解
 屈曲部位斑块状角化过度呈线性排列
+屎肠球菌严重感染
+屎肠球菌反复感染
 山梨醇摄入
 左上肢放射痛
 左上腔静脉引流至冠状窦
@@ -25296,6 +25905,7 @@ Z盘形态异常
 巨十二指肠
 巨噬细胞计数异常
 巨大中性粒细胞颗粒
+巨大传染性软疣
 巨大体感诱发电位
 巨大结膜乳头
 巨大肥厚性胃炎
@@ -25322,6 +25932,10 @@ Z盘形态异常
 巨细胞性溶血性疾病
 巨细胞性肝炎
 巨细胞病毒性结肠炎
+巨细胞病毒性肝炎
+巨细胞病毒性肺炎
+巨细胞病毒性脑炎
+巨细胞病毒性视网膜炎
 巨细胞病毒（CMV）尿液核酸检测阳性
 巨结肠
 巨耳垂
@@ -25360,6 +25974,7 @@ Z盘形态异常
 布萨卡结节
 布鲁什菲尔德斑
 帆状脐带插入
+希腊武士头盔征
 帕彭海默小体
 帕金森综合征
 带状白内障
@@ -25380,6 +25995,7 @@ Z盘形态异常
 干血斑中葡萄糖-6-磷酸脱氢酶水平升高
 干血斑中葡萄糖-6-磷酸脱氢酶水平异常
 干血斑中葡萄糖-6-磷酸脱氢酶水平降低
+干酪样肉芽肿性病变
 干酪样胎脂样脱屑
 干骺端V形畸形
 干骺端不规则
@@ -25565,6 +26181,7 @@ Z盘形态异常
 异常乳磨牙形态
 异常乳突形态
 异常乳糜微粒浓度
+异常乳腺组织生物标本
 异常交流性面部表情
 异常交通
 异常仪式行为
@@ -25888,6 +26505,7 @@ Z盘形态异常
 异常心房形态
 异常心率变异性
 异常心球形态
+异常心理意象
 异常心电图
 异常心肌形态学
 异常心肌细胞形态
@@ -26262,6 +26880,7 @@ Z盘形态异常
 异常阴蒂形态
 异常阴道出血
 异常阴道分泌物
+异常阴道感染
 异常阿姆斯勒方格表测试
 异常附肢骨骼形态
 异常静态自动视野检查
@@ -26316,6 +26935,8 @@ Z盘形态异常
 弓形内膜/中膜小静脉炎
 弓形动脉内膜细胞增生
 弓形暗点
+弓形虫中枢神经系统感染
+弓形虫眼内炎
 弓状内膜/中层肉芽肿性小静脉炎
 弓状动脉内皮增生
 弓状动脉内膜/中膜凝固性坏死
@@ -26436,6 +27057,7 @@ Z盘形态异常
 循环18-羟基皮质酮水平异常
 循环18-羟基皮质酮水平降低
 循环27-羟基胆固醇浓度升高
+循环3-O-甲基多巴浓度升高
 循环ADAMTS13活性降低
 循环B细胞缺失
 循环C-三醇浓度升高
@@ -26614,7 +27236,9 @@ Z盘形态异常
 循环中植烷酸浓度升高
 循环中次黄嘌呤浓度升高
 循环中溶血磷脂酰胆碱浓度升高
+循环中特异性b型流感嗜血杆菌抗体浓度降低
 循环中甘露糖结合蛋白浓度升高
+循环中生长抑素浓度升高
 循环中生长激素释放激素浓度升高
 循环中甲基丙二酰甘氨酸浓度升高
 循环中甲基丙二酰肉碱浓度升高
@@ -26712,10 +27336,13 @@ Z盘形态异常
 循环十四烯酰肉碱浓度升高
 循环十四酰肉碱浓度升高
 循环单甲基甾醇浓度升高
+循环单糖浓度异常
 循环卟啉浓度升高
 循环去甲肾上腺素浓度降低
+循环双糖浓度异常
 循环反三碘甲状腺原氨酸浓度升高
 循环反向三碘甲状腺原氨酸浓度降低
+循环变肾上腺素类物质浓度异常
 循环可溶性CD163浓度升高
 循环可溶性CD25浓度升高
 循环可溶性FAS配体浓度升高
@@ -26750,6 +27377,7 @@ Z盘形态异常
 循环抗利尿激素浓度降低
 循环抗缪勒管激素水平降低
 循环支链氨基酸浓度升高
+循环无机阴离子浓度异常
 循环有核红细胞
 循环未成熟中性粒细胞计数升高
 循环末端补体成分浓度降低
@@ -26849,6 +27477,7 @@ Z盘形态异常
 循环维生素E浓度升高
 循环维生素E浓度降低
 循环维生素K浓度降低
+循环维生素浓度异常
 循环网状血小板计数升高
 循环网织血小板计数降低
 循环羟脯氨酸浓度降低
@@ -27066,6 +27695,7 @@ Z盘形态异常
 心率变异性增加
 心率变异性降低
 心理健康减退
+心盲症
 心绞痛
 心肌免疫细胞浸润
 心肌原生T1值升高
@@ -27250,6 +27880,7 @@ Z盘形态异常
 恶性间皮瘤
 恶性雀斑样痣黑色素瘤
 恶性高热
+恶性黑色素性神经鞘瘤
 恶病质
 悉尼皱褶
 悬垂部尿道狭窄
@@ -27299,6 +27930,7 @@ Z盘形态异常
 意识模糊性觉醒
 意识波动
 感受性失语症
+感染性肉芽肿病
 感染性脑炎
 感染期间血清转氨酶升高
 感染特异性抗体反应降低
@@ -27335,9 +27967,12 @@ Z盘形态异常
 慢性刺激性结膜炎
 慢性口腔念珠菌病
 慢性呼吸性酸中毒
+慢性呼吸道合胞病毒感染
 慢性咳嗽
 慢性复发性中耳炎
+慢性季节性冠状病毒感染
 慢性弥散性血管内凝血
+慢性循环IgA缺乏症
 慢性循环IgD缺乏症
 慢性循环IgE浓度降低
 慢性循环IgE缺乏症
@@ -27345,6 +27980,8 @@ Z盘形态异常
 慢性循环IgG2水平降低
 慢性循环IgG3减少症
 慢性循环IgG4水平降低
+慢性循环免疫球蛋白M浓度降低
+慢性循环免疫球蛋白M缺失
 慢性循环性IgD降低
 慢性循环总免疫球蛋白G缺乏症
 慢性循环总免疫球蛋白G降低
@@ -27359,6 +27996,7 @@ Z盘形态异常
 慢性溶血性贫血
 慢性特发性荨麻疹
 慢性疖病
+慢性疣
 慢性疲劳
 慢性疼痛
 慢性癣菌感染
@@ -27368,6 +28006,7 @@ Z盘形态异常
 慢性粒单核细胞白血病
 慢性绒毛炎
 慢性结肠炎
+慢性耳念珠菌感染
 慢性肝功能衰竭
 慢性肝性脑病
 慢性肝炎
@@ -27382,8 +28021,11 @@ Z盘形态异常
 慢性肾脏病5期
 慢性胃炎
 慢性胰腺炎
+慢性脊髓灰质炎病毒排出
 慢性脑脊液淋巴细胞增多症
 慢性腹泻
+慢性蓝氏贾第鞭毛虫感染
+慢性诺如病毒感染
 慢性轴索性神经病
 慢性部分性循环IgG1降低
 慢性部分性循环IgG2降低
@@ -27396,6 +28038,7 @@ Z盘形态异常
 慢性髓性白血病
 慢性鼻炎
 慢性鼻炎因鼻气道狭窄
+慢性鼻病毒感染
 慢性鼻窦炎
 慢性（近乎）缺乏循环IgG1
 慢性（近乎）缺乏循环IgG2
@@ -28286,6 +28929,7 @@ Z盘形态异常
 持续性不自主发声
 持续性乳酸酸中毒
 持续性人乳头瘤病毒感染
+持续性传染性软疣感染
 持续性前囟未闭
 持续性发热
 持续性声音重复
@@ -28296,9 +28940,11 @@ Z盘形态异常
 持续性心脏杂音
 持续性思维
 持续性泄殖腔畸形
+持续性流感病毒血症
 持续性病毒血症
 持续性瞳孔膜
 持续性胎儿循环
+持续性腺病毒血症
 持续性部分性癫痫
 持续性镫骨动脉
 持续性静脉导管未闭
@@ -28443,12 +29089,17 @@ Z盘形态异常
 摇椅足
 撕脱性骨折
 播散性传染性软疣
+播散性单纯疱疹病毒感染
 播散性念珠菌病
+播散性星状病毒感染
+播散性疣
 播散性病毒感染
 播散性皮肤疣
 播散性皮肤癣菌病
 播散性组织胞浆菌病
+播散性结核感染
 播散性隐孢子虫感染
+播散性隐球菌感染
 播散性非结核分枝杆菌感染
 支持细胞发育不全
 支持细胞增生症
@@ -28639,6 +29290,7 @@ Z盘形态异常
 无β脂蛋白血症
 无丙种球蛋白血症
 无乳症
+无乳链球菌复发性感染
 无先兆偏头痛
 无光感极低视力
 无分层无脑回畸形
@@ -28776,6 +29428,7 @@ Z盘形态异常
 星形胶质细胞增生
 星形胶质细胞形态异常
 星状玻璃体变性
+星状病毒中枢神经系统感染
 星状虹膜
 昼夜节律
 昼盲症
@@ -28922,6 +29575,8 @@ Z盘形态异常
 本体感觉诱发性癫痫发作
 本周蛋白尿
 术后出血时间延长
+机会性分枝杆菌感染
+机会性寄生虫感染
 机会性感染
 机会性病毒感染
 机会性真菌感染
@@ -29454,6 +30109,9 @@ Z盘形态异常
 水母头征
 水源性荨麻疹
 水疱性皮疹
+水痘-带状疱疹病毒性肺炎
+水痘-带状疱疹病毒性脑膜炎
+水痘-带状疱疹病毒脑炎
 水痘易感性
 水痘样疹
 水肿
@@ -29614,6 +30272,7 @@ Z盘形态异常
 淋巴样结节增生
 淋巴水肿
 淋巴瘤
+淋巴瘤家族史
 淋巴瘤细胞对滤泡的定植
 淋巴管发育不全
 淋巴管扩张症
@@ -29898,6 +30557,7 @@ Z盘形态异常
 特异性抗体反应缺失
 特异性抗多糖抗体水平降低
 特征性发现
+特殊性细菌性皮肤脓肿
 特鲁索征
 犁骨形态异常
 犬吠样咳嗽
@@ -29930,6 +30590,7 @@ Z盘形态异常
 环指近节指骨溶解性病变
 环状皮肤病变
 环状纤维
+环状肉芽肿
 环状胰腺
 环状软骨形态异常
 环礁征
@@ -30003,6 +30664,7 @@ Z盘形态异常
 生酮饮食改善
 生长停滞线
 生长异常
+生长抑素瘤
 生长期脱发
 生长板形态异常
 生长激素刺激试验反应降低
@@ -30056,6 +30718,7 @@ Z盘形态异常
 由过度通气引发
 由过敏原触发
 由钠摄入引发
+由隐球菌引起的硬化性胆管炎
 由食物摄入引发
 由高脂饮食诱发
 由高蛋白摄入引发
@@ -30229,6 +30892,8 @@ Z盘形态异常
 病情稳定
 病毒性肝炎
 病毒性脑炎
+病毒性脑膜炎
+病毒性脓毒症
 病毒感染诱发的横纹肌溶解症
 病毒血症
 病理性专注
@@ -30334,6 +30999,7 @@ Z盘形态异常
 白色口腔黏膜斑块
 白色鳞屑性皮肤
 白血病
+白血病家族史
 白质严重脱髓鞘
 白质球样细胞
 百日咳
@@ -30361,6 +31027,7 @@ Z盘形态异常
 皮层下定位
 皮损出血
 皮样囊肿
+皮炎芽生菌复发感染
 皮炎芽生菌痰真菌染色阳性
 皮疹
 皮纹变异
@@ -30546,6 +31213,7 @@ Z盘形态异常
 直立性心动过速
 直立性晕厥
 直线性细胞内自体荧光脂色素储存物质积聚
+直肠乙状结肠指数异常
 直肠会阴瘘
 直肠前庭瘘
 直肠前突
@@ -30602,8 +31270,14 @@ Z盘形态异常
 真皮黑素小体异常
 真空吸引助产术
 真菌性毛发病
+真菌性肝脓肿
+真菌性肾脏脓肿
+真菌性脑炎
+真菌性脑脓肿
 真菌性脑膜炎
+真菌性脾脓肿
 真菌性血流感染
+真菌性败血症
 真菌过敏症
 眩晕
 眶上嵴发育不全
@@ -32357,6 +33031,7 @@ Z盘形态异常
 粪性呕吐
 粪性溃疡
 粪石
+粪肠球菌反复感染
 精原细胞成熟阻滞
 精囊发育不全
 精囊囊肿
@@ -32688,7 +33363,14 @@ Z盘形态异常
 细胞表面糖基磷脂酰肌醇锚定蛋白表达降低
 细胞钴胺素摄取减少
 细菌性心内膜炎
+细菌性肝脓肿
+细菌性肾脓肿
 细菌性脑炎
+细菌性脑脓肿
+细菌性脑膜炎
+细菌性脓毒症
+细菌性脾脓肿
+细菌性蜂窝织炎
 细菌细胞管型
 细菌过敏
 细长型肱骨
@@ -32720,6 +33402,8 @@ Z盘形态异常
 结构性足部畸形
 结核分枝杆菌特异性γ-干扰素释放试验阳性
 结核分枝杆菌痰培养阳性
+结核性骨髓炎
+结核感染
 结核病诱导的基于T细胞的γ-干扰素释放试验阳性血液检测
 结核结节数量异常
 结核菌素皮肤试验阳性
@@ -32852,9 +33536,53 @@ Z盘形态异常
 网状青斑
 网织红细胞减少症
 网织红细胞增多症
+罕见BK病毒感染
+罕见HHV8感染
+罕见凝固酶阴性葡萄球菌感染
+罕见副流感病毒感染
+罕见口腔感染
+罕见寄生虫性胰腺炎
 罕见寄生虫感染
+罕见巴西副球孢子菌感染
+罕见心包炎
+罕见心血管系统感染
+罕见性真菌性肌炎
+罕见拟杆菌属感染
+罕见支原体感染
+罕见普雷沃菌感染
+罕见曲霉菌感染
+罕见李斯特菌感染
+罕见梭杆菌感染
+罕见梭菌感染
+罕见毛霉菌病
+罕见水痘-带状疱疹病毒皮肤感染
+罕见爱知病毒性肝炎
+罕见病毒性皮肤病
+罕见病毒性阴道感染
+罕见的沙雷菌感染
+罕见的真菌性胰腺炎
+罕见的细菌性甲床感染
+罕见的肾脓肿
+罕见的霍乱弧菌感染
+罕见皮肤寄生虫感染
+罕见真菌性皮肤感染
+罕见真菌性结肠炎
 罕见真菌感染
+罕见眼部感染
+罕见细菌性胃肠炎
+罕见细菌感染
+罕见肌肉骨骼感染
+罕见肝脏感染
+罕见肺炎链球菌感染
+罕见脊髓感染
 罕见蠕虫感染
+罕见诺卡菌感染
+罕见链球菌感染
+罕见隐孢子虫感染
+罕见隐球菌感染
+罕见革兰氏阳性细菌感染
+罕见马尔尼菲篮状菌感染
+罕见鲍曼不动杆菌感染
 罗基坦斯基-阿肖夫胆囊窦
 罗姆伯格征阳性
 罗森塔尔纤维
@@ -33009,8 +33737,14 @@ Z盘形态异常
 肉类过敏原过敏
 肉芽肿
 肉芽肿性冠状动脉炎
+肉芽肿性淋巴细胞性间质性肺疾病
+肉芽肿性淋巴结病
+肉芽肿性滑膜炎
+肉芽肿性牙龈炎
 肉芽肿性结膜炎
 肉芽肿性胆管炎
+肉芽肿性葡萄膜炎
+肉芽肿性虹膜炎
 肉芽肿病
 肋弓凹陷
 肋脊角压痛
@@ -33320,11 +34054,13 @@ Z盘形态异常
 肝尿刊酸酶活性降低
 肝局灶性结节性增生
 肝平滑肌瘤
+肝念珠菌病
 肝性脑病
 肝性黄色瘤病
 肝果糖-1,6-二磷酸醛缩酶活性降低
 肝桥接纤维化
 肝梗死
+肝棘球蚴囊肿
 肝母细胞瘤
 肝泡沫细胞
 肝淀粉样变性
@@ -33379,6 +34115,7 @@ Z盘形态异常
 肝脏羧酸酯酶1活性降低
 肝脏肉碱水平降低
 肝脏节段性发育不全
+肝脏血吸虫病
 肝脏表面扇贝样改变
 肝脏超声检查异常
 肝脓肿
@@ -33445,10 +34182,12 @@ Z盘形态异常
 肠道形态异常
 肠道淋巴滤泡增生
 肠道炎症
+肠道病毒中枢神经系统感染
 肠道病毒尿核酸阳性检测
 肠道病毒性皮肌炎综合征
 肠道病毒性肝炎
 肠道病毒性脑炎
+肠道病毒脓毒症
 肠道碱性磷酸酶升高
 肠道神经元形态异常
 肠道神经系统形态异常
@@ -33635,12 +34374,14 @@ Z盘形态异常
 肩胛肌肥大
 肩胛肌萎缩
 肩胛肱骨融合症
+肩胛胸壁关节不协调
 肩胛胸壁分离
 肩胛腓骨肌无力
 肩胛腓骨肌病
 肩胛腓骨肌萎缩症
 肩胛间区疼痛
 肩胛骨下缘水平线
+肩胛骨压迫试验阳性
 肩胛骨发育不全
 肩胛骨发育不全/肩胛骨发育不良
 肩胛骨外侧缘增厚
@@ -33694,6 +34435,7 @@ Z盘形态异常
 肱骨内翻
 肱骨分叉畸形
 肱骨发育不全/肱骨发育不良
+肱骨后旋肱动脉闭塞
 肱骨增宽
 肱骨外侧髁发育不全
 肱骨外生骨疣
@@ -33845,6 +34587,7 @@ Z盘形态异常
 肺气囊
 肺气肿
 肺水肿
+肺泡-动脉氧分压差（A-a梯度）升高
 肺泡内磷脂沉积
 肺泡内磷脂蓄积
 肺泡内结节性钙化
@@ -33867,6 +34610,7 @@ Z盘形态异常
 肺源性心脏病
 肺灌注缺损
 肺炎
+肺炎伴实变
 肺炎球菌特异性抗体水平降低
 肺炎链球菌痰培养阳性
 肺空气栓塞
@@ -33908,6 +34652,7 @@ Z盘形态异常
 肺间质淋巴细胞浸润
 肺间质细胞糖原蓄积
 肺间质高分辨率计算机断层扫描异常
+肺隐球菌病
 肺隔离症
 肺静脉发育不全
 肺静脉异位引流
@@ -34388,6 +35133,7 @@ Z盘形态异常
 背部疼痛
 背部肌肉组织异常
 背阔肌发育不全
+背阔肌断裂
 胎儿三角头畸形
 胎儿下尿路梗阻
 胎儿丙卡巴肼暴露
@@ -34437,6 +35183,7 @@ Z盘形态异常
 胎儿结肠回声增强
 胎儿肠管回声增强
 胎儿肠管扩张
+胎儿肠结石症
 胎儿股骨/足长比降低
 胎儿股骨短小
 胎儿股骨长度异常
@@ -34484,6 +35231,7 @@ Z盘形态异常
 胎儿鼻骨缺失
 胎动减少
 胎动增加
+胎头持续屈曲
 胎盘厚度增加
 胎盘大小异常
 胎盘异常植入子宫壁
@@ -34653,6 +35401,7 @@ Z盘形态异常
 胸主动脉瘤
 胸主动脉钙化
 胸大肌发育不全
+胸大肌撕裂
 胸导管形态异常
 胸小肌缺失
 胸廓前后径增大
@@ -34918,6 +35667,7 @@ Z盘形态异常
 脐带异常插入
 脐带打结
 脐带残端异常出血
+脐带水肿
 脐带绕颈
 脐带脱垂
 脐带血中二氧化碳水平异常
@@ -35097,6 +35847,7 @@ Z盘形态异常
 脑脊液/血清白蛋白比值异常
 脑脊液/血清白蛋白比值降低
 脑脊液14-3-3蛋白浓度升高
+脑脊液3-O-甲基多巴浓度升高
 脑脊液3-甲氧基-4-羟基苯乙二醇醛浓度降低
 脑脊液4-羟基丁酸浓度升高
 脑脊液5'-磷酸吡哆醛浓度降低
@@ -35158,6 +35909,7 @@ Z盘形态异常
 脑脊液分枝杆菌培养阳性
 脑脊液单纯疱疹病毒核酸检测阳性
 脑脊液去唾液酸转铁蛋白与转铁蛋白比值降低
+脑脊液叶酸浓度异常
 脑脊液叶酸缺乏症
 脑脊液嗜酸性粒细胞增多症
 脑脊液噬血细胞现象
@@ -35187,6 +35939,7 @@ Z盘形态异常
 脑脊液弓形虫核酸检测阳性
 脑脊液形态学异常
 脑脊液性病研究实验室试验阳性
+脑脊液恶性细胞
 脑脊液感染病原体
 脑脊液抗N-甲基-D-天冬氨酸受体抗体阳性
 脑脊液抗酸杆菌涂片阳性
@@ -35531,6 +36284,7 @@ Z盘形态异常
 腱反射减弱
 腱鞘炎
 腱黄瘤病
+腹主动脉分支动脉形态异常
 腹主动脉夹层
 腹主动脉扩张
 腹主动脉瘤
@@ -35604,6 +36358,10 @@ Z盘形态异常
 腹部色素缺失
 腺样体炎
 腺泡发育不良
+腺病毒性结肠炎
+腺病毒性肝炎
+腺病毒性肺炎
+腺病毒脑炎
 腺瘤性结肠息肉病
 腺细胞肿瘤
 膀胱出口梗阻
@@ -35726,6 +36484,7 @@ Z盘形态异常
 自发性绒毛膜羊膜分离
 自发性结膜滤过泡
 自发性脑脊液漏
+自发性膈肌破裂
 自发性血小板聚集
 自发性血肿
 自发性趾（指）环状缩窄症
@@ -35757,6 +36516,7 @@ Z盘形态异常
 自身免疫性甲状旁腺功能减退症
 自身免疫性血小板减少症
 自身免疫抗体阳性
+自身免疫疾病家族史
 自身运动错觉
 自闭症行为
 自闭症谱系障碍（Autism Spectrum Disorder, ASD）
@@ -35888,6 +36648,8 @@ Z盘形态异常
 苯丙酮酸血症
 苯妥英暴露导致的病情加重
 茎突舌肌异常
+草绿色链球菌性肝脓肿
+草绿色链球菌感染引起的心内膜炎
 草莓舌
 草酸钙结晶尿
 草酸钙肾结石症
@@ -35937,6 +36699,7 @@ Z盘形态异常
 营养性肢体改变
 萨尔茨曼角膜结节
 落日眼征
+葡萄球菌性肝脓肿
 葡萄糖磷酸异构酶水平降低
 葡萄糖耐受不良
 葡萄胎
@@ -35950,6 +36713,7 @@ Z盘形态异常
 蓝痣
 蓝色尿液（Blue urine）
 蓝色虹膜
+蓝色视野内视现象
 蓝色锥体单色视症
 蓟管状牙髓
 蓬发综合征
@@ -36035,6 +36799,7 @@ Z盘形态异常
 螺丝刀形切牙
 螺旋骨折
 蠕动减弱
+血中糖醇浓度异常
 血型
 血型A型
 血型B型
@@ -36442,6 +37207,7 @@ Z盘形态异常
 视网膜静脉阻塞
 视网膜骨针样色素沉着
 视网膜黄白色病变
+视觉后像（视物再现）
 视觉固定不稳定
 视觉增强前庭眼反射受损
 视觉失认症
@@ -36631,6 +37397,7 @@ Z盘形态异常
 超氧化物代谢异常
 超氧化物歧化酶水平升高
 超氧化物歧化酶水平降低
+超逼真意象能力
 超重
 超难治性癫痫持续状态
 超髓鞘化视网膜神经纤维
@@ -37087,15 +37854,9 @@ Z盘形态异常
 过时性视网膜畸形
 过时性进行性视网膜变性
 过时性非进行性先天性视网膜营养不良
-过时术语：失语症（Dysphasia）  
-现代术语：语言障碍（Language Disorder）或失语症（Aphasia）
 过时术语：婴儿高钙血症
 过时术语：心动过速（伴嗜铬细胞瘤）
-过时术语：早发性绝经（Precocious Menopause）  
-现代术语：原发性卵巢功能不全（Primary Ovarian Insufficiency, POI）
 过时术语：泌乳素瘤
-过时术语：疱疹性脑炎
-现代术语：单纯疱疹病毒性脑炎 (Herpes Simplex Virus Encephalitis, HSV Encephalitis)
 过时术语：趾行（Toe walking）
 过时术语：迟发性肌营养不良症
 过时术语：限制性心力衰竭
@@ -37220,8 +37981,6 @@ Z盘形态异常
 过时的术语：伴反应改变的局灶性自主神经性癫痫发作
 过时的术语：多汗症（伴嗜铬细胞瘤）
 过时的术语：大动脉转位伴室间隔缺损
-过时的术语：夹层主动脉扩张
-现代医学术语：主动脉夹层（Aortic Dissection）
 过时的术语：局灶性发作，无热性
 过时的术语：局灶性认知性发作伴反应性受损
 过时的术语：局灶性认知性发作伴注意力障碍
@@ -37314,6 +38073,7 @@ Z盘形态异常
 运动迟缓
 运动障碍
 近亲婚配后代
+近亲结婚
 近内斜视
 近外斜视
 近期丙泊酚输注镇静史
@@ -37636,6 +38396,10 @@ Z盘形态异常
 里急后重
 里格尔异常
 重叠趾
+重型心内膜炎
+重型李斯特菌病
+重型水痘感染
+重型脑膜炎奈瑟菌感染
 重复性强迫行为
 重复言语症
 重复输尿管
@@ -37644,29 +38408,54 @@ Z盘形态异常
 重复齿状突
 重度
 重度B淋巴细胞减少症
+重度中耳炎
 重度传导性听力障碍
 重度光敏性
+重度克雷伯菌感染
 重度全身性骨质疏松症
 重度全面性发育迟缓
 重度副流感病毒感染
+重度口炎
+重度口腔念珠菌病
 重度听力障碍
+重度外耳道炎
+重度季节性冠状病毒感染
 重度巨细胞病毒感染
 重度弓形虫病
+重度心包炎
+重度志贺氏菌感染
 重度感受性语言发育迟缓
 重度感染
 重度感音神经性听力损失
 重度扁平椎
+重度拟杆菌属感染
 重度智力障碍
 重度牙周炎
+重度牙龈炎
 重度短肢侏儒症
+重度结膜炎
 重度肌张力低下
 重度脑积水
 重度蛋白尿
+重度视网膜炎
 重度贾第虫病
 重度静止性脑病
+重症利什曼病
+重症呼吸道合胞病毒感染
+重症咽炎
+重症嗜肺军团菌感染
+重症巴西副球孢子菌感染
+重症心肌炎
+重症支原体感染
 重症水痘-带状疱疹病毒感染
 重症流感感染
+重症淋病奈瑟菌感染
+重症球孢子菌感染
+重症肠杆菌感染
 重症腺病毒感染
+重症诺卡菌感染
+重症轮状病毒感染
+重症霍乱弧菌感染
 重链副蛋白血症
 钆暴露
 针孔视力 1.2 LogMAR
@@ -37710,6 +38499,7 @@ Z盘形态异常
 铁粒幼细胞性贫血
 铅毒性麻痹
 铊浓度升高
+铜绿假单胞菌复发性感染
 铜锤样颅骨
 铲形上颌中切牙
 铲状肋骨
@@ -37737,6 +38527,7 @@ Z盘形态异常
 锁骨细薄
 锁骨胸骨端骨折
 锁骨远端变薄
+锁骨远端骨溶解症
 锁骨骨化延迟
 锁骨骨折
 锂暴露导致的病情加重
@@ -38015,7 +38806,9 @@ Z盘形态异常
 阿尔茨海默病
 阿弗他溃疡
 阿片类药物加剧
+阿米巴肝脓肿
 附着点炎
+附着龈缺失
 附睾乳头状囊腺瘤
 附睾囊肿
 附睾增大
@@ -38169,12 +38962,15 @@ Z盘形态异常
 隐匿性起病
 隐匿性黄斑营养不良
 隐孢子虫感染引起的慢性肝炎
+隐孢子虫感染所致硬化性胆管炎
 隐性脊柱裂
 隐性近视
 隐性远视
 隐性颅裂
 隐斜视
+隐球菌引起的慢性肝炎
 隐球菌性脑膜炎
+隐球菌球
 隐眼畸形
 隐睾症
 隐窝增生
@@ -38264,24 +39060,91 @@ Z盘形态异常
 非交通性脑积水
 非免疫性胎儿水肿
 非共同性斜视
+非典型HHV-7感染
+非典型上呼吸道感染
 非典型中枢神经系统感染
+非典型人偏肺病毒感染
+非典型克雷伯菌感染
+非典型出血性膀胱炎
+非典型分枝杆菌关节炎
+非典型分枝杆菌感染
+非典型分枝杆菌皮肤感染
+非典型分枝杆菌肌炎
+非典型分枝杆菌骨髓炎
 非典型分选
+非典型化脓性链球菌感染
+非典型单纯疱疹病毒感染
+非典型单纯疱疹病毒皮肤感染
+非典型口炎
+非典型口腔念珠菌病
+非典型呼吸道合胞病毒感染
+非典型嗜肺军团菌感染
 非典型失神发作
 非典型失神持续状态
+非典型寄生虫性阴道炎
+非典型巨细胞病毒感染
+非典型弓形虫感染
+非典型心内膜炎
+非典型志贺氏菌感染
+非典型念珠菌感染
 非典型性姿态
+非典型性寄生虫性胃肠炎
 非典型性或迁延性肝炎
+非典型性无乳链球菌感染
+非典型性牙周炎
+非典型性筋膜感染
+非典型性细菌性肌炎
+非典型性细菌性胰腺炎
+非典型性细菌性骨髓炎
+非典型性角膜炎
 非典型感染
+非典型感染性结肠炎
+非典型感染性肌炎
+非典型感染性血管炎
+非典型星状病毒感染
+非典型柠檬酸杆菌感染
 非典型椭圆形红细胞增多症
+非典型沙门氏菌感染
+非典型流感嗜血杆菌感染
+非典型流感感染
+非典型淋巴系统感染
+非典型甲真菌感染
 非典型畸胎瘤样/横纹肌样瘤
+非典型病毒性结肠炎
+非典型病毒性胃肠炎
+非典型病毒性胰腺炎
 非典型病毒感染
 非典型痣
+非典型皮肤利什曼病
 非典型皮肤感染
+非典型皮肤癣菌感染
+非典型真菌性骨髓炎
 非典型神经纤维瘤病
+非典型细菌性关节炎
+非典型细菌性皮肤感染
+非典型细菌性胆管炎
+非典型细菌性膀胱炎
+非典型细菌性阴道感染
+非典型耳念珠菌感染
+非典型肠杆菌属感染
+非典型肠球菌感染
+非典型肠道病毒感染
 非典型肺类癌瘤
+非典型肾盂肾炎
 非典型胃肠道感染
+非典型胆管炎
+非典型脊髓灰质炎病毒感染
+非典型脓肿分枝杆菌感染
+非典型腺病毒感染
+非典型膀胱炎
+非典型蓝氏贾第鞭毛虫感染
 非典型行为
 非典型裂隙周围结节
+非典型诺如病毒感染
+非典型阴道真菌感染
+非典型革兰氏阴性细菌感染
 非典型高苯丙氨酸血症
+非典型鸟分枝杆菌复合群感染
 非凹陷性水肿
 非分泌性肾上腺皮质腺瘤
 非动脉炎性前部缺血性视神经病变
@@ -38297,12 +39160,14 @@ Z盘形态异常
 非对称性身材矮小
 非小细胞肺癌
 非常频繁
+非干酪性肉芽肿病
 非干酪样上皮样细胞肉芽肿病
 非快速眼动睡眠期异态睡眠
 非恢复性睡眠
 非惊厥性癫痫持续状态
 非惊厥性癫痫持续状态伴昏迷
 非惊厥性癫痫持续状态无昏迷
+非感染性肉芽肿病
 非感染性脑膜炎
 非指向性面部表情
 非搏动性腹部肿块
@@ -38319,6 +39184,7 @@ Z盘形态异常
 非瘙痒性荨麻疹
 非癫痫性发作
 非结合性高胆红素血症
+非结核分枝杆菌感染
 非结核分枝杆菌肺部感染
 非肉芽肿性葡萄膜炎
 非致密性心肌病
@@ -39192,6 +40058,7 @@ Z盘形态异常
 鱼际隆起异常
 鱼鳞病
 鲍德勒骨刺
+鲍曼不动杆菌复发性感染
 鲍曼囊形态异常
 鲍曼囊管化
 鲍曼囊蛋白样碎屑
@@ -39309,6 +40176,8 @@ Z盘形态异常
 黏膜毛细血管扩张症
 黏膜疹
 黏膜皮肤病变疼痛
+黏膜相关恒定T细胞比例升高
+黏膜相关恒定T细胞比例异常
 黏膜相关恒定T细胞比例降低
 黏膜蔗糖酶-异麦芽糖酶活性降低
 黑便

@@ -112,6 +112,7 @@ function HomeContent() {
   const [apiUrl, setApiUrl] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('');
+  const [defaultModel, setDefaultModel] = useState('');
   const abortControllerRef = useRef<AbortController | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
@@ -130,6 +131,23 @@ function HomeContent() {
     if (savedApiKey) setApiKey(savedApiKey);
     if (savedModel) setModel(savedModel);
   }, []);
+
+  // 拉取服务端默认模型（环境变量 MODEL）
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/config')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (!cancelled && data && typeof data.defaultModel === 'string') {
+          setDefaultModel(data.defaultModel);
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // 当前实际使用的模型：用户设置优先，否则使用服务端默认
+  const activeModel = model || defaultModel;
 
 
   const handleSearch = useCallback((searchQuery: string) => {
@@ -398,7 +416,7 @@ function HomeContent() {
         <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
           <span>内容由AI生成，请仔细甄别</span>
           <span className="text-gray-300 dark:text-gray-600">|</span>
-          <span>基于 Human Phenotype Ontology (2026-02-16)</span>
+          <span>基于 Human Phenotype Ontology (2026-06-06)</span>
           <span className="text-gray-300 dark:text-gray-600">|</span>
           <a
             href="https://hpo.jax.org"
@@ -408,6 +426,20 @@ function HomeContent() {
           >
             hpo.jax.org
           </a>
+          {activeModel && (
+            <>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <span className="inline-flex items-center gap-1">
+                <span>模型:</span>
+                <code
+                  title={model ? '来自本地设置' : '来自服务端环境变量 MODEL'}
+                  className="px-1.5 py-0.5 rounded bg-gray-200/70 dark:bg-gray-700/70 text-gray-700 dark:text-gray-200 font-mono text-[11px]"
+                >
+                  {activeModel}
+                </code>
+              </span>
+            </>
+          )}
         </div>
       </div>
 

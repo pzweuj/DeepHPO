@@ -13,10 +13,10 @@ import time
 
 # 硅基流动 Deepseek-V3 || 如果用其他服务商，可自行调整
 def silicon_deepseek_v3(message, sdk):
-    url = "https://api.siliconflow.cn/v1/chat/completions"
+    url = "https://token-plan-cn.xiaomimimo.com/v1/chat/completions"
     
     payload = {
-        "model": "deepseek-ai/DeepSeek-V3.2",
+        "model": "mimo-v2.5",
         "messages": [
             {
                 "role": "system",
